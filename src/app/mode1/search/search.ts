@@ -1,16 +1,18 @@
-import {Component, inject} from "@angular/core";
+import {Component, inject, OnDestroy, OnInit} from "@angular/core";
 
 import {debounceTime, distinctUntilChanged, Subscription} from "rxjs";
-import {FormControl} from "@angular/forms";
+import {FormControl, ReactiveFormsModule} from "@angular/forms";
 import {Spotify} from "../../../services/spotify";
 
 @Component({
   selector: "app-search",
-  imports: [],
+  imports: [
+    ReactiveFormsModule
+  ],
   templateUrl: "./search.html",
   styleUrl: "./search.scss",
 })
-export class Search {
+export class Search implements OnInit, OnDestroy{
   spotifyAPI = inject(Spotify)
   searchControl = new FormControl('');
   private searchSubscription!: Subscription;
