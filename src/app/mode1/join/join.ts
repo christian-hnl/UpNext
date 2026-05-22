@@ -1,10 +1,13 @@
 import {Component, inject, input} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {searchForGlobalZoneless} from "@angular/cli/src/commands/mcp/tools/onpush-zoneless-migration/migrate-test-file";
+import {Search} from "../search/search";
 
 @Component({
   selector: 'app-join',
-  imports: [],
+  imports: [
+    Search
+  ],
   templateUrl: './join.html',
   styleUrl: './join.scss',
 })
