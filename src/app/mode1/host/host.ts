@@ -4,6 +4,7 @@ import { Spotify } from '../../../services/spotify';
 import {SupabaseService} from '../../../services/supabase-service';
 import {FormsModule} from '@angular/forms';
 import {QRCodeComponent} from 'angularx-qrcode';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-host',
@@ -20,6 +21,7 @@ export class Host implements OnInit{
   userProfile: WritableSignal<UserProfile | null> = signal<UserProfile | null>(null);
   spotifyService = inject(Spotify);
   supabaseService = inject(SupabaseService);
+  router = inject(Router);
 
   title = signal("");
 
@@ -29,11 +31,17 @@ export class Host implements OnInit{
   }
 
   async checkAuth() {
-    const accessToken = await this.spotifyService.getAccessToken();
-    if (accessToken) {
-      console.log("AccessToken: " + accessToken)
-      this.userProfile.set(await this.spotifyService.getMyProfile());
-      console.log(this.userProfile())
+    try {
+      const accessToken = await this.spotifyService.getAccessToken();
+      if (accessToken) {
+        this.userProfile.set(await this.spotifyService.getMyProfile());
+        // If we are on the callback route, redirect to the clean host route
+        if (this.router.url.startsWith('/callback')) {
+          await this.router.navigate(['/mode1/host']);
+        }
+      }
+    } catch (e) {
+      console.error(e);
     }
   }
 

@@ -38,7 +38,7 @@ export class Search implements OnInit, OnDestroy{
   }
 
   ngOnDestroy() {
-    // Wichtig: Subscription beenden, um Memory Leaks zu vermeiden
+
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }

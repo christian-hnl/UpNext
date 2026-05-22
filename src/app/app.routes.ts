@@ -13,7 +13,7 @@ export const routes: Routes = [
   { path: 'mode1/join', component: Join },
   { path: 'mode1/host', component: Host },
   { path: 'mode2/join', component: Mode2 },
-  { path: 'callback', redirectTo: '/mode1/host' },
+  { path: 'callback', component: Host },
   { path: '404', component: Error },
   { path: '**', redirectTo: '404' },
 ];
