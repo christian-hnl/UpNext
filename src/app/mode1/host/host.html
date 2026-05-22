@@ -1,0 +1,36 @@
+
+
+<h1>mode1</h1>
+<h2>host session</h2>
+
+
+<button (click)="onLogin()">Mit Spotify anmelden</button>
+
+<div>
+  <p>username: {{ userProfile()?.display_name }}</p>
+  <p>email: {{ userProfile()?.email }}</p>
+  <input type="text" placeholder="title" [(ngModel)]="title">
+</div>
+
+<button (click)="addSession()">host session</button>
+
+
+
+<div class="qr-container">
+  <qrcode
+    [qrdata]="sessionLink()"
+    [width]="300"
+    [errorCorrectionLevel]="'M'"
+
+    [colorDark]="'#1DB954'"
+    [colorLight]="'#191414'"
+
+    [imageSrc]="'logoUrl'"
+    [imageHeight]="60"
+    [imageWidth]="60"
+  ></qrcode>
+</div>
+
+<input type="text" [(ngModel)]="sessionLink">
+
+
