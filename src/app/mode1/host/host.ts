@@ -27,30 +27,46 @@ export class Host implements OnInit{
 
 
   ngOnInit() {
-    this.checkAuth();
+    this.handleAuthentication();
   }
 
-  async checkAuth() {
-    try {
-      const accessToken = await this.spotifyService.getAccessToken();
-      if (accessToken) {
+  async handleAuthentication() {
+    // Check if the current URL is the Spotify callback
+    if (this.router.url.startsWith('/callback')) {
+      try {
+        // The login method will complete the authentication process
+        await this.spotifyService.login();
+        // Fetch user profile
         this.userProfile.set(await this.spotifyService.getMyProfile());
-        // If we are on the callback route, redirect to the clean host route
-        if (this.router.url.startsWith('/callback')) {
-          await this.router.navigate(['/mode1/host']);
-        }
+        // Redirect to the clean host URL
+        await this.router.navigate(['/mode1/host']);
+      } catch (e) {
+        console.error('Error during Spotify authentication callback:', e);
+        // On error, redirect to a safe page
+        await this.router.navigate(['/welcome']);
       }
-    } catch (e) {
-      console.error(e);
+    } else {
+      // This is a normal page load, just check for an existing token
+      try {
+        const token = await this.spotifyService.getAccessToken();
+        if (token) {
+          this.userProfile.set(await this.spotifyService.getMyProfile());
+        }
+      } catch (e) {
+        // This can happen if the user is not logged in, which is fine.
+        console.log('User is not logged in.');
+      }
     }
   }
 
   async onLogin() {
+    // This method now only initiates the login
     await this.spotifyService.login();
   }
 
   async onLogout() {
     await this.spotifyService.logout();
+    this.userProfile.set(null);
   }
 
   public sessionLink = signal("https://sigfriedschweigl.github.io/POS/index.html")
