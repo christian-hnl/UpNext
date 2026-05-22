@@ -4,6 +4,7 @@ import { Spotify } from '../../../services/spotify';
 import {SupabaseService} from '../../../services/supabase-service';
 import {FormsModule} from '@angular/forms';
 import {QRCodeComponent} from 'angularx-qrcode';
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-host',
@@ -20,29 +21,52 @@ export class Host implements OnInit{
   userProfile: WritableSignal<UserProfile | null> = signal<UserProfile | null>(null);
   spotifyService = inject(Spotify);
   supabaseService = inject(SupabaseService);
+  router = inject(Router);
 
   title = signal("");
 
 
   ngOnInit() {
-    this.checkAuth();
+    this.handleAuthentication();
   }
 
-  async checkAuth() {
-    const accessToken = await this.spotifyService.getAccessToken();
-    if (accessToken) {
-      console.log("AccessToken: " + accessToken)
-      this.userProfile.set(await this.spotifyService.getMyProfile());
-      console.log(this.userProfile())
+  async handleAuthentication() {
+    // Check if the current URL is the Spotify callback
+    if (this.router.url.startsWith('/callback')) {
+      try {
+        // The login method will complete the authentication process
+        await this.spotifyService.login();
+        // Fetch user profile
+        this.userProfile.set(await this.spotifyService.getMyProfile());
+        // Redirect to the clean host URL
+        await this.router.navigate(['/mode1/host']);
+      } catch (e) {
+        console.error('Error during Spotify authentication callback:', e);
+        // On error, redirect to a safe page
+        await this.router.navigate(['/welcome']);
+      }
+    } else {
+      // This is a normal page load, just check for an existing token
+      try {
+        const token = await this.spotifyService.getAccessToken();
+        if (token) {
+          this.userProfile.set(await this.spotifyService.getMyProfile());
+        }
+      } catch (e) {
+        // This can happen if the user is not logged in, which is fine.
+        console.log('User is not logged in.');
+      }
     }
   }
 
   async onLogin() {
+    // This method now only initiates the login
     await this.spotifyService.login();
   }
 
   async onLogout() {
     await this.spotifyService.logout();
+    this.userProfile.set(null);
   }
 
   public sessionLink = signal("https://sigfriedschweigl.github.io/POS/index.html")

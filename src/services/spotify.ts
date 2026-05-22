@@ -10,7 +10,7 @@ export class Spotify {
   constructor() {
     // Liest die aktuelle Domain aus (z.B. http://localhost:4200 oder https://deine-app.vercel.app)
     const redirectUrl = window.location.origin + '/callback';
-
+    console.log(redirectUrl)
     this.sdk = SpotifyApi.withUserAuthorization(
         "47763151a4a5406bbbb58c8ad2601f81",
         redirectUrl,
