@@ -8,12 +8,13 @@ export class Spotify {
   private sdk: SpotifyApi;
 
   constructor() {
-    // Initialisierung: Das SDK prüft bei jedem Seitenaufruf automatisch,
-    // ob ein Login-Callback in der URL steckt.
+    // Liest die aktuelle Domain aus (z.B. http://localhost:4200 oder https://deine-app.vercel.app)
+    const redirectUrl = window.location.origin + '/callback';
+
     this.sdk = SpotifyApi.withUserAuthorization(
-      "c680968a416149a08fa5191dbea575b5",
-      "http://127.0.0.1:4200/callback",
-      Scopes.all
+        "c680968a416149a08fa5191dbea575b5",
+        redirectUrl,
+        Scopes.all
     );
   }
 
