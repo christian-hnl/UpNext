@@ -12,3 +12,7 @@ export interface SpotifyImage {
   height: number | null;
   width: number | null;
 }
+
+export interface SpotifySearch{
+  title: string
+}

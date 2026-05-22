@@ -22,6 +22,10 @@ export class Spotify {
     await this.sdk.authenticate();
   }
 
+  async search(search: string){
+    return await this.sdk.search(search, ["track"], "AT", 5);
+  }
+
   async getMyProfile(): Promise<UserProfile> {
     return await this.sdk.currentUser.profile();
   }
