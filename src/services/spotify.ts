@@ -12,7 +12,7 @@ export class Spotify {
     const redirectUrl = window.location.origin + '/callback';
 
     this.sdk = SpotifyApi.withUserAuthorization(
-        "c680968a416149a08fa5191dbea575b5",
+        "47763151a4a5406bbbb58c8ad2601f81",
         redirectUrl,
         Scopes.all
     );
