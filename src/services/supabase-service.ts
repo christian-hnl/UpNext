@@ -26,7 +26,7 @@ export class SupabaseService {
     }
   }
 
-  async addSession(titleEingabe: string) {
+  async addSession(titleEingabe: string, hostID: string) {
     const rHostId = Math.floor(100000 + Math.random() * 900000).toString();
     const qrUrl = window.location.origin + '/mode1/join/' + rHostId;
     console.log(qrUrl);
@@ -34,7 +34,7 @@ export class SupabaseService {
 
     const { data, error } = await this.supabase
       .from('sessions').insert({
-        host_id: "123456",
+        host_id: hostID,
         title: titleEingabe,
         qrCodeData: qrUrl,
         mode: "host",

@@ -71,10 +71,10 @@ export class Host implements OnInit{
 
   public sessionLink = signal("https://sigfriedschweigl.github.io/POS/index.html")
 
-  public logoUrl: string = "assets/image.png";
 
   async addSession() {
-    const data = await this.supabaseService.addSession(this.title());
+    console.log(this.userProfile)
+    const data = await this.supabaseService.addSession(this.title(), <string>this.userProfile()?.id);
     if (data && data[0] && data[0].qrCodeData) {
       this.sessionLink.set(data[0].qrCodeData)
     }
