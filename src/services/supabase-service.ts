@@ -42,11 +42,22 @@ export class SupabaseService {
       }).select();
 
     if (error) {
-      console.error('Fehler beim Speichern:', error.message);
+      console.error('error:', error.message);
       return null;
     }
 
-    console.log('✅ Eintrag erfolgreich gespeichert:', data);
+    console.log('eintrag erfolgreich:', data);
     return data;
   }
+
+
+
+  async joinSession(id: string) {
+    return this.supabase
+        .from('sessions')
+        .select('host_id')
+        .eq('host_id', id)
+  }
+
+
 }
