@@ -10,7 +10,7 @@ export const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
   { path: 'welcome', component: Welcome },
   { path: 'mode1', component: Mode1 },
-  { path: 'mode1/join', component: Join },
+  { path: 'mode1/join/:id', component: Join },
   { path: 'mode1/host', component: Host },
   { path: 'mode2/join', component: Mode2 },
   { path: 'callback', component: Host },

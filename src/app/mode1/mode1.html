@@ -4,8 +4,8 @@
 <h3>join private session</h3>
 
 <div>
-  <input placeholder="enter session-id">
-  <button>join</button>
+  <input [(ngModel)]="sessionId" placeholder="enter session-id">
+    <button [routerLink]="['/mode1/join', sessionId()]">join</button>
 </div>
 
 
