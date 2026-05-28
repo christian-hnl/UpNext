@@ -16,17 +16,8 @@
 
 <button (click)="onLogout()">Logout</button>
 
-<div class="qr-container">
-  <qrcode
-    [qrdata]="sessionLink()"
-    [width]="250"
-    [errorCorrectionLevel]="'M'"
+<app-qrcode></app-qrcode>
 
-    [colorDark]="'#FFFFFF'"
-    [colorLight]="'#191414'"
-  ></qrcode>
-</div>
 
-<input type="text" [(ngModel)]="sessionLink">
 
 
