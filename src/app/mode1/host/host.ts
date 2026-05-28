@@ -72,6 +72,10 @@ export class Host implements OnInit{
   }
 
 
+  sendQRdata(){
+    this.qrCode.generateQR("testqr")
+  }
+
 
   async addSession() {
     console.log(this.userProfile)
