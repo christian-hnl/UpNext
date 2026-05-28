@@ -1,15 +1,21 @@
 import {Component, inject, input, OnInit, signal} from '@angular/core';
 import {SupabaseService} from "../../../services/supabase-service";
+import {FormsModule} from "@angular/forms";
+import {Spotify} from "../../../services/spotify";
+import {Search} from "../search/search";
 
 @Component({
   selector: 'app-session',
   imports: [
+    FormsModule,
+    Search
   ],
   templateUrl: './session.html',
   styleUrl: './session.scss',
 })
 export class Session implements OnInit {
   private supabaseS = inject(SupabaseService);
+  private spotifyApi = inject(Spotify)
   sessionId = input.required<string>();
 
   title = signal<string | null | undefined>("");
@@ -36,6 +42,7 @@ export class Session implements OnInit {
 
 
   }
+
 
 
 }

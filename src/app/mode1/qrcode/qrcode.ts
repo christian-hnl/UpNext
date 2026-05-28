@@ -1,4 +1,4 @@
-import {Component, input, signal} from "@angular/core";
+import {Component, Input, input, signal} from "@angular/core";
 import {QRCodeComponent} from "angularx-qrcode";
 
 @Component({
@@ -10,11 +10,7 @@ import {QRCodeComponent} from "angularx-qrcode";
   styleUrl: "./qrcode.scss",
 })
 export class Qrcode {
-  sessionLink = signal("sigfriedschweigl")
 
-
-  generateQR(qrdata: string){
-    this.sessionLink.set(qrdata);
-  }
+  @Input() sessionLink: string = '';
 
 }

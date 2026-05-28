@@ -18,14 +18,12 @@ export class Search implements OnInit, OnDestroy{
   private searchSubscription!: Subscription;
 
   ngOnInit() {
-    // 2. Auf Änderungen des Inputs "lauschen"
     this.searchSubscription = this.searchControl.valueChanges
         .pipe(
-            debounceTime(300),        // Wartet 300ms nach dem letzten Tastendruck
-            distinctUntilChanged()    // Sucht nur, wenn sich der Text wirklich geändert hat
+            debounceTime(300),
+            distinctUntilChanged()
         )
         .subscribe((searchTerm) => {
-          // Diese Funktion wird erst gefeuert, wenn 300ms nicht getippt wurde
           this.performSearch(searchTerm);
         });
   }
@@ -38,7 +36,6 @@ export class Search implements OnInit, OnDestroy{
   }
 
   ngOnDestroy() {
-
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
     }
