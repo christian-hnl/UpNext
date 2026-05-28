@@ -1,6 +1,5 @@
 import {Component, inject, signal} from '@angular/core';
 import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {Search} from "./search/search";
 import {FormsModule} from "@angular/forms";
 import {SupabaseService} from "../../services/supabase-service";
 
@@ -9,25 +8,19 @@ import {SupabaseService} from "../../services/supabase-service";
   imports: [
     RouterLink,
     RouterLinkActive,
-    Search,
     FormsModule
   ],
   templateUrl: './mode1.html',
   styleUrl: './mode1.scss',
 })
 export class Mode1 {
-  sessionId = signal("");
   private supabaseService = inject(SupabaseService);
-
   private router = inject(Router);
+
+  sessionId = signal("");
 
 
   async checkSession(id: string) {
-    if (!id || id.trim() === '') {
-      console.warn('Bitte gib eine gültige Session-ID ein.');
-      return;
-    }
-
     try {
       const { data, error } = await this.supabaseService.joinSession(id);
 
@@ -36,9 +29,8 @@ export class Mode1 {
         return;
       }
 
-      if (!data || data.length === 0) {
+      if (!data) {
         console.warn('Keine Session mit dieser ID gefunden.');
-        this.sessionId.set("");
       } else {
         console.log('erfolgreich beigetreten');
         await this.router.navigate(['/mode1/session', id]);
@@ -48,5 +40,7 @@ export class Mode1 {
       console.error('Error: ', err);
     }
   }
+
+
 
 }

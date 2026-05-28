@@ -74,7 +74,7 @@ export class Host implements OnInit{
 
   async addSession() {
     console.log(this.userProfile)
-    const data = await this.supabaseService.addSession(this.title(), <string>this.userProfile()?.id);
+    const data = await this.supabaseService.addSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
       this.sessionLink.set(data[0].qrCodeData)
     }
