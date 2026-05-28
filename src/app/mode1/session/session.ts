@@ -1,9 +1,11 @@
 import {Component, inject, input, OnInit, signal} from '@angular/core';
 import {SupabaseService} from "../../../services/supabase-service";
+import {Search} from "../search/search";
 
 @Component({
   selector: 'app-session',
   imports: [
+    Search
   ],
   templateUrl: './session.html',
   styleUrl: './session.scss',
