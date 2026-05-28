@@ -23,8 +23,9 @@ export class Host implements OnInit{
   supabaseService = inject(SupabaseService);
   router = inject(Router);
   qrCode = new Qrcode;
+  sessionId = signal<number>(0);
 
-  title = signal("");
+  title = signal<string>("");
 
 
   ngOnInit() {
@@ -32,7 +33,6 @@ export class Host implements OnInit{
   }
 
   async handleAuthentication() {
-    // Check if the current URL is the Spotify callback
     if (this.router.url.startsWith('/callback')) {
       try {
 
@@ -62,6 +62,7 @@ export class Host implements OnInit{
 
   async onLogin() {
     await this.spotifyService.login();
+    await this.supabaseService.addUser(this.userProfile.name, this.sessionId(), true);
   }
 
   async onLogout() {
