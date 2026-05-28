@@ -10,13 +10,15 @@ import {SupabaseService} from "../../../services/supabase-service";
 })
 export class Session implements OnInit {
   private supabaseS = inject(SupabaseService);
-  sessionId = input.required<string>();
 
+  sessionId = input.required<string>();
   title = signal<string | null | undefined>("");
+  
 
   async ngOnInit() {
     await this.loadSessionInfos();
   }
+
 
 
   async loadSessionInfos() {

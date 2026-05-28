@@ -24,7 +24,6 @@ export class SupabaseService {
         host_id: rHostId,
         title: titleEingabe,
         qrCodeData: qrUrl,
-        mode: "host",
         status: "running"
       }).select();
 
@@ -53,6 +52,16 @@ export class SupabaseService {
         .select('*')
         .eq('host_id', id)
         .maybeSingle();
+  }
+
+  async addUser(username: string, sessionId: number) {
+    return this.supabase
+      .from('participants')
+        .insert({
+          name: username,
+          role: 'member',
+          session_id: sessionId
+        })
   }
 
 

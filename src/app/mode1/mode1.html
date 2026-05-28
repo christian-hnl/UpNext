@@ -3,8 +3,12 @@
 <h1>Mode1</h1>
 <h3>join private session</h3>
 
+
+
 <div>
-  <input [(ngModel)]="sessionId" placeholder="enter session-id">
+    <input [(ngModel)]="userName" placeholder="enter name">
+    <br>
+    <input [(ngModel)]="sessionId" placeholder="enter session-id">
     <button (click)="checkSession(sessionId())">join</button>
 </div>
 
@@ -14,6 +18,6 @@
 <a
   routerLink='/mode1/host'
   routerLinkActive='active'>
-  host private session
+  <h3>host private session</h3>
 </a>
 

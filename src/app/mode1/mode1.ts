@@ -18,7 +18,7 @@ export class Mode1 {
   private router = inject(Router);
 
   sessionId = signal("");
-
+  userName = signal("");
 
   async checkSession(id: string) {
     try {
