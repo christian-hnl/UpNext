@@ -30,7 +30,7 @@ export class Mode1 {
       }
 
       if (!data) {
-        console.warn('Keine Session mit dieser ID gefunden.');
+        console.warn('Keine SessionMember mit dieser ID gefunden.');
       } else {
         const {
           data: userData,
