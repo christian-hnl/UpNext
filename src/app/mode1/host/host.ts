@@ -1,9 +1,8 @@
-import {Component, inject, OnInit, signal, viewChild, WritableSignal} from '@angular/core';
+import {Component, inject, OnInit, signal, WritableSignal} from '@angular/core';
 import {UserProfile} from '@spotify/web-api-ts-sdk';
 import { Spotify } from '../../../services/spotify';
 import {SupabaseService} from '../../../services/supabase-service';
 import {FormsModule} from '@angular/forms';
-import {QRCodeComponent} from 'angularx-qrcode';
 import {Router} from "@angular/router";
 import {Qrcode} from "../qrcode/qrcode";
 
@@ -11,7 +10,6 @@ import {Qrcode} from "../qrcode/qrcode";
   selector: 'app-host',
   imports: [
     FormsModule,
-    QRCodeComponent,
     Qrcode
   ],
   templateUrl: './host.html',

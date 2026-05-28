@@ -9,12 +9,14 @@ import { Database} from '../app/database.types';
 export class SupabaseService {
   private supabase: SupabaseClient<Database>;
 
+
   constructor() {
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
   }
 
+
   async addSession(titleEingabe: string) {
-    const rHostId = Math.floor(100000 + Math.random() * 900000).toString();
+    const rHostId = Math.floor(100000 + Math.random() * 900000);
     const qrUrl = window.location.origin + '/mode1/session/' + rHostId;
     console.log(qrUrl);
 
@@ -24,7 +26,6 @@ export class SupabaseService {
         host_id: rHostId,
         title: titleEingabe,
         qrCodeData: qrUrl,
-        mode: "host",
         status: "running"
       }).select();
 
@@ -37,9 +38,7 @@ export class SupabaseService {
     return data;
   }
 
-
-
-  async joinSession(id: string) {
+  async joinSession(id: number) {
     return this.supabase
         .from('sessions')
         .select('host_id')
@@ -47,12 +46,31 @@ export class SupabaseService {
         .maybeSingle();
   }
 
-  async getSessionInfos(id: string) {
+  async getSessionInfos(id: number) {
     return this.supabase
       .from('sessions')
         .select('*')
         .eq('host_id', id)
         .maybeSingle();
+  }
+
+  async addUser(username: string, sessionId: number) {
+    return this.supabase
+      .from('participants')
+        .insert({
+          name: username,
+          role: 'member',
+          session_id: sessionId
+        }).select('id')
+        .single();
+  }
+
+  async getUserInfos(id: string) {
+      return this.supabase
+          .from('participants')
+          .select('*')
+          .eq('id', id)
+        .single();
   }
 
 
