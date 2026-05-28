@@ -35,7 +35,7 @@ export class Mode1 {
         const {
           data: userData,
           error: userError
-        } = await this.supabaseService.addUser(this.userName(), this.sessionId());
+        } = await this.supabaseService.addUser(this.userName(), this.sessionId(), false);
 
         if (userError) {
           console.error('Fehler beim Erstellen des Users: ', userError.message);

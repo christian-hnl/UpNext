@@ -54,12 +54,15 @@ export class SupabaseService {
         .maybeSingle();
   }
 
-  async addUser(username: string, sessionId: number) {
+  async addUser(username: string, sessionId: number, host: boolean) {
+    let role: string = 'member';
+    if (host) role = 'host';
+
     return this.supabase
       .from('participants')
         .insert({
           name: username,
-          role: 'member',
+          role: role,
           session_id: sessionId
         }).select('id')
         .single();
