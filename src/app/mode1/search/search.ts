@@ -1,13 +1,15 @@
-import {Component, inject, OnDestroy, OnInit} from "@angular/core";
-
+import {Component, inject, OnDestroy, OnInit, signal} from "@angular/core";
 import {debounceTime, distinctUntilChanged, Subscription} from "rxjs";
 import {FormControl, ReactiveFormsModule} from "@angular/forms";
 import {Spotify} from "../../../services/spotify";
+import {Track} from "@spotify/web-api-ts-sdk";
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: "app-search",
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CommonModule
   ],
   templateUrl: "./search.html",
   styleUrl: "./search.scss",
@@ -16,25 +18,27 @@ export class Search implements OnInit, OnDestroy{
   spotifyAPI = inject(Spotify)
   searchControl = new FormControl('');
   private searchSubscription!: Subscription;
+  searchResults = signal<Track[]>([]);
+
 
   ngOnInit() {
-    // 2. Auf Änderungen des Inputs "lauschen"
     this.searchSubscription = this.searchControl.valueChanges
         .pipe(
-            debounceTime(300),        // Wartet 300ms nach dem letzten Tastendruck
-            distinctUntilChanged()    // Sucht nur, wenn sich der Text wirklich geändert hat
+            debounceTime(300),
+            distinctUntilChanged()
         )
         .subscribe((searchTerm) => {
-          // Diese Funktion wird erst gefeuert, wenn 300ms nicht getippt wurde
           this.performSearch(searchTerm);
         });
   }
 
-  performSearch(term: string | null) {
-    if (!term) return;
-
-    console.log('Suche jetzt nach:', term);
-    console.log(this.spotifyAPI.search(term))
+  async performSearch(term: string | null) {
+    if (!term) {
+      this.searchResults.set([]);
+      return
+    }
+    const result = await this.spotifyAPI.search(term);
+    this.searchResults.set(result.tracks.items);
   }
 
   ngOnDestroy() {
