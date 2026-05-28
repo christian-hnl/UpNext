@@ -2,13 +2,13 @@ import {Component, inject, input, OnInit, signal} from '@angular/core';
 import {SupabaseService} from "../../../services/supabase-service";
 
 @Component({
-  selector: 'app-session',
+  selector: 'app-sessionMember',
   imports: [
   ],
-  templateUrl: './session.html',
-  styleUrl: './session.scss',
+  templateUrl: './sessionMember.html',
+  styleUrl: './sessionMember.scss',
 })
-export class Session implements OnInit {
+export class SessionMember implements OnInit {
   private supabaseS = inject(SupabaseService);
 
   sessionId = input.required<number>();

@@ -17,7 +17,7 @@ export class SupabaseService {
 
   async addSession(titleEingabe: string) {
     const rHostId = Math.floor(100000 + Math.random() * 900000);
-    const qrUrl = window.location.origin + '/mode1/session/' + rHostId;
+    const qrUrl = window.location.origin + '/mode1/sessionMember/' + rHostId;
     console.log(qrUrl);
 
 
