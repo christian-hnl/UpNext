@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SessionMember } from './sessionMember';
+import { SessionMember } from './session-member';
 
 describe('SessionMember', () => {
   let component: SessionMember;

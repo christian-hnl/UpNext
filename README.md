@@ -63,3 +63,6 @@ For more information on using the Angular CLI, including detailed command refere
 
 - `npx supabase login`
 - `npx supabase gen types typescript --project-id qhricufhclpqsilfolql > database.types.ts`
+
+# website
+- `https://up-next-beta.vercel.app/welcome`

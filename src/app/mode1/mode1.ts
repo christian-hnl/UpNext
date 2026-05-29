@@ -1,14 +1,14 @@
 import {Component, inject, signal} from '@angular/core';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {Router} from '@angular/router';
 import {FormsModule} from "@angular/forms";
 import {SupabaseService} from "../../services/supabase-service";
+import {Host} from "./host/host";
 
 @Component({
   selector: 'app-mode1',
   imports: [
-    RouterLink,
-    RouterLinkActive,
-    FormsModule
+    FormsModule,
+    Host
   ],
   templateUrl: './mode1.html',
   styleUrl: './mode1.scss',
@@ -52,7 +52,7 @@ export class Mode1 {
 
           localStorage.setItem('userId', userData.id.toString());
 
-          await this.router.navigate(['/mode1/sessionMember', id]);
+          await this.router.navigate(['/mode1/session-member', id]);
         }
       }
 
