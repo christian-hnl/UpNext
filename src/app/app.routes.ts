@@ -11,7 +11,7 @@ export const routes: Routes = [
   { path: 'welcome', component: Welcome },
   { path: 'mode1', component: Mode1 },
   { path: 'mode1/sessionMember/:sessionId', component: SessionMember },
-  { path: 'mode1/host', component: Host },
+  { path: 'mode1/sessionHost', component: Host },
   { path: 'mode2/sessionMember', component: Mode2 },
   { path: 'callback', component: Host },
   { path: '404', component: Error },

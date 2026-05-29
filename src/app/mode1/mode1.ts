@@ -17,12 +17,17 @@ export class Mode1 {
   private supabaseService = inject(SupabaseService);
   private router = inject(Router);
 
-  sessionId = signal<number>(0);
+  sessionId = signal<number | null>(null);
   userName = signal("");
 
-  async checkSession(id: number) {
+  async checkSession(id: number | null) {
     try {
-      const { data, error } = await this.supabaseService.joinSession(id);
+      if (id === null) {
+        console.warn('Enter session-id.');
+        return;
+      }
+
+      const { data, error } = await this.supabaseService.joinPrivateSession(id);
 
       if (error) {
         console.error('Error: ', error.message);
@@ -30,12 +35,12 @@ export class Mode1 {
       }
 
       if (!data) {
-        console.warn('Keine SessionMember mit dieser ID gefunden.');
+        console.warn('Keine session mit dieser ID gefunden.');
       } else {
         const {
           data: userData,
           error: userError
-        } = await this.supabaseService.addUser(this.userName(), this.sessionId(), false);
+        } = await this.supabaseService.addUser(this.userName(), <number>this.sessionId(), false);
 
         if (userError) {
           console.error('Fehler beim Erstellen des Users: ', userError.message);
@@ -47,7 +52,7 @@ export class Mode1 {
 
           localStorage.setItem('userId', userData.id.toString());
 
-          await this.router.navigate(['/mode1/session', id]);
+          await this.router.navigate(['/mode1/sessionMember', id]);
         }
       }
 
