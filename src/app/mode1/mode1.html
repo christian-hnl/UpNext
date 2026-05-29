@@ -6,7 +6,7 @@
 
 
 <div>
-    <input [(ngModel)]="userName" placeholder="enter name">
+    <input [(ngModel)]="userName" placeholder="enter your name">
     <br>
     <input [(ngModel)]="sessionId" placeholder="enter session-id">
     <button (click)="checkSession(sessionId())">join</button>
@@ -16,7 +16,7 @@
 <br>
 
 <a
-  routerLink='/mode1/host'
+  routerLink='/mode1/sessionHost'
   routerLinkActive='active'>
   <h3>host private session</h3>
 </a>

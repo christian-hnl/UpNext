@@ -29,7 +29,7 @@ export class Host implements OnInit{
 
 
   ngOnInit() {
-    this.handleAuthentication();
+    this.handleAuthentication().then();
   }
 
   async handleAuthentication() {
@@ -40,7 +40,7 @@ export class Host implements OnInit{
 
         this.userProfile.set(await this.spotifyService.getMyProfile());
 
-        await this.router.navigate(['/mode1/host']);
+        await this.router.navigate(['/mode1/sessionHost']);
       } catch (e) {
         console.error('Error during Spotify authentication callback:', e);
 
@@ -74,7 +74,7 @@ export class Host implements OnInit{
 
   async addSession() {
     console.log(this.userProfile)
-    const data = await this.supabaseService.addSession(this.title());
+    const data = await this.supabaseService.addPrivateSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
       this.qrCode.generateQR(data[0].qrCodeData)
     }

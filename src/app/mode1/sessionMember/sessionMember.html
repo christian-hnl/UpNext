@@ -4,3 +4,13 @@
 <h1>{{ title() }}</h1>
 <p>session id: {{ sessionId() }}</p>
 <p>Hello {{ userName() }}!</p>
+
+<p>you are in this session with:</p>
+
+<ul>
+    @for (member of otherMembers(); track $index) {
+        <li> {{ member }} </li>
+    }
+</ul>
+
+<p>and your host is: {{ hostName() }}</p>

@@ -15,15 +15,15 @@ export class SupabaseService {
   }
 
 
-  async addSession(titleEingabe: string) {
-    const rHostId = Math.floor(100000 + Math.random() * 900000);
-    const qrUrl = window.location.origin + '/mode1/sessionMember/' + rHostId;
+  async addPrivateSession(titleEingabe: string) {
+    const randSessionId = Math.floor(100000 + Math.random() * 900000);
+    const qrUrl = window.location.origin + '/mode1/sessionMember/' + randSessionId;
     console.log(qrUrl);
 
 
     const { data, error } = await this.supabase
-      .from('sessions').insert({
-        host_id: rHostId,
+      .from('private_sessions').insert({
+        session_id: randSessionId,
         title: titleEingabe,
         qrCodeData: qrUrl,
         status: "running"
@@ -38,19 +38,29 @@ export class SupabaseService {
     return data;
   }
 
-  async joinSession(id: number) {
+
+  //joining
+  async joinPrivateSession(id: number) {
     return this.supabase
-        .from('sessions')
-        .select('host_id')
-        .eq('host_id', id)
+        .from('private_sessions')
+        .select('session_id')
+        .eq('session_id', id)
         .maybeSingle();
   }
 
-  async getSessionInfos(id: number) {
+  async joinPublicSession(id: number) {
+      return this.supabase
+          .from('public_sessions')
+          .select('session_id')
+          .eq('session_id', id)
+          .maybeSingle();
+  }
+
+  async getPrivateSessionInfos(id: number) {
     return this.supabase
-      .from('sessions')
+      .from('private_sessions')
         .select('*')
-        .eq('host_id', id)
+        .eq('session_id', id)
         .maybeSingle();
   }
 
@@ -75,6 +85,24 @@ export class SupabaseService {
           .eq('id', id)
         .single();
   }
+
+
+  async getMemberNamesBySessionId(sessionId: number) {
+      return this.supabase
+          .from('participants')
+          .select('name')
+          .eq('session_id', sessionId)
+          .eq('role', 'member');
+  }
+
+    async getHostNameBySessionId(sessionId: number) {
+        return this.supabase
+            .from('participants')
+            .select('name')
+            .eq('session_id', sessionId)
+            .eq('role', 'host')
+            .single();
+    }
 
 
 }
