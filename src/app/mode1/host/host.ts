@@ -76,6 +76,12 @@ export class Host implements OnInit{
     const data = await this.supabaseService.addPrivateSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
       this.qrCode.generateQR(data[0].qrCodeData)
+
+      this.sessionId.set(data[0].session_id);
+      await this.router.navigate(['/mode1/session-host', this.sessionId()]);
     }
   }
+
+
+
 }

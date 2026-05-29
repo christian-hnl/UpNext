@@ -2,7 +2,7 @@ import {Component, inject, input, OnInit, signal} from '@angular/core';
 import {SupabaseService} from "../../../services/supabase-service";
 
 @Component({
-  selector: 'app-sessionMember',
+  selector: 'app-session-member',
   imports: [
   ],
   templateUrl: './sessionMember.html',

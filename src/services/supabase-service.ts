@@ -17,7 +17,7 @@ export class SupabaseService {
 
   async addPrivateSession(titleEingabe: string) {
     const randSessionId = Math.floor(100000 + Math.random() * 900000);
-    const qrUrl = window.location.origin + '/mode1/sessionMember/' + randSessionId;
+    const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
     console.log(qrUrl);
 
 
