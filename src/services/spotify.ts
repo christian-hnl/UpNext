@@ -17,8 +17,13 @@ export class Spotify {
     );
   }
 
-  async login() {
+  async login(): Promise<UserProfile | null> {
     await this.sdk.authenticate();
+    try {
+      return await this.getMyProfile();
+    } catch (e) {
+      return null;
+    }
   }
 
   async search(search: string){
@@ -35,5 +40,9 @@ export class Spotify {
 
   async getAccessToken(){
     return await this.sdk.getAccessToken();
+  }
+
+  async addToQueue(){
+    return await this.sdk
   }
 }
