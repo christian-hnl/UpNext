@@ -103,6 +103,13 @@ export class SupabaseService {
             .eq('role', 'host')
             .single();
     }
-
+    /*
+    async voteUp(sessionId ,songId, userId){
+        return null
+    }
+    async voteDown(sessionId:string, SongId: string, userId: string){
+        return null
+    }
+*/
 
 }
