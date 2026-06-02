@@ -1,3 +1,16 @@
 
 <input type="text" [formControl]="searchControl" placeholder="Suche...">
+<ul>
+
+    @for (song of searchTracks; track song.id) {
+        <div class="searchcard">
+        <li>{{song.name}}</li>
+        <li>{{song.artists[0].name}}</li>
+        <li>{{song.duration_ms}}</li>
+        <button>👍</button>
+        <button>👎</button>
+        </div>
+    }
+
+</ul>
 
