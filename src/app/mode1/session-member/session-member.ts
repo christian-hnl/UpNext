@@ -1,10 +1,12 @@
 import {Component, inject, input, OnInit, signal} from '@angular/core';
 import {SupabaseService} from "../../../services/supabase-service";
+import {Search} from "../search/search";
 
 @Component({
   selector: 'app-session-member',
-  imports: [
-  ],
+    imports: [
+        Search
+    ],
   templateUrl: './sessionMember.html',
   styleUrl: './sessionMember.scss',
 })

@@ -13,6 +13,16 @@ export interface SpotifyImage {
   width: number | null;
 }
 
-export interface SpotifySearch{
-  title: string
+
+export interface SpotifyTrack {
+  id: string;
+  name: string;
+  duration_ms: number;
+  explicit: boolean;
+  is_playable: boolean;
+  uri: string;
+  type: string;
+
+  album?: any;
+  artists: any[];
 }
