@@ -37,9 +37,10 @@ export class Host implements OnInit{
 
         await this.spotifyService.login();
 
-        this.userProfile.set(await this.spotifyService.getMyProfile());
+        const profile = await this.spotifyService.getMyProfile();
+        this.userProfile.set(profile);
 
-        await this.router.navigate(['/mode1/sessionHost']);
+        await this.router.navigate(['/mode1/configureSession']);
       } catch (e) {
         console.error('Error during Spotify authentication callback:', e);
 
@@ -60,8 +61,14 @@ export class Host implements OnInit{
   }
 
   async onLogin() {
-    await this.spotifyService.login();
-    await this.supabaseService.addUser(this.userProfile.name, this.sessionId(), true);
+    try {
+      const profile = await this.spotifyService.login();
+      if (profile) {
+        this.userProfile.set(profile);
+      }
+    } catch (e) {
+      console.error("Login failed", e);
+    }
   }
 
   async onLogout() {
@@ -71,11 +78,16 @@ export class Host implements OnInit{
 
 
   async addSession() {
-    console.log(this.userProfile)
+    console.log(this.userProfile())
     const data = await this.supabaseService.addPrivateSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
-
       this.sessionId.set(data[0].session_id);
+
+      const profile = this.userProfile();
+      if (profile) {
+        await this.supabaseService.addUser(profile.display_name, this.sessionId(), true);
+      }
+
       await this.router.navigate(['/mode1/session-host', this.sessionId()]);
     }
   }
