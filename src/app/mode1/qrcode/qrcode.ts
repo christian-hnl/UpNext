@@ -10,11 +10,6 @@ import {QRCodeComponent} from "angularx-qrcode";
   styleUrl: "./qrcode.scss",
 })
 export class Qrcode {
-  sessionLink = signal("sigfriedschweigl")
-
-
-  generateQR(qrdata: string){
-    this.sessionLink.set(qrdata);
-  }
+  sessionLink = input<string>("No data")
 
 }

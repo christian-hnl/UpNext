@@ -22,7 +22,6 @@ export class Host implements OnInit{
   spotifyService = inject(Spotify);
   supabaseService = inject(SupabaseService);
   router = inject(Router);
-  qrCode = new Qrcode;
   sessionId = signal<number>(0);
 
   title = signal<string>("");
@@ -75,7 +74,6 @@ export class Host implements OnInit{
     console.log(this.userProfile)
     const data = await this.supabaseService.addPrivateSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
-      this.qrCode.generateQR(data[0].qrCodeData)
 
       this.sessionId.set(data[0].session_id);
       await this.router.navigate(['/mode1/session-host', this.sessionId()]);

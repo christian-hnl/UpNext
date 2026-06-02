@@ -1,9 +1,14 @@
 import {Component, inject, input, OnInit, signal} from "@angular/core";
 import {SupabaseService} from "../../../services/supabase-service";
+import {QRCodeComponent} from "angularx-qrcode";
+import {Qrcode} from "../qrcode/qrcode";
 
 @Component({
   selector: "app-session-member-host",
-  imports: [],
+  imports: [
+    QRCodeComponent,
+    Qrcode
+  ],
   templateUrl: "./session-host.html",
   styleUrl: "./session-host.scss",
 })
@@ -15,6 +20,7 @@ export class SessionHost implements OnInit {
   title = signal<string | undefined>(undefined);
   userName = signal<string | null | undefined>(undefined);
   members = signal<string[]>([]);
+  qrcodedata = signal("")
 
 
   ngOnInit() {
@@ -36,6 +42,7 @@ export class SessionHost implements OnInit {
     }
 
     this.title.set(data?.title);
+    this.qrcodedata.set(<string>data?.qrCodeData)
   }
 
   async loadMyUserInfos() {
