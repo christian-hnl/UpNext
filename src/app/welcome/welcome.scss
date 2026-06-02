@@ -1,0 +1,132 @@
+/* 1. Schriftart importieren (ähnlich wie im Bild) */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
+/* 2. Basis-Styling für die Angular-Komponente (Dark Mode) */
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #0b0c10; // Sehr dunkles Blau/Schwarz
+  color: #ffffff;
+  font-family: 'Montserrat', sans-serif; // Überall diese Schriftart verwenden
+  padding: 20px 15px;
+}
+
+// --- HEADER BEREICH ---
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 1.5rem;
+
+  .logo {
+    width: 35px;
+    height: auto;
+    margin-right: 12px;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 800;       // Sehr fett, wie im Bild
+    letter-spacing: 1px;
+  }
+}
+
+// --- ZWISCHENTEXT (GEMEINSAM MUSIK HÖREN) ---
+// Spricht das div an, das direkt nach dem Header kommt
+.header-container + div {
+  text-align: center;
+  margin-bottom: 2.5rem;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;  // Etwas Abstand zwischen den Buchstaben
+  }
+}
+
+// --- MODES BEREICH ---
+.modes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;              // Abstand zwischen den beiden Boxen
+}
+
+.mode-wrapper {
+  position: relative;
+  z-index: 0;               // Erstellt einen eigenen Layer-Kontext für die Box
+  width: 100%;
+  max-width: 360px;
+  background-color: #12141d; // Dunkle Farbe der Box
+  border-radius: 16px;
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;         // WICHTIG: Schneidet das Bild an den runden Ecken ab
+
+  // Leichter Hover-Effekt
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  // --- NEON EFFEKTE ---
+  // Box 1 (Private Party) -> Grün
+  &:nth-child(1) {
+    border: 2px solid #1ed760;
+    box-shadow: 0 0 15px rgba(30, 215, 96, 0.25), inset 0 0 10px rgba(30, 215, 96, 0.1);
+  }
+
+  // Box 2 (Event) -> Lila
+  &:nth-child(2) {
+    border: 2px solid #b721ff;
+    box-shadow: 0 0 15px rgba(183, 33, 255, 0.25), inset 0 0 10px rgba(183, 33, 255, 0.1);
+  }
+
+  // --- TEXT (Link / Überschrift) ---
+  .mode-box {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-decoration: none;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    background-color: transparent; // Verhindert schwarze Balken hinter dem Text
+
+    // UX-Trick: Spannt den klickbaren Bereich des <a>-Tags über die gesamte Box
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 16px;
+    }
+  }
+
+  // --- UNTERTITEL ---
+  p {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #a0a5b5;
+    letter-spacing: 0.5px;
+    background-color: transparent; // Verhindert schwarze Balken
+  }
+
+  // --- BILD (nur in der Mode 1 Box) ---
+  .mode-image {
+    position: absolute;
+    right: -10px;           // Schiebt das Bild sanft an den rechten Rand
+    bottom: 0;
+    height: 100%;           // Nutzt die volle Höhe der Box aus (kannst du anpassen)
+    width: auto;
+    object-fit: contain;
+    z-index: -1;            // Legt das Bild hinter den Text, aber VOR den Hintergrund
+    opacity: 0.85;          // Macht es minimal transparent, damit es hochwertiger wirkt
+    pointer-events: none;   // Verhindert, dass das Bild den Klick auf den Link blockiert
+    mix-blend-mode: lighten; // oder 'lighten'
+  }
+}

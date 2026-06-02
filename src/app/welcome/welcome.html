@@ -1,15 +1,35 @@
+<header class="header-container">
+    <img src="logo_no-text.ico" alt="Logo" class="logo" />
+    <h1 class="title">upNext</h1>
+</header>
+
+<div>
+    <p>GEMEINSAM MUSIK HÖREN</p>
+</div>
 
 
-<h1>upNext</h1>
+<div class="modes-container">
+    <div class="mode-wrapper">
+        <a
+                routerLink='/mode1'
+                routerLinkActive='active'
+                class="mode-box">
+            PRIVATE PARTY
+        </a>
+        <p>FÜR DICH UND DEINE FREUNDE</p>
 
+        <img src="mode1_animated2.png" alt="Private Party" class="mode-image">
+    </div>
 
-<a
-  routerLink='/mode1'
-  routerLinkActive='active'>
-  mode1
-</a>
-<a
-  routerLink='/mode2/session-member'
-  routerLinkActive='active'>
-  mode2
-</a>
+    <div class="mode-wrapper">
+        <a
+                routerLink='/mode2/session-member'
+                routerLinkActive='active'
+                class="mode-box">
+            EVENT
+        </a>
+        <p>FÜR FESTIVALS, CLUBS & KONZERTE</p>
+
+        <img src="mode2.png" alt="Private Party" class="mode-image">
+    </div>
+</div>
