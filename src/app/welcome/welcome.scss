@@ -20,14 +20,14 @@
   margin-bottom: 1.5rem;
 
   .logo {
-    width: 35px;
+    width: 60px;
     height: auto;
     margin-right: 12px;
   }
 
   .title {
     margin: 0;
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: 800;       // Sehr fett, wie im Bild
     letter-spacing: 1px;
   }
@@ -55,66 +55,6 @@
   gap: 1.5rem;              // Abstand zwischen den beiden Boxen
 }
 
-.mode-wrapper {
-  position: relative;
-  z-index: 0;               // Erstellt einen eigenen Layer-Kontext für die Box
-  width: 100%;
-  max-width: 360px;
-  background-color: #12141d; // Dunkle Farbe der Box
-  border-radius: 16px;
-  padding: 24px 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;         // WICHTIG: Schneidet das Bild an den runden Ecken ab
-
-  // Leichter Hover-Effekt
-  &:hover {
-    transform: translateY(-3px);
-  }
-
-  // --- NEON EFFEKTE ---
-  // Box 1 (Private Party) -> Grün
-  &:nth-child(1) {
-    border: 2px solid #1ed760;
-    box-shadow: 0 0 15px rgba(30, 215, 96, 0.25), inset 0 0 10px rgba(30, 215, 96, 0.1);
-  }
-
-  // Box 2 (Event) -> Lila
-  &:nth-child(2) {
-    border: 2px solid #b721ff;
-    box-shadow: 0 0 15px rgba(183, 33, 255, 0.25), inset 0 0 10px rgba(183, 33, 255, 0.1);
-  }
-
-  // --- TEXT (Link / Überschrift) ---
-  .mode-box {
-    font-size: 1.4rem;
-    font-weight: 800;
-    color: #ffffff;
-    text-decoration: none;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-    background-color: transparent; // Verhindert schwarze Balken hinter dem Text
-
-    // UX-Trick: Spannt den klickbaren Bereich des <a>-Tags über die gesamte Box
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 16px;
-    }
-  }
-
-  // --- UNTERTITEL ---
-  p {
-    margin: 0;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #a0a5b5;
-    letter-spacing: 0.5px;
-    background-color: transparent; // Verhindert schwarze Balken
-  }
 
   // --- BILD (nur in der Mode 1 Box) ---
   .mode-image {
@@ -128,5 +68,197 @@
     opacity: 0.85;          // Macht es minimal transparent, damit es hochwertiger wirkt
     pointer-events: none;   // Verhindert, dass das Bild den Klick auf den Link blockiert
     mix-blend-mode: lighten; // oder 'lighten'
+  }
+
+
+
+
+// --- ZWISCHENTEXT (GEMEINSAM MUSIK HÖREN) ---
+// Besser mit Klasse ansprechen
+.subtitle-container {
+  text-align: center;
+  margin-bottom: 2.5rem;
+
+  p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+  }
+}
+
+// --- SESSION JOIN BEREICH ---
+.session-join-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 3.5rem;
+  width: 100%;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+
+  .session-input {
+    flex: 1;
+    background-color: #12141d;
+    border: 2px solid #2a2d3e;
+    border-radius: 8px;
+    padding: 14px 16px;
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    -moz-appearance: textfield;
+    appearance: textfield;
+
+    /* Pfeile für Chrome, Safari, Edge und Opera ausblenden */
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+      }
+
+    &::placeholder {
+      color: #5c6275;
+      font-weight: 400;
+    }
+
+    // Leichter Glow beim Tippen
+    &:focus {
+      border-color: #1ed760;
+      box-shadow: 0 0 10px rgba(30, 215, 96, 0.2);
+    }
+  }
+
+  .join-btn {
+    background-color: #1ed760;
+    color: #0b0c10;
+    border: none;
+    border-radius: 8px;
+    padding: 14px 24px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      background-color: #1db954;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 215, 96, 0.3);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// --- MODES BEREICH ---
+.modes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.mode-wrapper {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  max-width: 360px;
+  background-color: #12141d;
+  border-radius: 16px;
+  padding: 24px 20px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  // --- BOX 1: PRIVATE PARTY ---
+  &:nth-child(1) {
+    border: 2px solid #1ed760;
+    box-shadow: 0 0 15px rgba(30, 215, 96, 0.25), inset 0 0 10px rgba(30, 215, 96, 0.1);
+
+    .mode-image {
+      object-fit: contain; // Hält die Figuren im Rahmen
+      width: 45%;
+      right: -10px;        // Leicht nach rechts geschoben
+    }
+  }
+
+  // --- BOX 2: EVENT ---
+  &:nth-child(2) {
+    border: 2px solid #b721ff;
+    box-shadow: 0 0 15px rgba(183, 33, 255, 0.25), inset 0 0 10px rgba(183, 33, 255, 0.1);
+
+    .mode-image {
+      object-fit: cover;   // Füllt den rechten Bereich komplett ohne zu verzerren
+      width: 55%;
+      right: 0;
+      border-radius: 0 16px 16px 0; // Passt sich den runden Ecken der Box an
+
+      // Erzeugt einen weichen Übergang (Fade-out) nach links zum Text hin
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40%);
+      mask-image: linear-gradient(to right, transparent 0%, black 40%);
+    }
+  }
+
+  // --- TEXT CONTAINER ---
+  .text-content {
+    display: flex;
+    flex-direction: column;
+    z-index: 2; // Muss über dem Bild liegen
+    max-width: 55%;
+    background: transparent !important; // Überschreibt schwarze Blöcke
+  }
+
+  .mode-box {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-decoration: none;
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+    background: transparent !important; // Überschreibt schwarze Blöcke
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 16px;
+    }
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #a0a5b5;
+    letter-spacing: 0.5px;
+    background: transparent !important; // Überschreibt schwarze Blöcke
+  }
+
+  // --- BILDER BASIS-STYLES ---
+  .mode-image {
+    position: absolute;
+    bottom: 0;
+    height: 100%;
+    z-index: 1;             // Zwischen Text und Hintergrund
+    opacity: 0.85;
+    pointer-events: none;
+    mix-blend-mode: lighten;
   }
 }
