@@ -20,14 +20,21 @@ export class Mode1 {
   sessionId = signal<number | null>(null);
   userName = signal("");
 
-  async checkSession(id: number | null) {
+  async checkSession() {
+    const sId = this.sessionId();
+
+    if (sId === null) {
+      console.warn('Enter session-id.');
+      return;
+    }
+
     try {
-      if (id === null) {
+      if (this.sessionId() === null) {
         console.warn('Enter session-id.');
         return;
       }
 
-      const { data, error } = await this.supabaseService.joinPrivateSession(id);
+      const { data, error } = await this.supabaseService.joinPrivateSession(sId);
 
       if (error) {
         console.error('Error: ', error.message);
@@ -52,7 +59,7 @@ export class Mode1 {
 
           localStorage.setItem('userId', userData.id.toString());
 
-          await this.router.navigate(['/mode1/session-member', id]);
+          await this.router.navigate(['/mode1/session-member', this.sessionId()]);
         }
       }
 

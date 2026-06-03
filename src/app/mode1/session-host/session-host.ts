@@ -6,7 +6,6 @@ import {Qrcode} from "../qrcode/qrcode";
 @Component({
   selector: "app-session-member-host",
   imports: [
-    QRCodeComponent,
     Qrcode
   ],
   templateUrl: "./session-host.html",
