@@ -4,13 +4,11 @@ import { Spotify } from '../../../services/spotify';
 import {SupabaseService} from '../../../services/supabase-service';
 import {FormsModule} from '@angular/forms';
 import {Router} from "@angular/router";
-import {Qrcode} from "../qrcode/qrcode";
 
 @Component({
   selector: 'app-host',
   imports: [
-    FormsModule,
-    Qrcode
+    FormsModule
   ],
   templateUrl: './host.html',
   styleUrl: './host.scss',
@@ -32,17 +30,19 @@ export class Host implements OnInit{
   }
 
   async handleAuthentication() {
+    console.log('[Host] handleAuthentication called. URL:', this.router.url);
     if (this.router.url.startsWith('/callback')) {
       try {
-
+        console.log('[Host] Handling OAuth callback');
         await this.spotifyService.login();
 
         const profile = await this.spotifyService.getMyProfile();
+        console.log('[Host] Profile retrieved after callback:', profile);
         this.userProfile.set(profile);
 
         await this.router.navigate(['/mode1/configureSession']);
       } catch (e) {
-        console.error('Error during Spotify authentication callback:', e);
+        console.error('[Host] Error during Spotify authentication callback:', e);
 
         await this.router.navigate(['/welcome']);
       }
@@ -51,11 +51,13 @@ export class Host implements OnInit{
       try {
         const token = await this.spotifyService.getAccessToken();
         if (token) {
-          this.userProfile.set(await this.spotifyService.getMyProfile());
+          const profile = await this.spotifyService.getMyProfile();
+          console.log('[Host] User already logged in, profile:', profile);
+          this.userProfile.set(profile);
         }
       } catch (e) {
 
-        console.log('User is not logged in.');
+        console.log('[Host] User is not logged in.');
       }
     }
   }
@@ -78,17 +80,25 @@ export class Host implements OnInit{
 
 
   async addSession() {
-    console.log(this.userProfile())
+    console.log('[Host] addSession called. Title:', this.title());
+    console.log('[Host] Current user profile:', this.userProfile());
     const data = await this.supabaseService.addPrivateSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
-      this.sessionId.set(data[0].session_id);
+      console.log('[Host] Session created successfully. Data:', data[0]);
+      // Extract numeric part from UUID string (00000000-0000-0000-0000-000000123456)
+    const sidStr = data[0].session_id;
+      this.sessionId.set(sidStr);
 
       const profile = this.userProfile();
       if (profile) {
+        console.log('[Host] Registering host user in database:', profile.display_name);
         await this.supabaseService.addUser(profile.display_name, this.sessionId(), true);
       }
 
+      console.log('[Host] Navigating to session-host view with sessionId:', this.sessionId());
       await this.router.navigate(['/mode1/session-host', this.sessionId()]);
+    } else {
+      console.error('[Host] Failed to create session');
     }
   }
 

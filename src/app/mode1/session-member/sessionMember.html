@@ -2,18 +2,20 @@
 
 
 <h1>{{ title() }}</h1>
-<p>session id: {{ sessionId() }}</p>
-<p>Hello {{ userName() }}!</p>
+<p>Session ID: {{ sessionId() }}</p>
+<p>Hallo {{ userName() }}!</p>
 
-<p>you are in this session with:</p>
+<div class="session-info">
+    <p>Host: <strong>{{ hostName() }}</strong></p>
+    <p>Andere Teilnehmer: 
+        @for (member of otherMembers(); track $index) {
+            <span>{{ member }}{{ !$last ? ', ' : '' }}</span>
+        } @empty {
+            <span>Nur du</span>
+        }
+    </p>
+</div>
 
-<ul>
-    @for (member of otherMembers(); track $index) {
-        <li> {{ member }} </li>
-    }
-</ul>
+<app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
 
-<p>and your host is: {{ hostName() }}</p>
-
-
-<app-search></app-search>
+<app-search [sessionId]="sessionId()"></app-search>

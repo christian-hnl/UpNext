@@ -144,6 +144,11 @@ $text-sub: #b3b3b3;
           svg { fill: $text-main; }
         }
 
+        &.hidden {
+          visibility: hidden;
+          pointer-events: none;
+        }
+
         &:active {
           transform: scale(0.9);
         }
@@ -158,6 +163,13 @@ $text-sub: #b3b3b3;
       }
     }
 
+    .queued-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+
     // Dauer des Songs
     .track-duration {
       color: $text-sub;
@@ -166,6 +178,34 @@ $text-sub: #b3b3b3;
       width: 40px;
       text-align: right;
       flex-shrink: 0;
+    }
+
+    .track-actions {
+      display: flex;
+      align-items: center;
+      margin-right: 16px;
+      flex-shrink: 0;
+
+      .add-to-queue-btn {
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: $text-sub;
+        transition: all 0.2s ease;
+
+        &:hover {
+          color: #1DB954; // Spotify Green
+          transform: scale(1.1);
+        }
+
+        &:active {
+          transform: scale(0.9);
+        }
+      }
     }
   }
 

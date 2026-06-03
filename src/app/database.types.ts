@@ -125,21 +125,21 @@ export type Database = {
         Row: {
           artist: string | null
           genre: string | null
-          sessionId: string | null
+          sessionId: number | null
           spotify_id: string
           title: string | null
         }
         Insert: {
           artist?: string | null
           genre?: string | null
-          sessionId?: string | null
+          sessionId?: number | null
           spotify_id: string
           title?: string | null
         }
         Update: {
           artist?: string | null
           genre?: string | null
-          sessionId?: string | null
+          sessionId?: number | null
           spotify_id?: string
           title?: string | null
         }
@@ -150,19 +150,22 @@ export type Database = {
           id: number
           participant_id: string | null
           queue_id: number | null
-          value: number | null
+          vote: number | null
+          song_id: string | null
         }
         Insert: {
           id?: number
           participant_id?: string | null
           queue_id?: number | null
-          value?: number | null
+          vote?: number | null
+          song_id?: string | null
         }
         Update: {
           id?: number
           participant_id?: string | null
           queue_id?: number | null
-          value?: number | null
+          vote?: number | null
+          song_id?: string | null
         }
         Relationships: [
           {

@@ -1,13 +1,13 @@
 import {Component, inject, input, OnInit, signal} from "@angular/core";
 import {SupabaseService} from "../../../services/supabase-service";
-import {QRCodeComponent} from "angularx-qrcode";
 import {Qrcode} from "../qrcode/qrcode";
+import {Queuevoting} from "../queuevoting/queuevoting";
 
 @Component({
   selector: "app-session-member-host",
   imports: [
-    QRCodeComponent,
-    Qrcode
+    Qrcode,
+    Queuevoting
   ],
   templateUrl: "./session-host.html",
   styleUrl: "./session-host.scss",

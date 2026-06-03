@@ -1,0 +1,129 @@
+// Spotify Colors (Keep consistent with search.scss)
+$spotify-bg: #121212;
+$spotify-hover: #2a2929;
+$text-main: #ffffff;
+$text-sub: #b3b3b3;
+
+.queue-section {
+  padding: 32px;
+  background-color: $spotify-bg;
+  color: $text-main;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  h2 {
+    margin-bottom: 24px;
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-main;
+  }
+}
+
+.queue-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 900px;
+
+  .track-row {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: $spotify-hover;
+
+      .track-votes .vote-btn {
+        opacity: 1;
+      }
+    }
+
+    .track-placeholder {
+      width: 40px;
+      height: 40px;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+
+    .track-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+      padding-right: 16px;
+
+      .track-name {
+        font-size: 16px;
+        color: $text-main;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 4px;
+      }
+
+      .track-artist {
+        font-size: 14px;
+        color: $text-sub;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .track-votes {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-right: 32px;
+      flex-shrink: 0;
+
+      .vote-btn {
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        opacity: 0.3;
+        transition: opacity 0.2s, transform 0.1s;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          width: 16px;
+          height: 16px;
+          fill: $text-sub;
+        }
+
+        &:hover {
+          opacity: 1;
+          svg { fill: $text-main; }
+        }
+
+        &:active {
+          transform: scale(0.9);
+        }
+      }
+
+      .vote-count {
+        min-width: 20px;
+        text-align: center;
+        font-size: 14px;
+        font-weight: 500;
+        color: $text-sub;
+      }
+    }
+
+    .track-actions {
+      width: 40px;
+      flex-shrink: 0;
+    }
+  }
+
+  .no-results {
+    color: $text-sub;
+    font-size: 16px;
+    padding: 20px 16px;
+  }
+}
