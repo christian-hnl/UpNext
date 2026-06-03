@@ -1,0 +1,35 @@
+<div class="queue-section">
+    <h2>Top 10 Warteschlange</h2>
+    <ul class="queue-list">
+        @for (item of queue(); track item.id) {
+            <li class="track-row">
+                <!-- Wir haben hier kein Cover im item.songs, aber wir nutzen die Struktur -->
+                <div class="track-placeholder"></div>
+
+                <div class="track-info">
+                    <span class="track-name">{{ item.songs?.title }}</span>
+                    <span class="track-artist">{{ item.songs?.artist }}</span>
+                </div>
+
+                <div class="track-votes">
+                    <button class="vote-btn up" (click)="upvote(item.id)" aria-label="Upvote">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 14l5-5 5 5z"/>
+                        </svg>
+                    </button>
+                    <span class="vote-count">{{ item.score || 0 }}</span>
+                    <button class="vote-btn down" (click)="downvote(item.id)" aria-label="Downvote">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Platzhalter für Ausrichtung wie in Search -->
+                <div class="track-actions"></div>
+            </li>
+        } @empty {
+            <li class="no-results">Noch keine Lieder in der Warteschlange.</li>
+        }
+    </ul>
+</div>

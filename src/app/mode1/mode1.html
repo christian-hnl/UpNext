@@ -1,18 +1,19 @@
 
 
-<h1>Mode1</h1>
-<h3>join private session</h3>
+<h1>Private Party</h1>
 
+<div class="mode1-container">
+    <div class="join-section">
+        <h3>Einer Session beitreten</h3>
+        <input [(ngModel)]="userName" placeholder="Dein Name" required>
+        <br>
+        <input [(ngModel)]="sessionId" placeholder="Session-ID">
+        <button (click)="checkSession(sessionId())" [disabled]="!userName().trim() || !sessionId()">Beitreten</button>
+    </div>
 
+    <hr>
 
-<div>
-    <input [(ngModel)]="userName" placeholder="enter your name">
-    <br>
-    <input [(ngModel)]="sessionId" placeholder="enter session-id">
-    <button (click)="checkSession(sessionId())">join</button>
+    <div class="host-section">
+        <app-host></app-host>
+    </div>
 </div>
-
-
-<br>
-
-<app-host></app-host>

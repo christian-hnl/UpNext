@@ -27,6 +27,12 @@ export class Mode1 {
         return;
       }
 
+      if (!this.userName().trim()) {
+        console.warn('Bitte gib einen Namen ein.');
+        alert('Bitte gib einen Namen ein, bevor du beitrittst.');
+        return;
+      }
+
       const { data, error } = await this.supabaseService.joinPrivateSession(id);
 
       if (error) {

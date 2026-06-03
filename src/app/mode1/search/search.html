@@ -18,13 +18,33 @@
                 </div>
 
                 <div class="track-votes">
-                    <button class="vote-btn" aria-label="Upvote">
-                        <svg viewBox="0 0 24 24"><path d="M4 14l8-8 8 8H4z"></path></svg>
+                    <button class="vote-btn up" [class.hidden]="!song.isQueued" (click)="upvote(song.queueId)" aria-label="Upvote">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 14l5-5 5 5z"/>
+                        </svg>
                     </button>
-                    <span class="vote-count">0</span>
-                    <button class="vote-btn" aria-label="Downvote">
-                        <svg viewBox="0 0 24 24"><path d="M20 10l-8 8-8-8h16z"></path></svg>
+                    <span class="vote-count">{{ song.votes || 0 }}</span>
+                    <button class="vote-btn down" [class.hidden]="!song.isQueued" (click)="downvote(song.queueId)" aria-label="Downvote">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M7 10l5 5 5-5z"/>
+                        </svg>
                     </button>
+                </div>
+
+                <div class="track-actions">
+                    @if (song.isQueued) {
+                        <div class="queued-badge" title="Bereits in der Warteschlange">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="#1DB954">
+                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                            </svg>
+                        </div>
+                    } @else {
+                        <button class="add-to-queue-btn" (click)="addToQueue(song)" aria-label="Zur Warteschlange hinzufügen">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" fill="currentColor"/>
+                            </svg>
+                        </button>
+                    }
                 </div>
 
                 <span class="track-duration">{{ formatDuration(song.duration_ms) }}</span>
