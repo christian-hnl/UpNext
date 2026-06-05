@@ -7,10 +7,11 @@
     <p>GEMEINSAM MUSIK HÖREN</p>
 </div>
 
-<div class="session-join-container">
-    <input class="session-input" [(ngModel)]="sessionId" placeholder="Enter Session-ID" type="number">
-    <button class="join-btn" (click)="checkSessionAndNavigateToSetName()">JOIN</button>
+
+<div class="welcome-join-wrapper">
+    <app-join-session></app-join-session>
 </div>
+
 
 <div class="modes-container">
     <div class="mode-wrapper">

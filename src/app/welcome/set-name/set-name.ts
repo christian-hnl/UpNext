@@ -37,7 +37,6 @@ export class SetName {
     const userId = userData.id;
     localStorage.setItem('userId', userId);
 
-    // 2. Den Session-Typ anhand der ersten Ziffer bestimmen
     const sessionIdStr = this.sessionId().toString();
     const isPrivateSession = sessionIdStr.charAt(0) === '1';
     const isPublicSession = sessionIdStr.charAt(0) === '2';

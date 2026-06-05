@@ -1,7 +1,13 @@
+@use 'variables' as *;
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
-@import 'variables';
 
-/* 3. Basis-Styling für die gesamte App */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+
+/* basis styling für gesamte app */
 html, body {
   margin: 0;
   padding: 0;
@@ -33,7 +39,7 @@ html, body {
   }
 }
 
-// --- ZWISCHENTEXT ---
+// zwischentext
 .subtitle-container {
   text-align: center;
   margin-bottom: 2.5rem;
@@ -46,73 +52,181 @@ html, body {
   }
 }
 
-/* 4. GLOBALE UI-ELEMENTE (Inputs & Buttons) */
+/* 4. GLOBALE UI-ELEMENTE */
+
 .session-join-container {
   display: flex;
+  flex-wrap: nowrap;
   justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 3.5rem;
+  align-items: stretch;
+  gap: 10px;
   width: 100%;
-  max-width: 360px;
-  margin-left: auto;
-  margin-right: auto;
+  max-width: 95%;
+  margin: 2% auto 2% auto;
+}
 
-  .session-input {
-    flex: 1;
-    background-color: $color-bg-card;
-    border: 2px solid $color-border;
-    border-radius: 8px;
-    padding: 14px 16px;
-    color: $color-text-main;
-    font-family: $font-main;
-    font-weight: 600;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+// Input-Klasse
+.session-input {
+  flex: 1 1 150px;
+  max-width: 80%;
+  background-color: $color-bg-card;
+  border: 2px solid $color-border;
+  border-radius: 8px;
+  padding: 14px 16px;
+  color: $color-text-main;
+  font-family: $font-main;
+  font-weight: 600;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
-    -moz-appearance: textfield;
-    appearance: textfield;
+  // versteckt die Pfeile bei type="number"
+  -moz-appearance: textfield;
+  appearance: textfield;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 
-    /* Pfeile für Chrome, Safari, Edge und Opera ausblenden */
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+  &::placeholder {
+    color: $color-text-placeholder;
+    font-weight: 400;
+  }
 
-    &::placeholder {
-      color: $color-text-placeholder;
-      font-weight: 400;
-    }
+  &:focus {
+    border-color: $color-green-main;
+    box-shadow: 0 0 10px rgba(30, 215, 96, 0.2);
+  }
+}
 
-    // Leichter Glow beim Tippen
-    &:focus {
-      border-color: $color-green-main;
-      box-shadow: 0 0 10px rgba(30, 215, 96, 0.2);
+// button klasse
+.join-btn {
+  flex: 0 0 auto;
+  background-color: $color-green-main;
+  color: $color-bg-main;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  font-family: $font-main;
+  font-weight: 800;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: $color-green-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(30, 215, 96, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* 5. GEMEINSAMES LAYOUT FÜR MODE-SEITEN (Karten, Header, Divider) */
+
+.mode-page-container {
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 3rem;
+
+  .title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .logo {
+      width: 45px;
+      height: auto;
+      margin-right: 12px;
     }
   }
 
-  .join-btn {
-    background-color: $color-green-main;
-    color: $color-bg-main;
-    border: none;
-    border-radius: 8px;
-    padding: 14px 24px;
-    font-family: $font-main;
+  .page-title {
+    margin: 0;
+    font-size: 2.2rem;
     font-weight: 800;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    color: $color-text-main;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
 
-    &:hover {
-      background-color: $color-green-hover;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(30, 215, 96, 0.3);
-    }
+  .page-subtitle {
+    margin: 8px 0 0 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+}
 
-    &:active {
-      transform: translateY(0);
+.action-card {
+  width: 100%;
+  background-color: $color-bg-card;
+  border: 1px solid $color-border;
+  border-radius: 16px;
+  padding: 30px 25px;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+
+  .card-heading {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: $color-text-main;
+    letter-spacing: 0.5px;
+  }
+
+  .card-description {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $color-text-muted;
+    margin-bottom: 1%;
+    line-height: 1.6;
+
+    strong {
+      color: $color-text-main;
     }
   }
+}
+
+.divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin: 2rem 0;
+  color: $color-text-placeholder;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid $color-border;
+  }
+
+  &::before {
+    margin-right: 15px;
+  }
+
+  &::after {
+    margin-left: 15px;
+  }
+}
+
+
+.welcome-join-wrapper {
+  margin-bottom: 2.5rem;
 }

@@ -6,7 +6,7 @@
   padding: 20px 15px;
 }
 
-// --- MODES BEREICH ---
+// modes
 .modes-container {
   display: flex;
   flex-direction: column;
@@ -35,7 +35,7 @@
     transform: translateY(-3px);
   }
 
-  // --- BOX 1: PRIVATE PARTY ---
+  // box1: private party
   &:nth-child(1) {
     border: 2px solid $color-green-main;
     box-shadow: 0 0 15px rgba(30, 215, 96, 0.25), inset 0 0 10px rgba(30, 215, 96, 0.1);
@@ -47,7 +47,7 @@
     }
   }
 
-  // --- BOX 2: EVENT ---
+  // box2: event
   &:nth-child(2) {
     border: 2px solid $color-purple-main;
     box-shadow: 0 0 15px rgba(183, 33, 255, 0.25), inset 0 0 10px rgba(183, 33, 255, 0.1);
@@ -63,7 +63,7 @@
     }
   }
 
-  // --- TEXT CONTAINER ---
+  // text container
   .text-content {
     display: flex;
     flex-direction: column;
@@ -98,7 +98,7 @@
     background: transparent !important;
   }
 
-  // --- BILDER BASIS-STYLES ---
+  // images styling
   .mode-image {
     position: absolute;
     bottom: 0;

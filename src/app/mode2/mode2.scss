@@ -1,0 +1,29 @@
+@use '../../variables' as *;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 15px;
+  min-height: 100vh;
+}
+
+// 1. Die spezifische Farbe für den Untertitel
+.page-subtitle {
+  color: $color-purple-main;
+}
+
+// 2. Der spezifische Rahmen für die Info-Karte
+.info-card {
+  border-color: rgba(183, 33, 255, 0.2);
+
+  .card-description {
+    margin-bottom: 0; // Kein Button drunter, also kein Abstand nötig
+  }
+}
+
+// 3. Angular-Komponenten bändigen
+app-join-session {
+  display: block;
+  width: 100%;
+}

@@ -1,18 +1,36 @@
+<div class="mode-page-container">
 
+    <header class="page-header">
+        <h1 class="page-title">PRIVATE PARTY</h1>
+        <p class="page-subtitle">FÜR DICH UND DEINE FREUNDE</p>
+    </header>
 
-<h1>Mode1</h1>
-<h3>join private session</h3>
+    <section class="action-card">
+        <h3 class="card-heading">JOIN SESSION</h3>
 
+        <app-join-session></app-join-session>
+    </section>
 
+    <div class="divider">
+        <span>ODER</span>
+    </div>
 
-<div>
-    <input [(ngModel)]="userName" placeholder="enter your name">
-    <br>
-    <input [(ngModel)]="sessionId" placeholder="enter session-id">
-    <button (click)="checkSession()">join</button>
+    <section class="action-card host-card">
+        <h3 class="card-heading">HOST SESSION</h3>
+
+        <app-host></app-host>
+    </section>
+
+    <div class="divider">
+        <span>INFO</span>
+    </div>
+
+    <section class="action-card info-card">
+        <h3 class="card-heading">WAS IST DER PRIVATE MODUS?</h3>
+        <p class="card-description">
+            Der PRIVATE Modus ist perfekt für Homepartys! Füge zusammen mit Freunden Songs hinzu, stimme über die Vorschläge der anderen ab und lehn dich zurück: <strong>UpNext</strong> spielt automatisch den perfekten Mix für euch.
+            <br><br>
+            Hoste eine eigene Session über deinen Spotify-Account oder gib einfach die Session-ID eines Freundes ein, um direkt beizutreten.
+        </p>
+    </section>
 </div>
-
-
-<br>
-
-<app-host></app-host>

@@ -1,36 +1,18 @@
-import {Component, inject, signal} from '@angular/core';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
+import {Component} from '@angular/core';
+import {RouterLink, RouterLinkActive} from '@angular/router';
 import {FormsModule} from "@angular/forms";
-import {SupabaseService} from "../../services/supabase-service";
+import {JoinSession} from "../join-session/join-session";
 
 @Component({
   selector: 'app-welcome',
   imports: [
     RouterLink,
     RouterLinkActive,
-    FormsModule
+    FormsModule,
+    JoinSession
   ],
   templateUrl: './welcome.html',
   styleUrl: './welcome.scss',
 })
-export class Welcome {
-  private router = inject(Router);
-  private supabaseS = inject(SupabaseService);
+export class Welcome {}
 
-  sessionId = signal<number | null>(null);
-
-
-  async checkSessionAndNavigateToSetName() {
-    const sId = this.sessionId();
-    if (!sId) {
-      console.warn('Bitte eine Session-ID eingeben.');
-      return;
-    }
-
-    if (await this.supabaseS.checkIfSessionIsValid(sId)) {
-      await this.router.navigate(['/set-name', sId]);
-    }
-  }
-
-
-}

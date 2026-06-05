@@ -1,0 +1,76 @@
+// Variablen importieren (Pfad anpassen, falls die Datei in einem anderen Unterordner liegt)
+@use '../../variables' as *;
+
+// Den gesamten Host-Bereich zentrieren
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh; // Nimmt fast die ganze Höhe ein, damit es schön in der Mitte sitzt
+  padding: 20px 15px;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 600px;
+}
+
+// Die große 404
+.error-title {
+  margin: 0;
+  font-size: 6rem;
+  font-weight: 800;
+  color: $color-green-main;
+  text-shadow: 0 0 25px rgba(30, 215, 96, 0.4); // Cooler Glow-Effekt
+  line-height: 1;
+  letter-spacing: 2px;
+}
+
+// Der Untertitel im upNext-Stil
+.error-subtitle {
+  margin: 0;
+  margin-top: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: $color-text-main;
+  letter-spacing: 2px;
+}
+
+// Das Logo (Responsive gemacht)
+.error-logo {
+  width: 100%;
+  max-width: 320px; // Verhindert, dass es auf großen Bildschirmen zu riesig wird
+  height: auto;
+  margin: 3rem 0;
+  opacity: 0.8; // Passt sich dem Dark Mode eleganter an
+  mix-blend-mode: lighten;
+}
+
+// Der Zurück-Button (sieht aus wie dein Join-Button)
+.back-btn {
+  display: inline-block;
+  background-color: $color-green-main;
+  color: $color-bg-main;
+  text-decoration: none; // Entfernt den blauen Link-Unterstrich
+  border-radius: 8px;
+  padding: 16px 32px;
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase; // Macht den Text automatisch groß
+  letter-spacing: 1px;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    background-color: $color-green-hover;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(30, 215, 96, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
