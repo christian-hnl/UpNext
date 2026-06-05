@@ -6,6 +6,7 @@ import { Mode2 } from './mode2/mode2';
 import { Error } from './error/error';
 import { SessionMember } from './mode1/session-member/session-member';
 import {SessionHost} from "./mode1/session-host/session-host";
+import {SetName} from "./welcome/set-name/set-name";
 
 export const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -13,6 +14,7 @@ export const routes: Routes = [
   { path: 'welcome', component: Welcome },
   { path: 'mode1', component: Mode1 },
   { path: 'mode2', component: Mode2 },
+  { path: 'set-name/:sessionId', component: SetName },
 
   { path: 'callback', component: Host },
   { path: 'mode1/configureSession', component: Host },
