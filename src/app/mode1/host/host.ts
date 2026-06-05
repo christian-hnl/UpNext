@@ -85,9 +85,8 @@ export class Host implements OnInit{
     const data = await this.supabaseService.addPrivateSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
       console.log('[Host] Session created successfully. Data:', data[0]);
-      // Extract numeric part from UUID string (00000000-0000-0000-0000-000000123456)
-    const sidStr = data[0].session_id;
-      this.sessionId.set(sidStr);
+      const sessionId = data[0].session_id;
+      this.sessionId.set(sessionId);
 
       const profile = this.userProfile();
       if (profile) {

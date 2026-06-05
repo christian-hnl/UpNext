@@ -1,47 +1,64 @@
-// Spotify Colors (Keep consistent with search.scss)
-$spotify-bg: #121212;
-$spotify-hover: #2a2929;
-$text-main: #ffffff;
-$text-sub: #b3b3b3;
+:host { display: block; }
 
+/* --- "Now playing" card --- */
 .now-playing-section {
-  padding: 32px 32px 0 32px;
-  background-color: $spotify-bg;
-  color: $text-main;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
+  margin-bottom: var(--space-4);
+  color: var(--text-1);
 
   .now-playing-label {
-    font-size: 14px;
+    font-size: 0.72rem;
     font-weight: 700;
-    color: #1DB954;
+    color: var(--accent);
     text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 16px;
+    letter-spacing: 0.14em;
+    margin-bottom: 14px;
   }
 
   .currently-playing-row {
-    background: linear-gradient(90deg, #282828 0%, #121212 100%);
-    padding: 16px;
-    border-radius: 8px;
-    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(100deg, rgba(30, 215, 96, 0.10), rgba(255, 255, 255, 0.02));
+    padding: 14px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-soft);
 
     .track-image {
-      width: 64px !important;
-      height: 64px !important;
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-sm);
       margin-right: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      object-fit: cover;
+      box-shadow: var(--shadow-card);
     }
 
-    .track-name {
-      font-size: 18px !important;
-      font-weight: 700;
-      color: #1DB954 !important;
+    .track-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 0;
+
+      .track-name {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--accent);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .track-artist { font-size: 0.85rem; color: var(--text-2); }
     }
 
     .track-duration {
-      font-size: 14px;
-      color: $text-sub;
-      margin-right: 16px;
+      font-size: 0.85rem;
+      color: var(--text-2);
+      margin-right: 14px;
+      font-variant-numeric: tabular-nums;
     }
   }
 
@@ -50,127 +67,78 @@ $text-sub: #b3b3b3;
     align-items: flex-end;
     gap: 3px;
     height: 20px;
-    padding-right: 16px;
+    padding-right: 4px;
 
     .bar {
       width: 4px;
-      background: #1DB954;
+      border-radius: 2px;
+      background: var(--accent);
       animation: equalize 1s ease-in-out infinite;
 
-      &.bar-1 { height: 60%; animation-delay: 0s; }
-      &.bar-2 { height: 100%; animation-delay: 0.2s; }
-      &.bar-3 { height: 80%; animation-delay: 0.4s; }
+      &.bar-1 { height: 60%;  animation-delay: 0s;   }
+      &.bar-2 { height: 100%; animation-delay: .2s;  }
+      &.bar-3 { height: 80%;  animation-delay: .4s;  }
     }
   }
 }
 
 @keyframes equalize {
-  0% { height: 40%; }
-  50% { height: 100%; }
-  100% { height: 40%; }
+  0%   { height: 40%;  }
+  50%  { height: 100%; }
+  100% { height: 40%;  }
 }
 
+/* --- Queue card --- */
 .queue-section {
-  padding: 16px 32px 32px 32px;
-  background-color: $spotify-bg;
-  color: $text-main;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
+  color: var(--text-1);
 
   h2 {
-    margin-bottom: 24px;
-    font-size: 24px;
+    margin: 0 0 18px;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: $text-main;
+    letter-spacing: -0.01em;
   }
-}
-
-.now-playing-container {
-  margin-bottom: 48px;
-
-  .now-playing-card {
-    display: flex;
-    align-items: center;
-    padding: 16px;
-    background: linear-gradient(135deg, #282828 0%, #121212 100%);
-    border-radius: 8px;
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(29, 185, 84, 0.1);
-      pointer-events: none;
-    }
-
-    .now-playing-cover {
-      width: 64px;
-      height: 64px;
-      border-radius: 4px;
-      margin-right: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-
-    .playing-animation {
-      display: flex;
-      align-items: flex-end;
-      gap: 3px;
-      margin-right: 20px;
-      height: 20px;
-
-      span {
-        width: 3px;
-        background: #1db954;
-        animation: play-anim 1s ease-in-out infinite;
-        
-        &:nth-child(2) { animation-delay: 0.2s; }
-        &:nth-child(3) { animation-delay: 0.4s; }
-      }
-    }
-
-    .track-duration {
-      color: #1db954;
-      font-weight: 500;
-      margin-left: auto;
-    }
-  }
-}
-
-@keyframes play-anim {
-  0%, 100% { height: 5px; }
-  50% { height: 18px; }
 }
 
 .queue-list {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-width: 900px;
 
   .track-row {
     display: flex;
     align-items: center;
-    padding: 8px 16px;
-    border-radius: 4px;
-    margin-bottom: 2px;
-    transition: background-color 0.2s ease;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    transition: background-color .18s ease;
 
     &:hover {
-      background-color: $spotify-hover;
-
-      .track-votes .vote-btn {
-        opacity: 1;
-      }
+      background: var(--overlay-hover);
+      .track-votes .vote-btn { opacity: 1; }
     }
 
-    .track-cover {
-      width: 40px;
-      height: 40px;
-      margin-right: 16px;
+    .track-image {
+      width: 44px;
+      height: 44px;
+      margin-right: 14px;
       flex-shrink: 0;
-      border-radius: 4px;
+      border-radius: var(--radius-sm);
       object-fit: cover;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .track-placeholder {
+      width: 44px;
+      height: 44px;
+      margin-right: 14px;
+      flex-shrink: 0;
+      border-radius: var(--radius-sm);
+      background: var(--bg-raised-2);
     }
 
     .track-info {
@@ -181,17 +149,18 @@ $text-sub: #b3b3b3;
       padding-right: 16px;
 
       .track-name {
-        font-size: 16px;
-        color: $text-main;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-1);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        margin-bottom: 4px;
+        margin-bottom: 3px;
       }
 
       .track-artist {
-        font-size: 14px;
-        color: $text-sub;
+        font-size: 0.82rem;
+        color: var(--text-2);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -199,53 +168,45 @@ $text-sub: #b3b3b3;
     }
 
     .track-duration {
-      font-size: 14px;
-      color: $text-sub;
+      font-size: 0.82rem;
+      color: var(--text-3);
       margin-right: 16px;
-      min-width: 40px;
+      min-width: 44px;
       text-align: right;
+      font-variant-numeric: tabular-nums;
     }
 
     .track-votes {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-right: 32px;
+      gap: 10px;
+      margin-right: 24px;
       flex-shrink: 0;
 
       .vote-btn {
         border: none;
         background: transparent;
         cursor: pointer;
-        opacity: 0.3;
-        transition: opacity 0.2s, transform 0.1s;
+        opacity: 0.35;
+        transition: opacity .2s, transform .1s;
         padding: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
 
-        svg {
-          width: 16px;
-          height: 16px;
-          fill: $text-sub;
-        }
+        svg { width: 16px; height: 16px; fill: var(--text-2); transition: fill .2s; }
 
-        &:hover {
-          opacity: 1;
-          svg { fill: $text-main; }
-        }
-
-        &:active {
-          transform: scale(0.9);
-        }
+        &:hover { opacity: 1; svg { fill: var(--text-1); } }
+        &:active { transform: scale(0.9); }
       }
 
       .vote-count {
         min-width: 20px;
         text-align: center;
-        font-size: 14px;
-        font-weight: 500;
-        color: $text-sub;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-1);
+        font-variant-numeric: tabular-nums;
       }
     }
 
@@ -258,26 +219,24 @@ $text-sub: #b3b3b3;
       .remove-btn {
         background: transparent;
         border: none;
-        color: #b3b3b3;
+        color: var(--text-2);
         cursor: pointer;
         padding: 5px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: color 0.2s, background-color 0.2s;
+        transition: color .2s, background-color .2s;
 
-        &:hover {
-          color: #e91429;
-          background-color: rgba(233, 20, 41, 0.1);
-        }
+        &:hover { color: var(--danger); background: var(--danger-soft); }
       }
     }
   }
 
   .no-results {
-    color: $text-sub;
-    font-size: 16px;
-    padding: 20px 16px;
+    color: var(--text-3);
+    font-size: 0.95rem;
+    padding: 18px 12px;
+    text-align: center;
   }
 }

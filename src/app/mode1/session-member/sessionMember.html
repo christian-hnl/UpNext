@@ -1,35 +1,35 @@
+<section class="page">
+    <header class="session-header">
+        <h1>{{ title() }}</h1>
+        <p class="session-id">Session ID: {{ sessionId() }}</p>
+    </header>
 
+    @if (isBlocked()) {
+        <div class="blocked-message">
+            <h2>Zugriff verweigert</h2>
+            <p>Du wurdest vom Host dieser Session gesperrt.</p>
+        </div>
+    } @else if (!isJoined()) {
+        <div class="join-container">
+            <h2>Lobby beitreten</h2>
+            <input type="text" [(ngModel)]="inputName" placeholder="Dein Name">
+            <button (click)="joinSession()">Beitreten</button>
+        </div>
+    } @else {
+        <div class="session-info">
+            <p class="greeting">Hallo {{ userName() }}!</p>
+            <p class="host-line">Host: <strong>{{ hostName() }}</strong></p>
+            <p class="members-line">Andere Teilnehmer:
+                @for (member of otherMembers(); track $index) {
+                    <span>{{ member }}{{ !$last ? ', ' : '' }}</span>
+                } @empty {
+                    <span>Nur du</span>
+                }
+            </p>
+        </div>
 
+        <app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
 
-<h1>{{ title() }}</h1>
-<p>Session ID: {{ sessionId() }}</p>
-
-@if (isBlocked()) {
-    <div class="blocked-message">
-        <h2>Zugriff verweigert</h2>
-        <p>Du wurdest vom Host dieser Session gesperrt.</p>
-    </div>
-} @else if (!isJoined()) {
-    <div class="join-container">
-        <h2>Lobby beitreten</h2>
-        <input type="text" [(ngModel)]="inputName" placeholder="Dein Name">
-        <button (click)="joinSession()">Beitreten</button>
-    </div>
-} @else {
-    <p>Hallo {{ userName() }}!</p>
-
-    <div class="session-info">
-        <p>Host: <strong>{{ hostName() }}</strong></p>
-        <p>Andere Teilnehmer:
-            @for (member of otherMembers(); track $index) {
-                <span>{{ member }}{{ !$last ? ', ' : '' }}</span>
-            } @empty {
-                <span>Nur du</span>
-            }
-        </p>
-    </div>
-
-    <app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
-
-    <app-search [sessionId]="sessionId()"></app-search>
-}
+        <app-search [sessionId]="sessionId()"></app-search>
+    }
+</section>

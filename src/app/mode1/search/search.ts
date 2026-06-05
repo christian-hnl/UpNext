@@ -20,6 +20,7 @@ export class Search implements OnInit, OnDestroy{
 
   searchControl = new FormControl('');
   private searchSubscription!: Subscription;
+  private queueChannel: any;
   searchTracks: any[] = [];
 
   ngOnInit() {
@@ -36,7 +37,7 @@ export class Search implements OnInit, OnDestroy{
   }
 
   setupQueueSubscription() {
-    this.supabaseService.subscribeToQueue(this.sessionId(), (payload) => {
+    this.queueChannel = this.supabaseService.subscribeToQueue(this.sessionId(), (payload) => {
       console.log('[Search] Queue change detected via realtime subscription:', payload);
       this.updateSearchTracksFromQueue();
     });
@@ -162,8 +163,8 @@ export class Search implements OnInit, OnDestroy{
       );
 
       if (newQueueItem) {
-        // Spotify-API mit deviceId aufrufen, falls vorhanden
-        await this.spotifyAPI.addToQueue(track.uri, newQueueItem.deviceId);
+        // Song zur echten Spotify-Wiedergabeschlange hinzufuegen (aktives Geraet des Hosts)
+        await this.spotifyAPI.addToQueue(track.uri);
 
         track.queueId = newQueueItem.id;
         // Den Score direkt aus dem neu erstellten (und gevoteten) Item nehmen
@@ -189,6 +190,9 @@ export class Search implements OnInit, OnDestroy{
 
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
+    }
+    if (this.queueChannel) {
+      this.supabaseService.supabase.removeChannel(this.queueChannel);
     }
   }
 }

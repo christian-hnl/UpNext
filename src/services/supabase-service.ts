@@ -20,7 +20,8 @@ export class SupabaseService {
 
   async addPrivateSession(titleEingabe: string) {
     console.log('[SupabaseService] addPrivateSession called with title:', titleEingabe);
-    const randSessionId = Math.floor(100000 + Math.random() * 900000);
+    // Konvention: erste Ziffer = Modus. Modus-1-Sessions (privat) beginnen mit 1 → 100000-199999
+    const randSessionId = 100000 + Math.floor(Math.random() * 100000);
     const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
     console.log('[SupabaseService] Generated QR URL:', qrUrl);
 

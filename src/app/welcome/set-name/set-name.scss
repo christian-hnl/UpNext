@@ -1,0 +1,67 @@
+:host { display: block; }
+
+.setname {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.setname-card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lift);
+  padding: clamp(28px, 6vw, 44px);
+  text-align: center;
+
+  .brand {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+  }
+
+  .prompt {
+    color: var(--text-2);
+    margin: 0 0 26px;
+    font-weight: 600;
+  }
+}
+
+.session-join-container {
+  display: flex;
+  gap: 10px;
+
+  .session-input {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg-input);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-pill);
+    padding: 14px 20px;
+    color: var(--text-1);
+    font-weight: 600;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s, background-color .2s;
+
+    &::placeholder { color: var(--text-3); font-weight: 500; }
+    &:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); background: var(--bg-raised-2); }
+  }
+
+  .join-btn {
+    background: var(--accent);
+    color: var(--accent-contrast);
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 14px 24px;
+    font-weight: 800;
+    transition: background-color .2s, transform .15s, box-shadow .2s;
+
+    &:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 10px 26px var(--accent-glow); }
+    &:active { transform: translateY(0); }
+  }
+}

@@ -1,65 +1,65 @@
+<section class="page">
+    <header class="session-header">
+        <h1>hosting session {{ title() }}</h1>
+        <p class="greeting">Hello {{ userName() }}!</p>
+    </header>
 
-<h1>hosting session {{ title() }}</h1>
-
-<p>Hello {{ userName() }}!</p>
-
-<p>Teilnehmer in deiner Session: </p>
-<ul class="member-list">
-    @for (member of members(); track member.id) {
-        <li [class.blocked]="member.status === 'blocked'">
-            <span class="member-name">{{member.name}}</span>
-            @if (member.role === 'host') {
-                <span class="member-role">(Host)</span>
-            }
-            
-            @if (member.role !== 'host') {
-                <div class="member-actions">
-                    @if (member.status === 'blocked') {
-                        <button class="unblock-btn" (click)="unblockParticipant(member.id)">Entsperren</button>
-                    } @else {
-                        <button class="block-btn" (click)="blockParticipant(member.id)">Sperren</button>
+    <div class="participants-card">
+        <p class="section-title">Teilnehmer in deiner Session</p>
+        <ul class="member-list">
+            @for (member of members(); track member.id) {
+                <li [class.blocked]="member.status === 'blocked'">
+                    <span class="member-name">{{member.name}}</span>
+                    @if (member.role === 'host') {
+                        <span class="member-role">(Host)</span>
                     }
-                </div>
+
+                    @if (member.role !== 'host') {
+                        <div class="member-actions">
+                            @if (member.status === 'blocked') {
+                                <button class="unblock-btn" (click)="unblockParticipant(member.id)">Entsperren</button>
+                            } @else {
+                                <button class="block-btn" (click)="blockParticipant(member.id)">Sperren</button>
+                            }
+                        </div>
+                    }
+                </li>
             }
-        </li>
-    }
-</ul>
-
-<div class="host-controls">
-    <div class="device-selector">
-        <label for="deviceSelect">Wiedergabegerät:</label>
-        <select id="deviceSelect" (change)="onDeviceChange($event)" [value]="selectedDeviceId()">
-            @for (device of devices(); track device.id) {
-                <option [value]="device.id">{{ device.name }} {{ device.is_active ? '(Aktiv)' : '' }}</option>
-            } @empty {
-                <option value="">Keine Geräte gefunden. Öffne Spotify!</option>
-            }
-        </select>
-        <button (click)="loadDevices()">Aktualisieren</button>
+        </ul>
     </div>
 
-    <button class="end-session-btn" (click)="endSession()">Session beenden</button>
-</div>
+    <div class="host-controls">
+        <div class="device-selector">
+            <label for="deviceSelect">Wiedergabegerät:</label>
+            <select id="deviceSelect" (change)="onDeviceChange($event)" [value]="selectedDeviceId()">
+                @for (device of devices(); track device.id) {
+                    <option [value]="device.id">{{ device.name }} {{ device.is_active ? '(Aktiv)' : '' }}</option>
+                } @empty {
+                    <option value="">Keine Geräte gefunden. Öffne Spotify!</option>
+                }
+            </select>
+            <button (click)="loadDevices()">Aktualisieren</button>
+        </div>
 
-<div class="debug-section">
-    <h3>Host Debug-Funktionen</h3>
-    <p class="debug-hint">Nur für dich als Host sichtbar. Nutze dies zum Testen der Warteschlange.</p>
-    
-    <div class="debug-actions">
-        <button (click)="syncQueues()">Queue jetzt synchronisieren</button>
-        <button (click)="loadDevices()">Geräte neu laden</button>
+        <button class="end-session-btn" (click)="endSession()">Session beenden</button>
     </div>
 
-    <!-- Wir greifen hier direkt auf die Queue zu, indem wir sie in der Host-Komponente laden 
-         oder wir bauen ein einfaches Interface -->
-    <div class="debug-queue-tools">
-        <h4>Warteschlange manipulieren</h4>
-        <!-- Hier könnten wir eine Liste der aktuellen Songs anzeigen mit + / - Buttons -->
-        <p>Nutze die Votebuttons in der Warteschlange unten, um die Reihenfolge zu testen.</p>
+    <div class="debug-section">
+        <h3>Host Debug-Funktionen</h3>
+        <p class="debug-hint">Nur für dich als Host sichtbar. Nutze dies zum Testen der Warteschlange.</p>
+
+        <div class="debug-actions">
+            <button (click)="syncQueues()">Queue jetzt synchronisieren</button>
+            <button (click)="loadDevices()">Geräte neu laden</button>
+        </div>
+
+        <div class="debug-queue-tools">
+            <h4>Warteschlange manipulieren</h4>
+            <p>Nutze die Votebuttons in der Warteschlange unten, um die Reihenfolge zu testen.</p>
+        </div>
     </div>
-</div>
 
-<app-queuevoting [sessionId]="sessionId()" [isHost]="true"></app-queuevoting>
+    <app-queuevoting [sessionId]="sessionId()" [isHost]="true"></app-queuevoting>
 
-
-<app-qrcode [sessionLink]="qrcodedata()"></app-qrcode>
+    <app-qrcode [sessionLink]="qrcodedata()"></app-qrcode>
+</section>

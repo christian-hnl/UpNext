@@ -1,24 +1,20 @@
-
-
-@if (!userProfile()) {
-  <div class="login-section">
-    <h3>Um eine Session zu hosten, melde dich bitte zuerst an</h3>
-    <button (click)="onLogin()">Mit Spotify anmelden</button>
-  </div>
-} @else {
-  <div class="host-section">
-    <h3>Hoste deine Session</h3>
-    <p>Angemeldet als: {{ userProfile()?.display_name }} ({{ userProfile()?.email }})</p>
-
-    <div class="input-group">
-      <input type="text" placeholder="Titel der Session" [(ngModel)]="title">
-      <button (click)="addSession()" [disabled]="!title().trim()">Session starten</button>
+<div class="host-panel">
+  @if (!userProfile()) {
+    <div class="login-section">
+      <h3>Um eine Session zu hosten, melde dich bitte zuerst an</h3>
+      <button (click)="onLogin()">Mit Spotify anmelden</button>
     </div>
+  } @else {
+    <div class="host-section">
+      <h3>Hoste deine Session</h3>
+      <p class="account">Angemeldet als: <strong>{{ userProfile()?.display_name }}</strong> ({{ userProfile()?.email }})</p>
 
-    <button (click)="onLogout()">Abmelden</button>
-  </div>
-}
+      <div class="input-group">
+        <input type="text" placeholder="Titel der Session" [(ngModel)]="title">
+        <button (click)="addSession()" [disabled]="!title().trim()">Session starten</button>
+      </div>
 
-
-
-
+      <button class="logout" (click)="onLogout()">Abmelden</button>
+    </div>
+  }
+</div>

@@ -17,6 +17,7 @@ export class Queuevoting implements OnInit, OnDestroy {
   queue = signal<any[]>([]);
   currentlyPlaying = signal<any>(null);
   private playbackInterval: any;
+  private queueChannel: any;
 
   async ngOnInit() {
     await this.loadQueue();
@@ -53,7 +54,7 @@ export class Queuevoting implements OnInit, OnDestroy {
 
   setupQueueSubscription() {
     console.log('[Queuevoting] Setting up queue subscription');
-    this.supabaseS.subscribeToQueue(this.sessionId(), (payload) => {
+    this.queueChannel = this.supabaseS.subscribeToQueue(this.sessionId(), (payload) => {
       console.log('[Queuevoting] Queue change detected via realtime subscription. Payload:', payload);
       
       // Bei JEDEM Event die Queue neu laden, um die UI aktuell zu halten
@@ -93,6 +94,9 @@ export class Queuevoting implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.playbackInterval) {
       clearInterval(this.playbackInterval);
+    }
+    if (this.queueChannel) {
+      this.supabaseS.supabase.removeChannel(this.queueChannel);
     }
   }
 }

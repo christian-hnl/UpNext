@@ -28,12 +28,12 @@ export class Mode1 {
       return;
     }
 
-    try {
-      if (this.sessionId() === null) {
-        console.warn('Enter session-id.');
-        return;
-      }
+    if (!this.userName().trim()) {
+      console.warn('Enter your name.');
+      return;
+    }
 
+    try {
       const { data, error } = await this.supabaseService.joinPrivateSession(sId);
 
       if (error) {
