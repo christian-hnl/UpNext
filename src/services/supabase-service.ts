@@ -69,11 +69,10 @@ export class SupabaseService {
   }
 
   async addUser(username: string, sessionId: number, host: boolean) {
-    console.log(`[SupabaseService] addUser called: username=${username}, sessionId=${sessionId}, host=${host}`);
     let role: string = 'member';
     if (host) role = 'host';
 
-    const result = await this.supabase
+    return this.supabase
       .from('participants')
         .insert({
           name: username,
@@ -81,14 +80,6 @@ export class SupabaseService {
           session_id: sessionId
         }).select('id')
         .single();
-
-    if (result.error) {
-      console.error('[SupabaseService] Error adding user:', result.error.message);
-    } else {
-      console.log('[SupabaseService] User added successfully:', result.data);
-    }
-
-    return result;
   }
 
   async getUserInfos(id: string) {
