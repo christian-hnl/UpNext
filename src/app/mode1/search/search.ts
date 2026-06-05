@@ -77,6 +77,8 @@ export class Search implements OnInit, OnDestroy{
       const updatedQueueItem = await this.supabaseService.vote(track.queueId, userId, 1);
       if (updatedQueueItem) {
         track.votes = updatedQueueItem.score;
+      } else {
+        track.votes = await this.supabaseService.getSongVotes(this.sessionId(), track.uri);
       }
     } catch (error) {
       console.error('Fehler beim Upvoten:', error);
@@ -92,6 +94,8 @@ export class Search implements OnInit, OnDestroy{
       const updatedQueueItem = await this.supabaseService.vote(track.queueId, userId, -1);
       if (updatedQueueItem) {
         track.votes = updatedQueueItem.score;
+      } else {
+        track.votes = await this.supabaseService.getSongVotes(this.sessionId(), track.uri);
       }
     } catch (error) {
       console.error('Fehler beim Downvoten:', error);
@@ -122,7 +126,8 @@ export class Search implements OnInit, OnDestroy{
       if (newQueueItem) {
         track.isQueued = true;
         track.queueId = newQueueItem.id;
-        track.votes = 1; 
+        // Den Score direkt aus dem neu erstellten (und gevoteten) Item nehmen
+        track.votes = newQueueItem.score;
       }
 
       console.log('Song zur Warteschlange hinzugefügt:', track.name);

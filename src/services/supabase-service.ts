@@ -141,7 +141,7 @@ export class SupabaseService {
                 session_id: this.formatSessionId(sessionId),
                 spotify_id: song.spotify_id,
                 suggested_by: userId,
-                score: 1, // Start mit 1 Vote vom Hinzufüger
+                score: 0, // Start mit 0, Vote wird unten hinzugefügt
                 status: 'queued'
             })
             .select()
@@ -175,7 +175,6 @@ export class SupabaseService {
 
     async vote(queueId: number, participantId: string, value: number) {
         console.log(`[SupabaseService] vote called: queueId=${queueId}, participantId=${participantId}, value=${value}`);
-        // Vote einfügen oder aktualisieren (Upsert)
         
         const { data: existingVote } = await this.supabase
             .from('votes')
@@ -186,12 +185,21 @@ export class SupabaseService {
 
         let error;
         if (existingVote) {
-            console.log('[SupabaseService] Updating existing vote:', existingVote.id);
-            const { error: updateError } = await this.supabase
-                .from('votes')
-                .update({ vote: value })
-                .eq('id', existingVote.id);
-            error = updateError;
+            if (existingVote.vote === value) {
+                console.log('[SupabaseService] Removing vote (toggle)');
+                const { error: deleteError } = await this.supabase
+                    .from('votes')
+                    .delete()
+                    .eq('id', existingVote.id);
+                error = deleteError;
+            } else {
+                console.log('[SupabaseService] Updating existing vote:', existingVote.id);
+                const { error: updateError } = await this.supabase
+                    .from('votes')
+                    .update({ vote: value })
+                    .eq('id', existingVote.id);
+                error = updateError;
+            }
         } else {
             console.log('[SupabaseService] Inserting new vote');
             const { error: insertError } = await this.supabase

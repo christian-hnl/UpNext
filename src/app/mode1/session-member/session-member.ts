@@ -2,12 +2,14 @@ import {Component, inject, input, OnInit, signal} from '@angular/core';
 import {SupabaseService} from "../../../services/supabase-service";
 import {Search} from "../search/search";
 import {Queuevoting} from "../queuevoting/queuevoting";
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-session-member',
     imports: [
         Search,
-        Queuevoting
+        Queuevoting,
+        FormsModule
     ],
   templateUrl: './sessionMember.html',
   styleUrl: './sessionMember.scss',
@@ -21,11 +23,31 @@ export class SessionMember implements OnInit {
   otherMembers = signal<string[]>([]);
   hostName = signal<string | null>(null);
 
+  inputName = "";
+  isJoined = signal<boolean>(false);
+
   async ngOnInit() {
     await this.loadSessionInfos();
-    await this.loadMyUserInfos();
-    await this.loadOtherMembers();
-    await this.loadHostName();
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+      this.isJoined.set(true);
+      await this.loadMyUserInfos();
+      await this.loadOtherMembers();
+      await this.loadHostName();
+    }
+  }
+
+  async joinSession() {
+    if (!this.inputName) return;
+    
+    const result = await this.supabaseS.addUser(this.inputName, this.sessionId(), false);
+    if (result.data) {
+      localStorage.setItem('userId', result.data.id);
+      this.isJoined.set(true);
+      this.userName.set(this.inputName);
+      await this.loadOtherMembers();
+      await this.loadHostName();
+    }
   }
 
 

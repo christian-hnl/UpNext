@@ -3,19 +3,28 @@
 
 <h1>{{ title() }}</h1>
 <p>Session ID: {{ sessionId() }}</p>
-<p>Hallo {{ userName() }}!</p>
 
-<div class="session-info">
-    <p>Host: <strong>{{ hostName() }}</strong></p>
-    <p>Andere Teilnehmer: 
-        @for (member of otherMembers(); track $index) {
-            <span>{{ member }}{{ !$last ? ', ' : '' }}</span>
-        } @empty {
-            <span>Nur du</span>
-        }
-    </p>
-</div>
+@if (!isJoined()) {
+    <div class="join-container">
+        <h2>Lobby beitreten</h2>
+        <input type="text" [(ngModel)]="inputName" placeholder="Dein Name">
+        <button (click)="joinSession()">Beitreten</button>
+    </div>
+} @else {
+    <p>Hallo {{ userName() }}!</p>
 
-<app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
+    <div class="session-info">
+        <p>Host: <strong>{{ hostName() }}</strong></p>
+        <p>Andere Teilnehmer:
+            @for (member of otherMembers(); track $index) {
+                <span>{{ member }}{{ !$last ? ', ' : '' }}</span>
+            } @empty {
+                <span>Nur du</span>
+            }
+        </p>
+    </div>
 
-<app-search [sessionId]="sessionId()"></app-search>
+    <app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
+
+    <app-search [sessionId]="sessionId()"></app-search>
+}
