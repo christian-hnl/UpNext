@@ -9,6 +9,7 @@
   padding: var(--space-5);
   margin-bottom: var(--space-4);
   color: var(--text-1);
+  animation: fade-in-up .45s cubic-bezier(.22, .61, .36, 1) backwards;
 
   .now-playing-label {
     font-size: 0.72rem;

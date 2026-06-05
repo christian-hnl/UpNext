@@ -17,6 +17,7 @@
   box-shadow: var(--shadow-lift);
   padding: clamp(28px, 6vw, 44px);
   text-align: center;
+  animation: pop-in .5s cubic-bezier(.22, .61, .36, 1) backwards .05s;
 
   .brand {
     font-size: 2rem;

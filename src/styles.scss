@@ -83,6 +83,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* App chrome: arrow cursor + no text selection, so UI text never shows the
+     blinking I-beam / "type here" caret. Real fields opt back in below. */
+  cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 h1, h2, h3, h4 { font-weight: 700; letter-spacing: -0.01em; margin: 0 0 0.5em; }
@@ -92,6 +97,13 @@ img { display: block; max-width: 100%; }
 /* Form controls inherit family + base color instead of UA defaults */
 input, button, select, textarea { font-family: inherit; color: inherit; }
 button { cursor: pointer; }
+
+/* Only real text fields are editable: restore the caret, text cursor & selection */
+input, textarea {
+  cursor: text;
+  -webkit-user-select: text;
+  user-select: text;
+}
 
 /* --- Premium micro-details: selection + scrollbars ----------------- */
 ::selection { background: var(--accent-glow); color: #fff; }
@@ -176,4 +188,49 @@ button { cursor: pointer; }
   background: var(--danger);
   color: #fff;
   &:hover { background: var(--danger-hover); }
+}
+
+/* =====================================================================
+   Motion — entrance reveals + tasteful micro-interactions.
+   Keyframes are global, so component stylesheets can reuse them by name.
+   ===================================================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Staggered reveal of the main content column.
+   fill-mode `backwards` hides each element until its turn, then releases it
+   afterwards so hover transforms (card lift, etc.) keep working. */
+.page > * {
+  animation: fade-in-up .5s cubic-bezier(.22, .61, .36, 1) backwards;
+}
+.page > *:nth-child(1)   { animation-delay: .03s; }
+.page > *:nth-child(2)   { animation-delay: .09s; }
+.page > *:nth-child(3)   { animation-delay: .15s; }
+.page > *:nth-child(4)   { animation-delay: .21s; }
+.page > *:nth-child(5)   { animation-delay: .27s; }
+.page > *:nth-child(6)   { animation-delay: .33s; }
+.page > *:nth-child(n+7) { animation-delay: .38s; }
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
