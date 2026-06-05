@@ -13,6 +13,8 @@ CREATE TABLE public.songs (
                               artist text,
                               genre text,
                               sessionId text,
+                              album_image text,
+                              duration_ms integer,
                               CONSTRAINT songs_pkey PRIMARY KEY (spotify_id)
 );
 CREATE TABLE public.session_queue (
@@ -42,6 +44,8 @@ CREATE TABLE public.private_sessions (
                                          qrCodeData text,
                                          title text NOT NULL DEFAULT 'NULL'::text,
                                          status text DEFAULT 'deactivated'::text,
+                                         spotify_token text,
+                                         active_device_id text,
                                          CONSTRAINT private_sessions_pkey PRIMARY KEY (session_id)
 );
 CREATE TABLE public.public_sessions (

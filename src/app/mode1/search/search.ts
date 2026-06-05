@@ -154,7 +154,9 @@ export class Search implements OnInit, OnDestroy{
           {
             spotify_id: track.uri,
             title: track.name,
-            artist: track.artists?.[0]?.name || 'Unbekannter Künstler'
+            artist: track.artists?.[0]?.name || 'Unbekannter Künstler',
+            album_image: track.album?.images?.[2]?.url,
+            duration_ms: track.duration_ms
           },
           userId
       );

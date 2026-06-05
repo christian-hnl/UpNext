@@ -148,7 +148,7 @@ export class SupabaseService {
             .single();
     }
 
-    async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string }, userId: string) {
+    async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string, duration_ms?: number }, userId: string) {
         console.log(`[SupabaseService] addSongToQueue called: sessionId=${sessionId}, song=${song.title}, userId=${userId}`);
         
         // Host-Device abrufen, falls vorhanden
@@ -165,6 +165,8 @@ export class SupabaseService {
                 spotify_id: song.spotify_id,
                 title: song.title,
                 artist: song.artist,
+                album_image: song.album_image,
+                duration_ms: song.duration_ms,
                 sessionId: sessionId
             });
 
@@ -357,7 +359,9 @@ export class SupabaseService {
 
     subscribeToQueue(sessionId: number, callback: (payload: any) => void) {
         console.log(`[SupabaseService] Subscribing to queue for sessionId=${sessionId}`);
-        return this.supabase
+        
+        // WICHTIG: In Supabase muss "Replication" für die Tabelle "session_queue" aktiviert sein!
+        const channel = this.supabase
             .channel(`queue-${sessionId}`)
             .on(
                 'postgres_changes',
@@ -371,10 +375,15 @@ export class SupabaseService {
                     console.log('[SupabaseService] Realtime update received for session_queue:', payload);
                     callback(payload);
                 }
-            )
-            .subscribe((status) => {
-                console.log(`[SupabaseService] Subscription status for queue-${sessionId}:`, status);
-            });
+            );
+            
+        channel.subscribe((status) => {
+            console.log(`[SupabaseService] Subscription status for queue-${sessionId}:`, status);
+            if (status === 'CHANNEL_ERROR') {
+                console.error('[SupabaseService] Realtime subscription failed. Check if replication is enabled in Supabase dashboard.');
+            }
+        });
 
+        return channel;
     }
 }

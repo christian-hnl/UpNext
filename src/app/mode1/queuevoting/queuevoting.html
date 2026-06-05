@@ -1,15 +1,39 @@
+@if (currentlyPlaying()) {
+    <div class="now-playing-section">
+        <div class="now-playing-label">Aktueller Song</div>
+        <div class="track-row currently-playing-row">
+            <img class="track-image" [src]="currentlyPlaying().album?.images?.[2]?.url" alt="">
+            <div class="track-info">
+                <span class="track-name">{{ currentlyPlaying().name }}</span>
+                <span class="track-artist">{{ currentlyPlaying().artists?.[0]?.name }}</span>
+            </div>
+            <span class="track-duration">{{ formatDuration(currentlyPlaying().duration_ms) }}</span>
+            <div class="playing-indicator">
+                <span class="bar bar-1"></span>
+                <span class="bar bar-2"></span>
+                <span class="bar bar-3"></span>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="queue-section">
-    <h2>Top 10 Warteschlange</h2>
+    <h2>Warteschlange</h2>
     <ul class="queue-list">
         @for (item of queue(); track item.id) {
             <li class="track-row">
-                <!-- Wir haben hier kein Cover im item.songs, aber wir nutzen die Struktur -->
-                <div class="track-placeholder"></div>
+                @if (item.songs?.album_image) {
+                    <img class="track-image" [src]="item.songs.album_image" alt="">
+                } @else {
+                    <div class="track-placeholder"></div>
+                }
 
                 <div class="track-info">
                     <span class="track-name">{{ item.songs?.title }}</span>
                     <span class="track-artist">{{ item.songs?.artist }}</span>
                 </div>
+                
+                <span class="track-duration">{{ formatDuration(item.songs?.duration_ms) }}</span>
 
                 <div class="track-votes">
                     <button class="vote-btn up" (click)="upvote(item.id)" aria-label="Upvote">
