@@ -1,5 +1,6 @@
-import {Component, inject, input, OnInit, signal} from "@angular/core";
+import {Component, inject, input, OnDestroy, OnInit, signal} from "@angular/core";
 import {SupabaseService} from "../../../services/supabase-service";
+import {Spotify} from "../../../services/spotify";
 
 @Component({
   selector: "app-queuevoting",
@@ -7,15 +8,52 @@ import {SupabaseService} from "../../../services/supabase-service";
   templateUrl: "./queuevoting.html",
   styleUrl: "./queuevoting.scss",
 })
-export class Queuevoting implements OnInit {
+export class Queuevoting implements OnInit, OnDestroy {
+  isHost = input<boolean>(false);
   sessionId = input.required<number>();
   private supabaseS = inject(SupabaseService);
+  private spotifyAPI = inject(Spotify);
 
   queue = signal<any[]>([]);
+  nowPlaying = signal<any>(null);
+  private refreshInterval: any;
+  private queueChannel: any;
+  private votesChannel: any;
 
   async ngOnInit() {
     await this.loadQueue();
+    await this.loadNowPlaying();
     this.setupQueueSubscription();
+    
+    // Alle 5 Sekunden den aktuellen Song prüfen
+    this.refreshInterval = setInterval(() => this.loadNowPlaying(), 5000);
+  }
+
+  ngOnDestroy() {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+    }
+    if (this.queueChannel) {
+      this.supabaseS.supabase.removeChannel(this.queueChannel);
+    }
+    if (this.votesChannel) {
+      this.supabaseS.supabase.removeChannel(this.votesChannel);
+    }
+  }
+
+  async loadNowPlaying() {
+    const track = await this.spotifyAPI.getCurrentlyPlaying();
+    if (track && track.item) {
+      this.nowPlaying.set(track.item);
+    } else {
+      this.nowPlaying.set(null);
+    }
+  }
+
+  formatDuration(ms: number): string {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
   }
 
   async loadQueue() {
@@ -26,21 +64,29 @@ export class Queuevoting implements OnInit {
       return;
     }
     console.log('[Queuevoting] Queue loaded:', data);
-    this.queue.set(data || []);
+    
+    // Nur Songs anzeigen, die noch nicht gespielt wurden
+    const activeQueue = (data || []).filter((item: any) => item.status !== 'played' && item.status !== 'deleted');
+    this.queue.set(activeQueue);
   }
 
   setupQueueSubscription() {
+    if (this.queueChannel) return; // Verhindert doppelte Subscriptions
+
     console.log('[Queuevoting] Setting up queue subscription');
-    this.supabaseS.subscribeToQueue(this.sessionId(), (payload) => {
-      console.log('[Queuevoting] Queue change detected via realtime subscription. Payload:', payload);
-      // Wenn ein Song gelöscht wurde (status='deleted'), aus der lokalen Liste entfernen
-      if (payload.eventType === 'UPDATE' && payload.new.status === 'deleted') {
-        this.queue.update(q => q.filter(item => item.id !== payload.new.id));
-      } else {
-        // Bei allen anderen Änderungen (neu, update, etc) die Queue neu laden
-        this.loadQueue();
-      }
+    this.queueChannel = this.supabaseS.subscribeToQueue(this.sessionId(), (payload) => {
+      console.log('[Queuevoting] Realtime update triggered refresh');
+      this.loadQueue();
     });
+
+    // ZUSÄTZLICH: Subscription für Votes
+    this.votesChannel = this.supabaseS.supabase
+      .channel(`votes-${this.sessionId()}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'votes' }, () => {
+        console.log('[Queuevoting] Vote change detected, refreshing queue...');
+        this.loadQueue();
+      })
+      .subscribe();
   }
 
   async upvote(queueId: number) {
@@ -55,7 +101,7 @@ export class Queuevoting implements OnInit {
     // aber eigentlich sollte subscribeToQueue das erledigen.
     await this.loadQueue();
   }
-
+  
   async downvote(queueId: number) {
     console.log('[Queuevoting] downvote called for queueId:', queueId);
     const userId = localStorage.getItem('userId');
@@ -65,5 +111,20 @@ export class Queuevoting implements OnInit {
     }
     await this.supabaseS.vote(queueId, userId, -1);
     await this.loadQueue();
+  }
+
+  async removeSong(queueId: number) {
+    if (confirm('Soll dieser Song wirklich aus der Warteschlange entfernt werden?')) {
+      const { error } = await this.supabaseS.supabase
+        .from('session_queue')
+        .update({ status: 'deleted' })
+        .eq('id', queueId);
+      
+      if (error) {
+        console.error('[Queuevoting] Error removing song:', error);
+      } else {
+        await this.loadQueue();
+      }
+    }
   }
 }

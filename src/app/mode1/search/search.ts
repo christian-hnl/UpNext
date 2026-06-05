@@ -20,6 +20,7 @@ export class Search implements OnInit, OnDestroy{
 
   searchControl = new FormControl('');
   private searchSubscription!: Subscription;
+  private queueChannel: any;
   searchTracks: any[] = [];
 
   ngOnInit() {
@@ -36,7 +37,9 @@ export class Search implements OnInit, OnDestroy{
   }
 
   setupQueueSubscription() {
-    this.supabaseService.subscribeToQueue(this.sessionId(), (payload) => {
+    if (this.queueChannel) return; // Verhindert doppelte Subscriptions
+
+    this.queueChannel = this.supabaseService.subscribeToQueue(this.sessionId(), (payload) => {
       console.log('[Search] Queue change detected via realtime subscription:', payload);
       this.updateSearchTracksFromQueue();
     });
@@ -47,7 +50,9 @@ export class Search implements OnInit, OnDestroy{
 
     try {
       const { data: currentQueue } = await this.supabaseService.getQueue(this.sessionId());
-      const queuedIdsMap = new Map(currentQueue?.map(item => [item.spotify_id, item]) || []);
+      // Nur Songs berücksichtigen, die noch nicht gespielt oder gelöscht wurden
+      const activeQueue = (currentQueue || []).filter(item => item.status !== 'played' && item.status !== 'deleted');
+      const queuedIdsMap = new Map(activeQueue.map(item => [item.spotify_id, item]));
 
       this.searchTracks = this.searchTracks.map(track => {
         const queueItem = queuedIdsMap.get(track.uri);
@@ -154,7 +159,9 @@ export class Search implements OnInit, OnDestroy{
           {
             spotify_id: track.uri,
             title: track.name,
-            artist: track.artists?.[0]?.name || 'Unbekannter Künstler'
+            artist: track.artists?.[0]?.name || 'Unbekannter Künstler',
+            album_image: track.album?.images?.[0]?.url,
+            duration_ms: track.duration_ms
           },
           userId
       );
@@ -184,9 +191,11 @@ export class Search implements OnInit, OnDestroy{
   }
 
   ngOnDestroy() {
-
     if (this.searchSubscription) {
       this.searchSubscription.unsubscribe();
+    }
+    if (this.queueChannel) {
+      this.supabaseService.supabase.removeChannel(this.queueChannel);
     }
   }
 }

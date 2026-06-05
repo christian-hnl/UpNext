@@ -5,6 +5,7 @@ CREATE TABLE public.participants (
                                      role text DEFAULT 'member'::text,
                                      session_id integer DEFAULT 0,
                                      name text,
+                                     status text DEFAULT 'active'::text,
                                      CONSTRAINT participants_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.songs (
@@ -13,6 +14,8 @@ CREATE TABLE public.songs (
                               artist text,
                               genre text,
                               sessionId text,
+                              album_image text,
+                              duration_ms integer,
                               CONSTRAINT songs_pkey PRIMARY KEY (spotify_id)
 );
 CREATE TABLE public.session_queue (
@@ -42,6 +45,8 @@ CREATE TABLE public.private_sessions (
                                          qrCodeData text,
                                          title text NOT NULL DEFAULT 'NULL'::text,
                                          status text DEFAULT 'deactivated'::text,
+                                         spotify_token text,
+                                         active_device_id text,
                                          CONSTRAINT private_sessions_pkey PRIMARY KEY (session_id)
 );
 CREATE TABLE public.public_sessions (

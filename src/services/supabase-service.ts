@@ -6,7 +6,7 @@ import {environment} from '../environments/environment';
   providedIn: 'root',
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  public supabase: SupabaseClient;
 
 
   constructor() {
@@ -61,6 +61,42 @@ export class SupabaseService {
     return this.supabase
       .from('private_sessions')
       .update({ status: status })
+      .eq('session_id', sessionId);
+  }
+
+  async deleteSession(sessionId: number) {
+    console.log('[SupabaseService] deleteSession called for:', sessionId);
+    
+    // Zuerst alle Votes löschen, die zu dieser Session gehören
+    // Das ist etwas komplexer, da wir über session_queue joinen müssten.
+    // Falls ON DELETE CASCADE in der DB fehlt, müssen wir manuell aufräumen:
+    
+    const { data: queueItems } = await this.supabase
+      .from('session_queue')
+      .select('id')
+      .eq('session_id', this.formatSessionId(sessionId));
+
+    if (queueItems && queueItems.length > 0) {
+      const queueIds = queueItems.map(item => item.id);
+      await this.supabase.from('votes').delete().in('queue_id', queueIds);
+    }
+
+    // Dann die Warteschlange löschen
+    await this.supabase
+      .from('session_queue')
+      .delete()
+      .eq('session_id', this.formatSessionId(sessionId));
+
+    // Dann die Teilnehmer löschen
+    await this.supabase
+      .from('participants')
+      .delete()
+      .eq('session_id', sessionId);
+
+    // Zum Schluss die Session selbst
+    return this.supabase
+      .from('private_sessions')
+      .delete()
       .eq('session_id', sessionId);
   }
 
@@ -131,10 +167,26 @@ export class SupabaseService {
   }
 
 
+  async getParticipants(sessionId: number) {
+      return this.supabase
+          .from('participants')
+          .select('*')
+          .eq('session_id', sessionId)
+          .order('joined_at', { ascending: true });
+  }
+
+  async updateParticipantStatus(participantId: string, status: 'active' | 'blocked') {
+      console.log(`[SupabaseService] Updating participant ${participantId} status to ${status}`);
+      return this.supabase
+          .from('participants')
+          .update({ status: status })
+          .eq('id', participantId);
+  }
+
   async getMemberNamesBySessionId(sessionId: number) {
       return this.supabase
           .from('participants')
-          .select('name')
+          .select('name, id, status')
           .eq('session_id', sessionId)
           .eq('role', 'member');
   }
@@ -148,7 +200,7 @@ export class SupabaseService {
             .single();
     }
 
-    async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string }, userId: string) {
+    async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string, duration_ms?: number }, userId: string) {
         console.log(`[SupabaseService] addSongToQueue called: sessionId=${sessionId}, song=${song.title}, userId=${userId}`);
         
         // Host-Device abrufen, falls vorhanden
@@ -165,7 +217,9 @@ export class SupabaseService {
                 spotify_id: song.spotify_id,
                 title: song.title,
                 artist: song.artist,
-                sessionId: sessionId
+                sessionId: sessionId,
+                album_image: song.album_image,
+                duration_ms: song.duration_ms
             });
 
         if (songError) {
@@ -355,9 +409,25 @@ export class SupabaseService {
         return data?.score || 0;
     }
 
+    async markSongAsPlayed(sessionId: number, spotifyId: string) {
+        console.log(`[SupabaseService] Marking song as played: ${spotifyId} in session ${sessionId}`);
+        const { error } = await this.supabase
+            .from('session_queue')
+            .update({ status: 'played' })
+            .eq('session_id', this.formatSessionId(sessionId))
+            .eq('spotify_id', spotifyId)
+            .neq('status', 'played'); // Nur wenn noch nicht als played markiert
+            
+        if (error) {
+            console.error('[SupabaseService] Error marking song as played:', error);
+        }
+    }
+
     subscribeToQueue(sessionId: number, callback: (payload: any) => void) {
-        console.log(`[SupabaseService] Subscribing to queue for sessionId=${sessionId}`);
-        return this.supabase
+        console.log(`[SupabaseService] Initializing Realtime for sessionId=${sessionId}`);
+        const formattedId = this.formatSessionId(sessionId);
+        
+        const channel = this.supabase
             .channel(`queue-${sessionId}`)
             .on(
                 'postgres_changes',
@@ -365,16 +435,18 @@ export class SupabaseService {
                     event: '*',
                     schema: 'public',
                     table: 'session_queue',
-                    filter: `session_id=eq.${this.formatSessionId(sessionId)}`
+                    filter: `session_id=eq.${formattedId}`
                 },
                 (payload) => {
-                    console.log('[SupabaseService] Realtime update received for session_queue:', payload);
+                    console.log('%c[Supabase Realtime] Event received!', 'background: #1DB954; color: black; font-weight: bold;', payload);
                     callback(payload);
                 }
-            )
-            .subscribe((status) => {
-                console.log(`[SupabaseService] Subscription status for queue-${sessionId}:`, status);
-            });
+            );
+            
+        channel.subscribe((status) => {
+            console.log(`[Supabase Realtime] Status for sessionId ${sessionId}:`, status);
+        });
 
+        return channel;
     }
 }

@@ -1,14 +1,36 @@
 <div class="queue-section">
-    <h2>Top 10 Warteschlange</h2>
+    @if (nowPlaying()) {
+        <div class="now-playing-container">
+            <h2>Aktuelle Wiedergabe</h2>
+            <div class="now-playing-card">
+                <div class="playing-animation">
+                    <span></span><span></span><span></span>
+                </div>
+                <img [src]="nowPlaying().album?.images?.[0]?.url" alt="Cover" class="now-playing-cover">
+                <div class="track-info">
+                    <span class="track-name">{{ nowPlaying().name }}</span>
+                    <span class="track-artist">{{ nowPlaying().artists?.[0]?.name }}</span>
+                </div>
+                <div class="track-duration">
+                    {{ formatDuration(nowPlaying().duration_ms) }}
+                </div>
+            </div>
+        </div>
+    }
+
+    <h2>Warteschlange</h2>
     <ul class="queue-list">
         @for (item of queue(); track item.id) {
             <li class="track-row">
-                <!-- Wir haben hier kein Cover im item.songs, aber wir nutzen die Struktur -->
-                <div class="track-placeholder"></div>
+                <img [src]="item.songs?.album_image || 'assets/default-cover.png'" alt="Cover" class="track-cover">
 
                 <div class="track-info">
                     <span class="track-name">{{ item.songs?.title }}</span>
                     <span class="track-artist">{{ item.songs?.artist }}</span>
+                </div>
+
+                <div class="track-duration" style="margin-right: 20px; color: #b3b3b3; font-size: 14px;">
+                    {{ formatDuration(item.songs?.duration_ms || 0) }}
                 </div>
 
                 <div class="track-votes">
@@ -25,8 +47,15 @@
                     </button>
                 </div>
                 
-                <!-- Platzhalter für Ausrichtung wie in Search -->
-                <div class="track-actions"></div>
+                <div class="track-actions">
+                    @if (isHost()) {
+                        <button class="remove-btn" (click)="removeSong(item.id)" title="Song entfernen">
+                            <svg viewBox="0 0 24 24" width="20" height="20">
+                                <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                            </svg>
+                        </button>
+                    }
+                </div>
             </li>
         } @empty {
             <li class="no-results">Noch keine Lieder in der Warteschlange.</li>

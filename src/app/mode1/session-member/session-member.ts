@@ -26,25 +26,66 @@ export class SessionMember implements OnInit {
 
   inputName = "";
   isJoined = signal<boolean>(false);
+  isBlocked = signal<boolean>(false);
 
   async ngOnInit() {
     await this.loadSessionInfos();
     await this.setupSpotifyToken();
+    this.setupSessionSubscription();
     const userId = localStorage.getItem('userId');
     if (userId) {
       // Prüfen, ob der User wirklich noch existiert
       const { data: userExists } = await this.supabaseS.getUserInfos(userId);
       if (userExists) {
+        if (userExists.status === 'blocked') {
+          this.isBlocked.set(true);
+          this.isJoined.set(false);
+          return;
+        }
         this.isJoined.set(true);
         this.userName.set(userExists.name);
         await this.loadOtherMembers();
         await this.loadHostName();
+        this.setupStatusSubscription(userId);
       } else {
         console.warn('[SessionMember] Saved userId not found in database, clearing localStorage');
         localStorage.removeItem('userId');
         this.isJoined.set(false);
       }
     }
+  }
+
+  private statusChannel: any;
+  private sessionChannel: any;
+
+  setupSessionSubscription() {
+    this.sessionChannel = this.supabaseS.supabase
+      .channel(`session-status-${this.sessionId()}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'private_sessions', filter: `session_id=eq.${this.sessionId()}` }, (payload: any) => {
+        console.log('[SessionMember] Session event detected:', payload.eventType);
+        if (payload.eventType === 'DELETE' || (payload.new && payload.new.status === 'finished')) {
+          alert('Die Session wurde vom Host beendet.');
+          localStorage.removeItem('userId');
+          window.location.href = '/';
+        }
+      })
+      .subscribe();
+  }
+
+  setupStatusSubscription(userId: string) {
+    this.statusChannel = this.supabaseS.supabase
+      .channel(`user-status-${userId}`)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'participants', filter: `id=eq.${userId}` }, (payload: any) => {
+        if (payload.new && payload.new.status === 'blocked') {
+          console.warn('[SessionMember] User was blocked!');
+          this.isBlocked.set(true);
+          this.isJoined.set(false);
+        } else if (payload.new && payload.new.status === 'active') {
+          this.isBlocked.set(false);
+          this.isJoined.set(true);
+        }
+      })
+      .subscribe();
   }
 
   private spotifyAPI = inject(Spotify);
@@ -73,17 +114,32 @@ export class SessionMember implements OnInit {
     try {
       const result = await this.supabaseS.addUser(this.inputName.trim(), this.sessionId(), false);
       if (result.data) {
-        localStorage.setItem('userId', result.data.id);
+        const userData = result.data as any;
+        if (userData.status === 'blocked') {
+          alert('Du wurdest von dieser Session gesperrt.');
+          return;
+        }
+        localStorage.setItem('userId', userData.id);
         this.isJoined.set(true);
         this.userName.set(this.inputName.trim());
         await this.loadOtherMembers();
         await this.loadHostName();
+        this.setupStatusSubscription(userData.id);
         
-        console.log('[SessionMember] Successfully joined session, userId:', result.data.id);
+        console.log('[SessionMember] Successfully joined session, userId:', userData.id);
       }
     } catch (error) {
       console.error('[SessionMember] Error joining session:', error);
       alert('Fehler beim Beitreten der Session.');
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.statusChannel) {
+      this.supabaseS.supabase.removeChannel(this.statusChannel);
+    }
+    if (this.sessionChannel) {
+      this.supabaseS.supabase.removeChannel(this.sessionChannel);
     }
   }
 
