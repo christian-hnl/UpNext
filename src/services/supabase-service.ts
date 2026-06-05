@@ -118,6 +118,28 @@ export class SupabaseService {
             .maybeSingle();
     }
 
+    async getAllParticipantsBySessionId(sessionId: number) {
+        return this.supabase
+            .from('participants')
+            .select('*')
+            .eq('session_id', sessionId)
+            .order('joined_at', { ascending: true });
+    }
+
+    async setParticipantStatus(participantId: string, status: string) {
+        return this.supabase
+            .from('participants')
+            .update({ status })
+            .eq('id', participantId);
+    }
+
+    async endSession(sessionId: number) {
+        return this.supabase
+            .from('private_sessions')
+            .update({ status: 'finished' })
+            .eq('session_id', sessionId);
+    }
+
 
 
     //queue logic

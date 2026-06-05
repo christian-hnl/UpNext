@@ -10,6 +10,7 @@ import {Spotify} from "../../../services/spotify";
 })
 export class Queuevoting implements OnInit, OnDestroy {
   sessionId = input.required<number>();
+  isHost = input<boolean>(false);
   private supabaseS = inject(SupabaseService);
   private spotifyAPI = inject(Spotify);
 
