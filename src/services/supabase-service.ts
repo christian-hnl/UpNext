@@ -117,6 +117,19 @@ export class SupabaseService {
             .single();
     }
 
+    async checkHost(userId: string, sessionId: number) {
+        return this.supabase
+            .from('participants')
+            .select('id')
+            .eq('id', userId)
+            .eq('session_id', sessionId)
+            .eq('role', 'host')
+            .maybeSingle();
+    }
+
+
+
+    //queue logic
     async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string }, userId: string) {
         console.log(`[SupabaseService] addSongToQueue called: sessionId=${sessionId}, song=${song.title}, userId=${userId}`);
         // Zuerst den Song in der globalen Songs-Tabelle registrieren/updaten
