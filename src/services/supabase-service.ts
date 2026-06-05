@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import {environment} from '../environments/environment';
-import { Database} from '../app/database.types';
+import {Database} from "../app/database.types";
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
-  private supabase: SupabaseClient<Database>;
+    supabase: SupabaseClient<Database>;
 
 
   constructor() {
@@ -121,7 +121,7 @@ export class SupabaseService {
 
 
     //queue logic
-    async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string }, userId: string) {
+    async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string, duration_ms: number }, userId: string) {
         console.log(`[SupabaseService] addSongToQueue called: sessionId=${sessionId}, song=${song.title}, userId=${userId}`);
         // Zuerst den Song in der globalen Songs-Tabelle registrieren/updaten
         const { error: songError } = await this.supabase
