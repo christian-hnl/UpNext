@@ -104,6 +104,15 @@ export class Spotify {
     }
   }
 
+  async getPlaybackState() {
+    try {
+      return await this.sdk.player.getPlaybackState();
+    } catch (e) {
+      console.error('[Spotify Service] Error getting playback state:', e);
+      return null;
+    }
+  }
+
   async getQueue() {
     try {
       return await this.sdk.player.getUsersQueue();

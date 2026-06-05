@@ -5,6 +5,7 @@ CREATE TABLE public.participants (
                                      role text DEFAULT 'member'::text,
                                      session_id integer DEFAULT 0,
                                      name text,
+                                     status text DEFAULT 'active'::text,
                                      CONSTRAINT participants_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.songs (

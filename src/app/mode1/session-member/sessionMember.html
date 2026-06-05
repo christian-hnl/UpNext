@@ -4,7 +4,12 @@
 <h1>{{ title() }}</h1>
 <p>Session ID: {{ sessionId() }}</p>
 
-@if (!isJoined()) {
+@if (isBlocked()) {
+    <div class="blocked-message">
+        <h2>Zugriff verweigert</h2>
+        <p>Du wurdest vom Host dieser Session gesperrt.</p>
+    </div>
+} @else if (!isJoined()) {
     <div class="join-container">
         <h2>Lobby beitreten</h2>
         <input type="text" [(ngModel)]="inputName" placeholder="Dein Name">
