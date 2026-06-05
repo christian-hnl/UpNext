@@ -11,6 +11,22 @@
     }
 </ul>
 
+<div class="host-controls">
+    <div class="device-selector">
+        <label for="deviceSelect">Wiedergabegerät:</label>
+        <select id="deviceSelect" (change)="onDeviceChange($event)" [value]="selectedDeviceId()">
+            @for (device of devices(); track device.id) {
+                <option [value]="device.id">{{ device.name }} {{ device.is_active ? '(Aktiv)' : '' }}</option>
+            } @empty {
+                <option value="">Keine Geräte gefunden. Öffne Spotify!</option>
+            }
+        </select>
+        <button (click)="loadDevices()">Aktualisieren</button>
+    </div>
+
+    <button class="end-session-btn" (click)="endSession()">Session beenden</button>
+</div>
+
 <app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
 
 

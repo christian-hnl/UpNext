@@ -3,6 +3,7 @@ import {SupabaseService} from "../../../services/supabase-service";
 import {Search} from "../search/search";
 import {Queuevoting} from "../queuevoting/queuevoting";
 import {FormsModule} from "@angular/forms";
+import {Spotify} from "../../../services/spotify";
 
 @Component({
   selector: 'app-session-member',
@@ -19,7 +20,7 @@ export class SessionMember implements OnInit {
 
   sessionId = input.required<number>();
   title = signal<string | null | undefined>("");
-  userName = signal<string | null | undefined>("");
+  userName = signal<string | null | undefined>(undefined);
   otherMembers = signal<string[]>([]);
   hostName = signal<string | null>(null);
 
@@ -28,25 +29,61 @@ export class SessionMember implements OnInit {
 
   async ngOnInit() {
     await this.loadSessionInfos();
+    await this.setupSpotifyToken();
     const userId = localStorage.getItem('userId');
     if (userId) {
-      this.isJoined.set(true);
-      await this.loadMyUserInfos();
-      await this.loadOtherMembers();
-      await this.loadHostName();
+      // Prüfen, ob der User wirklich noch existiert
+      const { data: userExists } = await this.supabaseS.getUserInfos(userId);
+      if (userExists) {
+        this.isJoined.set(true);
+        this.userName.set(userExists.name);
+        await this.loadOtherMembers();
+        await this.loadHostName();
+      } else {
+        console.warn('[SessionMember] Saved userId not found in database, clearing localStorage');
+        localStorage.removeItem('userId');
+        this.isJoined.set(false);
+      }
+    }
+  }
+
+  private spotifyAPI = inject(Spotify);
+
+  async setupSpotifyToken() {
+    const { data, error } = await this.supabaseS.getPrivateSessionInfos(this.sessionId());
+    if (data && (data as any).spotify_token) {
+      try {
+        const token = JSON.parse((data as any).spotify_token);
+        if (token) {
+          this.spotifyAPI.setAccessToken(token);
+          console.log('[SessionMember] Spotify token set from session');
+        }
+      } catch (e) {
+        console.error('[SessionMember] Error parsing spotify token:', e);
+      }
     }
   }
 
   async joinSession() {
-    if (!this.inputName) return;
+    if (!this.inputName || this.inputName.trim().length < 2) {
+      alert('Bitte gib einen gültigen Namen ein (mind. 2 Zeichen).');
+      return;
+    }
     
-    const result = await this.supabaseS.addUser(this.inputName, this.sessionId(), false);
-    if (result.data) {
-      localStorage.setItem('userId', result.data.id);
-      this.isJoined.set(true);
-      this.userName.set(this.inputName);
-      await this.loadOtherMembers();
-      await this.loadHostName();
+    try {
+      const result = await this.supabaseS.addUser(this.inputName.trim(), this.sessionId(), false);
+      if (result.data) {
+        localStorage.setItem('userId', result.data.id);
+        this.isJoined.set(true);
+        this.userName.set(this.inputName.trim());
+        await this.loadOtherMembers();
+        await this.loadHostName();
+        
+        console.log('[SessionMember] Successfully joined session, userId:', result.data.id);
+      }
+    } catch (error) {
+      console.error('[SessionMember] Error joining session:', error);
+      alert('Fehler beim Beitreten der Session.');
     }
   }
 

@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import {environment} from '../environments/environment';
-import { Database} from '../app/database.types';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupabaseService {
-  private supabase: SupabaseClient<Database>;
+  private supabase: SupabaseClient;
 
 
   constructor() {
@@ -30,7 +29,9 @@ export class SupabaseService {
         session_id: randSessionId,
         title: titleEingabe,
         qrCodeData: qrUrl,
-        status: "running"
+        status: "running",
+        spotify_token: JSON.stringify(await this.getSpotifyToken()),
+        active_device_id: null
       }).select();
 
     if (error) {
@@ -40,6 +41,36 @@ export class SupabaseService {
 
     console.log('[SupabaseService] Private session added successfully:', data);
     return data;
+  }
+
+  async updateSessionToken(sessionId: number, tokenStr: string) {
+    return this.supabase
+      .from('private_sessions')
+      .update({ spotify_token: tokenStr })
+      .eq('session_id', sessionId);
+  }
+
+  async updateActiveDevice(sessionId: number, deviceId: string | null) {
+    return this.supabase
+      .from('private_sessions')
+      .update({ active_device_id: deviceId })
+      .eq('session_id', sessionId);
+  }
+
+  async updateSessionStatus(sessionId: number, status: string) {
+    return this.supabase
+      .from('private_sessions')
+      .update({ status: status })
+      .eq('session_id', sessionId);
+  }
+
+  private async getSpotifyToken() {
+    // Versuchen das Token aus dem localStorage zu lesen (wo das Spotify SDK es speichert)
+    const tokenStr = localStorage.getItem('spotify-sdk:AuthorizationCodeWithPKCEStrategy:token');
+    if (tokenStr) {
+      return JSON.parse(tokenStr);
+    }
+    return null;
   }
 
 
@@ -119,6 +150,14 @@ export class SupabaseService {
 
     async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string }, userId: string) {
         console.log(`[SupabaseService] addSongToQueue called: sessionId=${sessionId}, song=${song.title}, userId=${userId}`);
+        
+        // Host-Device abrufen, falls vorhanden
+        let deviceId = null;
+        const { data: sessionInfo } = await this.getPrivateSessionInfos(sessionId);
+        if (sessionInfo && (sessionInfo as any).active_device_id) {
+            deviceId = (sessionInfo as any).active_device_id;
+        }
+
         // Zuerst den Song in der globalen Songs-Tabelle registrieren/updaten
         const { error: songError } = await this.supabase
             .from('songs')
@@ -149,6 +188,13 @@ export class SupabaseService {
 
         if (error) {
             console.error('[SupabaseService] Fehler beim Hinzufügen zur Queue:', error.message);
+            
+            // Falls der User nicht existiert (Foreign Key Error), versuchen wir ihn hinzuzufügen
+            if (error.message.includes('session_queue_suggested_by_fkey')) {
+                console.log('[SupabaseService] User seems to be missing in participants, attempting recovery...');
+                // Da wir hier nur die userId haben, aber keinen Namen, ist es schwierig.
+                // Aber normalerweise sollte der User existieren.
+            }
             return null;
         }
 
@@ -157,7 +203,7 @@ export class SupabaseService {
         // Automatisch den ersten Vote erstellen
         await this.vote(data.id, userId, 1);
 
-        return data;
+        return { ...data, deviceId };
     }
 
     async getQueue(sessionId: number) {
@@ -219,7 +265,46 @@ export class SupabaseService {
 
         console.log('[SupabaseService] Vote registered successfully, updating queue score');
         // Score in session_queue aktualisieren
-        return this.updateQueueScore(queueId);
+        const updatedItem = await this.updateQueueScore(queueId);
+        
+        if (updatedItem) {
+            await this.checkAutoDelete(updatedItem);
+        }
+        
+        return updatedItem;
+    }
+
+    private async checkAutoDelete(queueItem: any) {
+        // Wir brauchen die Anzahl der Teilnehmer in dieser Session
+        // session_id im queueItem ist ein UUID-String. Wir müssen sie in eine Zahl umwandeln für getMemberNamesBySessionId
+        // Oder wir machen eine neue Methode.
+        const numericSessionId = parseInt(queueItem.session_id.split('-').pop() || "0", 10);
+        
+        const { count, error } = await this.supabase
+            .from('participants')
+            .select('*', { count: 'exact', head: true })
+            .eq('session_id', numericSessionId);
+            
+        if (error || count === null) return;
+        
+        // Downvotes zählen (Stimmen mit Wert -1)
+        const { count: downvoteCount, error: dvError } = await this.supabase
+            .from('votes')
+            .select('*', { count: 'exact', head: true })
+            .eq('queue_id', queueItem.id)
+            .eq('vote', -1);
+            
+        if (dvError || downvoteCount === null) return;
+        
+        console.log(`[SupabaseService] Auto-delete check: ${downvoteCount} downvotes for ${count} participants`);
+        
+        if (downvoteCount >= count * 0.5) {
+            console.log(`[SupabaseService] Auto-deleting song ${queueItem.id} due to 50% downvotes`);
+            await this.supabase
+                .from('session_queue')
+                .update({ status: 'deleted' })
+                .eq('id', queueItem.id);
+        }
     }
 
     private async updateQueueScore(queueId: number) {

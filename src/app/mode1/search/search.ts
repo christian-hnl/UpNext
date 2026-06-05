@@ -25,12 +25,42 @@ export class Search implements OnInit, OnDestroy{
   ngOnInit() {
     this.searchSubscription = this.searchControl.valueChanges
         .pipe(
-            debounceTime(500),
+            debounceTime(300),
             distinctUntilChanged()
         )
         .subscribe((searchTerm) => {
           this.performSearch(searchTerm);
         });
+
+    this.setupQueueSubscription();
+  }
+
+  setupQueueSubscription() {
+    this.supabaseService.subscribeToQueue(this.sessionId(), (payload) => {
+      console.log('[Search] Queue change detected via realtime subscription:', payload);
+      this.updateSearchTracksFromQueue();
+    });
+  }
+
+  async updateSearchTracksFromQueue() {
+    if (this.searchTracks.length === 0) return;
+
+    try {
+      const { data: currentQueue } = await this.supabaseService.getQueue(this.sessionId());
+      const queuedIdsMap = new Map(currentQueue?.map(item => [item.spotify_id, item]) || []);
+
+      this.searchTracks = this.searchTracks.map(track => {
+        const queueItem = queuedIdsMap.get(track.uri);
+        return {
+          ...track,
+          votes: queueItem?.score || 0,
+          isQueued: !!queueItem,
+          queueId: queueItem?.id
+        };
+      });
+    } catch (error) {
+      console.error('[Search] Fehler beim Aktualisieren der Suchergebnisse:', error);
+    }
   }
 
   async performSearch(term: string | null) {
@@ -69,12 +99,13 @@ export class Search implements OnInit, OnDestroy{
   }
 
   async upvote(track: any) {
-    if (!track.queueId) return;
+    const queueId = track.queueId;
+    if (!queueId) return;
     const userId = localStorage.getItem('userId');
     if (!userId) return;
 
     try {
-      const updatedQueueItem = await this.supabaseService.vote(track.queueId, userId, 1);
+      const updatedQueueItem = await this.supabaseService.vote(queueId, userId, 1);
       if (updatedQueueItem) {
         track.votes = updatedQueueItem.score;
       } else {
@@ -86,12 +117,13 @@ export class Search implements OnInit, OnDestroy{
   }
 
   async downvote(track: any) {
-    if (!track.queueId) return;
+    const queueId = track.queueId;
+    if (!queueId) return;
     const userId = localStorage.getItem('userId');
     if (!userId) return;
 
     try {
-      const updatedQueueItem = await this.supabaseService.vote(track.queueId, userId, -1);
+      const updatedQueueItem = await this.supabaseService.vote(queueId, userId, -1);
       if (updatedQueueItem) {
         track.votes = updatedQueueItem.score;
       } else {
@@ -104,16 +136,20 @@ export class Search implements OnInit, OnDestroy{
 
   async addToQueue(track: any) {
     console.log('[Search] addToQueue called for track:', track.name);
+    if (track.isQueued) return;
+    
+    // UI sofort aktualisieren für besseres Feedback
+    track.isQueued = true;
+    
     try {
       const userId = localStorage.getItem('userId');
       if (!userId) {
+        track.isQueued = false;
         console.error('[Search] No userId found in localStorage');
         return;
       }
 
-      await this.spotifyAPI.addToQueue(track.uri);
-
-      const newQueueItem = await this.supabaseService.addSongToQueue(
+      const newQueueItem: any = await this.supabaseService.addSongToQueue(
           this.sessionId(),
           {
             spotify_id: track.uri,
@@ -124,15 +160,19 @@ export class Search implements OnInit, OnDestroy{
       );
 
       if (newQueueItem) {
-        track.isQueued = true;
+        // Spotify-API mit deviceId aufrufen, falls vorhanden
+        await this.spotifyAPI.addToQueue(track.uri, newQueueItem.deviceId);
+
         track.queueId = newQueueItem.id;
         // Den Score direkt aus dem neu erstellten (und gevoteten) Item nehmen
         track.votes = newQueueItem.score;
       }
 
       console.log('Song zur Warteschlange hinzugefügt:', track.name);
-    } catch (error) {
+    } catch (error: any) {
+      track.isQueued = false; // Rückgängig machen bei Fehler
       console.error('Fehler beim Hinzufügen zur Warteschlange:', error);
+      alert(error.message || 'Fehler beim Hinzufügen zur Warteschlange');
     }
   }
 

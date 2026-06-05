@@ -33,7 +33,13 @@ export class Queuevoting implements OnInit {
     console.log('[Queuevoting] Setting up queue subscription');
     this.supabaseS.subscribeToQueue(this.sessionId(), (payload) => {
       console.log('[Queuevoting] Queue change detected via realtime subscription. Payload:', payload);
-      this.loadQueue();
+      // Wenn ein Song gelöscht wurde (status='deleted'), aus der lokalen Liste entfernen
+      if (payload.eventType === 'UPDATE' && payload.new.status === 'deleted') {
+        this.queue.update(q => q.filter(item => item.id !== payload.new.id));
+      } else {
+        // Bei allen anderen Änderungen (neu, update, etc) die Queue neu laden
+        this.loadQueue();
+      }
     });
   }
 
