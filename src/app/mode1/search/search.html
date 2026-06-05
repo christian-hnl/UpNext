@@ -18,13 +18,13 @@
                 </div>
 
                 <div class="track-votes">
-                    <button class="vote-btn up" [class.hidden]="!song.isQueued" (click)="upvote(song.queueId)" aria-label="Upvote">
+                    <button class="vote-btn up" [class.hidden]="!song.isQueued" (click)="upvote(song)" aria-label="Upvote">
                         <svg viewBox="0 0 24 24">
                             <path d="M7 14l5-5 5 5z"/>
                         </svg>
                     </button>
                     <span class="vote-count">{{ song.votes || 0 }}</span>
-                    <button class="vote-btn down" [class.hidden]="!song.isQueued" (click)="downvote(song.queueId)" aria-label="Downvote">
+                    <button class="vote-btn down" [class.hidden]="!song.isQueued" (click)="downvote(song)" aria-label="Downvote">
                         <svg viewBox="0 0 24 24">
                             <path d="M7 10l5 5 5-5z"/>
                         </svg>

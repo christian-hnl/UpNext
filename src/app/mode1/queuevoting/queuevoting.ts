@@ -1,5 +1,6 @@
-import {Component, inject, input, OnInit, signal} from "@angular/core";
+import {Component, inject, input, OnDestroy, OnInit, signal} from "@angular/core";
 import {SupabaseService} from "../../../services/supabase-service";
+import {Spotify} from "../../../services/spotify";
 
 @Component({
   selector: "app-queuevoting",
@@ -7,15 +8,35 @@ import {SupabaseService} from "../../../services/supabase-service";
   templateUrl: "./queuevoting.html",
   styleUrl: "./queuevoting.scss",
 })
-export class Queuevoting implements OnInit {
+export class Queuevoting implements OnInit, OnDestroy {
   sessionId = input.required<number>();
   private supabaseS = inject(SupabaseService);
+  private spotifyAPI = inject(Spotify);
 
   queue = signal<any[]>([]);
+  currentlyPlaying = signal<any>(null);
+  private playbackInterval: any;
 
   async ngOnInit() {
     await this.loadQueue();
+    await this.loadCurrentlyPlaying();
     this.setupQueueSubscription();
+    
+    // Playback alle 5 Sekunden prüfen (da Spotify keine Webhooks für Playback-Events sendet)
+    this.playbackInterval = setInterval(() => this.loadCurrentlyPlaying(), 5000);
+  }
+
+  async loadCurrentlyPlaying() {
+    try {
+      const result = await this.spotifyAPI.getCurrentlyPlaying();
+      if (result && result.item) {
+        this.currentlyPlaying.set(result.item);
+      } else {
+        this.currentlyPlaying.set(null);
+      }
+    } catch (e) {
+      console.error('[Queuevoting] Fehler beim Laden des aktuellen Tracks:', e);
+    }
   }
 
   async loadQueue() {
@@ -33,6 +54,8 @@ export class Queuevoting implements OnInit {
     console.log('[Queuevoting] Setting up queue subscription');
     this.supabaseS.subscribeToQueue(this.sessionId(), (payload) => {
       console.log('[Queuevoting] Queue change detected via realtime subscription. Payload:', payload);
+      
+      // Bei JEDEM Event die Queue neu laden, um die UI aktuell zu halten
       this.loadQueue();
     });
   }
@@ -45,8 +68,6 @@ export class Queuevoting implements OnInit {
       return;
     }
     await this.supabaseS.vote(queueId, userId, 1);
-    // Wir laden die Queue hier auch manuell, falls Realtime mal hakt, 
-    // aber eigentlich sollte subscribeToQueue das erledigen.
     await this.loadQueue();
   }
 
@@ -59,5 +80,18 @@ export class Queuevoting implements OnInit {
     }
     await this.supabaseS.vote(queueId, userId, -1);
     await this.loadQueue();
+  }
+
+  formatDuration(ms: number | undefined): string {
+    if (!ms) return '0:00';
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  }
+
+  ngOnDestroy() {
+    if (this.playbackInterval) {
+      clearInterval(this.playbackInterval);
+    }
   }
 }
