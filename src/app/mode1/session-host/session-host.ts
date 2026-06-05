@@ -7,8 +7,6 @@ import {Router} from "@angular/router";
 @Component({
   selector: "app-session-member-host",
   imports: [
-    Qrcode,
-    Queuevoting
   ],
   templateUrl: "./session-host.html",
   styleUrl: "./session-host.scss",

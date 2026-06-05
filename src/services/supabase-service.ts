@@ -118,6 +118,33 @@ export class SupabaseService {
             .maybeSingle();
     }
 
+    /*
+    checkIfSessionIsValid(sessionId: number)
+    checkt ob die uebergebene id valid ist und dann ob sie entweder in private_session oder public_session vorhanden ist
+    return falls id valid ist true
+     */
+    async checkIfSessionIsValid(sessionId: number): Promise<boolean> {
+        if (sessionId.toString().length !== 6) {return false}
+        if (sessionId.toString().charAt(0) !== '1' && sessionId.toString().charAt(0) !== '2') {return false}
+
+        const privateCheck = await this.supabase
+            .from('private_sessions')
+            .select('session_id')
+            .eq('session_id', sessionId);
+        if (privateCheck.data && privateCheck.data.length > 0) {
+            return true;
+        }
+
+        const publicCheck = await this.supabase
+            .from('public_sessions')
+            .select('session_id')
+            .eq('session_id', sessionId);
+        if (publicCheck.data && publicCheck.data.length > 0) {
+            return true;
+        }
+
+        return false;
+    }
 
 
     //queue logic
