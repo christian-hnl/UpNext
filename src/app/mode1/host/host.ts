@@ -85,14 +85,19 @@ export class Host implements OnInit{
     const data = await this.supabaseService.addPrivateSession(this.title());
     if (data && data[0] && data[0].qrCodeData) {
       console.log('[Host] Session created successfully. Data:', data[0]);
-      // Extract numeric part from UUID string (00000000-0000-0000-0000-000000123456)
-    const sidStr = data[0].session_id;
-      this.sessionId.set(sidStr);
+      const sessionId = data[0].session_id;
+      this.sessionId.set(sessionId);
 
       const profile = this.userProfile();
       if (profile) {
         console.log('[Host] Registering host user in database:', profile.display_name);
-        await this.supabaseService.addUser(profile.display_name, this.sessionId(), true);
+        const { data: hostUser, error: hostUserError } = await this.supabaseService.addUser(profile.display_name, this.sessionId(), true);
+        if (hostUserError || !hostUser) {
+          console.error('[Host] Failed to register host user:', hostUserError?.message);
+          return;
+        }
+        // WICHTIG: Host-userId speichern – sonst scheitert der Host-Check in session-host (→ 404)
+        localStorage.setItem('userId', hostUser.id);
       }
 
       console.log('[Host] Navigating to session-host view with sessionId:', this.sessionId());

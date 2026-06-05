@@ -160,14 +160,6 @@ export class SessionMember implements OnInit {
     this.title.set(data?.title);
   }
 
-  async loadMyUserInfos() {
-    const userId = localStorage.getItem('userId');
-    if (userId === null) return;
-
-    const { data, error } = await this.supabaseS.getUserInfos(userId);
-    this.userName.set(data?.name);
-  }
-
   async loadOtherMembers() {
     const {data, error} = await this.supabaseS.getMemberNamesBySessionId(this.sessionId());
 

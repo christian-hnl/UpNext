@@ -1,165 +1,135 @@
-// Spotify Colors
-$spotify-bg: #121212;
-$spotify-hover: #2a2929;
-$text-main: #ffffff;
-$text-sub: #b3b3b3;
+:host { display: block; }
 
+/* The search panel is now a self-contained card */
 .search-container {
-  padding: 32px;
-  background-color: $spotify-bg;
-  min-height: 100vh;
-  color: $text-main;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-
-  // WICHTIG: Das hier überschreibt deinen globalen * Selektor für diese Komponente
-  * {
-    background-color: transparent;
-  }
+  background: var(--bg-raised);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-5);
+  color: var(--text-1);
 }
 
-// Search Input
+/* --- Search input --- */
 .input-wrapper {
   position: relative;
-  max-width: 400px;
-  margin-bottom: 40px;
+  max-width: 480px;
+  margin: 0 auto var(--space-5);
 
   .search-icon {
     position: absolute;
-    left: 16px;
+    left: 18px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    fill: $text-main;
+    width: 18px;
+    height: 18px;
+    fill: var(--text-3);
+    pointer-events: none;
   }
 
   input {
     width: 100%;
-    background-color: #242424 !important; // !important um den globalen Style zu schlagen
-    color: $text-main;
-    border: 1px solid transparent;
-    border-radius: 500px;
-    padding: 14px 16px 14px 48px;
-    font-size: 14px;
+    background: var(--bg-input);
+    color: var(--text-1);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-pill);
+    padding: 13px 18px 13px 46px;
+    font-size: 0.95rem;
     outline: none;
-    transition: all 0.3s ease;
+    transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease;
 
-    &:hover, &:focus {
-      background-color: #2a2929 !important;
-      border-color: #444;
-    }
-
-    &::placeholder {
-      color: $text-sub;
-    }
+    &:hover { background: var(--bg-raised-2); }
+    &:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow); }
+    &::placeholder { color: var(--text-3); }
   }
 }
 
-// Result-Liste
+/* --- Result list --- */
 .search-results {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-width: 900px; // Begrenzt die Breite, damit es nicht so extrem in die Länge gezogen wird
 
   .track-row {
     display: flex;
     align-items: center;
-    padding: 8px 16px;
-    border-radius: 4px;
-    margin-bottom: 2px;
-    transition: background-color 0.2s ease;
-    cursor: default;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    transition: background-color .18s ease;
 
     &:hover {
-      background-color: $spotify-hover !important; // Hover auf der ganzen Zeile
-
-      .track-votes .vote-btn {
-        opacity: 1; // Buttons beim Hovern der Zeile voll sichtbar machen
-      }
+      background: var(--overlay-hover);
+      .track-votes .vote-btn { opacity: 1; }
     }
 
-    // Cover Image
     .track-image {
-      width: 40px;
-      height: 40px;
-      border-radius: 4px;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
       object-fit: cover;
-      margin-right: 16px;
+      margin-right: 14px;
       flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
     }
 
-    // Song & Artist Info
     .track-info {
       display: flex;
       flex-direction: column;
       flex: 1;
-      min-width: 0; // Verhindert, dass langer Text das Layout zerschießt
+      min-width: 0;
       padding-right: 16px;
 
       .track-name {
-        font-size: 16px;
-        color: $text-main;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-1);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        margin-bottom: 4px;
+        margin-bottom: 3px;
       }
 
       .track-artist {
-        font-size: 14px;
-        color: $text-sub;
+        font-size: 0.82rem;
+        color: var(--text-2);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
     }
 
-    // Custom Voting Section
     .track-votes {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-right: 32px;
+      gap: 10px;
+      margin-right: 24px;
       flex-shrink: 0;
 
       .vote-btn {
         border: none;
+        background: transparent;
         cursor: pointer;
-        opacity: 0.3;
-        transition: opacity 0.2s, transform 0.1s;
+        opacity: 0.35;
+        transition: opacity .2s, transform .1s;
         padding: 4px;
         display: flex;
         align-items: center;
         justify-content: center;
 
-        svg {
-          width: 16px;
-          height: 16px;
-          fill: $text-sub;
-        }
+        svg { width: 16px; height: 16px; fill: var(--text-2); transition: fill .2s; }
 
-        &:hover {
-          opacity: 1;
-          svg { fill: $text-main; }
-        }
-
-        &.hidden {
-          visibility: hidden;
-          pointer-events: none;
-        }
-
-        &:active {
-          transform: scale(0.9);
-        }
+        &:hover { opacity: 1; svg { fill: var(--text-1); } }
+        &.hidden { visibility: hidden; pointer-events: none; }
+        &:active { transform: scale(0.9); }
       }
 
       .vote-count {
         min-width: 20px;
         text-align: center;
-        font-size: 14px;
-        font-weight: 500;
-        color: $text-sub;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-1);
+        font-variant-numeric: tabular-nums;
       }
     }
 
@@ -170,12 +140,11 @@ $text-sub: #b3b3b3;
       padding: 8px;
     }
 
-    // Dauer des Songs
     .track-duration {
-      color: $text-sub;
-      font-size: 14px;
+      color: var(--text-3);
+      font-size: 0.82rem;
       font-variant-numeric: tabular-nums;
-      width: 40px;
+      width: 44px;
       text-align: right;
       flex-shrink: 0;
     }
@@ -183,36 +152,31 @@ $text-sub: #b3b3b3;
     .track-actions {
       display: flex;
       align-items: center;
-      margin-right: 16px;
+      margin-right: 12px;
       flex-shrink: 0;
 
       .add-to-queue-btn {
         border: none;
+        background: transparent;
         cursor: pointer;
         padding: 8px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: $text-sub;
-        transition: all 0.2s ease;
+        color: var(--text-2);
+        transition: all .2s ease;
 
-        &:hover {
-          color: #1DB954; // Spotify Green
-          transform: scale(1.1);
-        }
-
-        &:active {
-          transform: scale(0.9);
-        }
+        &:hover { color: var(--accent); background: var(--overlay-hover); transform: scale(1.08); }
+        &:active { transform: scale(0.92); }
       }
     }
   }
 
-  // Fallback
   .no-results {
-    color: $text-sub;
-    font-size: 16px;
-    padding: 20px 16px;
+    color: var(--text-3);
+    font-size: 0.95rem;
+    padding: 18px 12px;
+    text-align: center;
   }
 }

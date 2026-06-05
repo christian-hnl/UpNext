@@ -1,4 +1,4 @@
-import {Component, Input, input, signal} from "@angular/core";
+import {Component, input} from "@angular/core";
 import {QRCodeComponent} from "angularx-qrcode";
 
 @Component({
