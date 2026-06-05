@@ -1,161 +1,9 @@
-/* 1. Schriftart importieren (ähnlich wie im Bild) */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+@use '../../variables' as *;
 
-/* 2. Basis-Styling für die Angular-Komponente (Dark Mode) */
+
 :host {
   display: block;
-  min-height: 100vh;
-  background-color: #0b0c10; // Sehr dunkles Blau/Schwarz
-  color: #ffffff;
-  font-family: 'Montserrat', sans-serif; // Überall diese Schriftart verwenden
   padding: 20px 15px;
-}
-
-// --- HEADER BEREICH ---
-.header-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2rem;
-  margin-bottom: 1.5rem;
-
-  .logo {
-    width: 60px;
-    height: auto;
-    margin-right: 12px;
-  }
-
-  .title {
-    margin: 0;
-    font-size: 2.5rem;
-    font-weight: 800;       // Sehr fett, wie im Bild
-    letter-spacing: 1px;
-  }
-}
-
-// --- ZWISCHENTEXT (GEMEINSAM MUSIK HÖREN) ---
-// Spricht das div an, das direkt nach dem Header kommt
-.header-container + div {
-  text-align: center;
-  margin-bottom: 2.5rem;
-
-  p {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;  // Etwas Abstand zwischen den Buchstaben
-  }
-}
-
-// --- MODES BEREICH ---
-.modes-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;              // Abstand zwischen den beiden Boxen
-}
-
-
-  // --- BILD (nur in der Mode 1 Box) ---
-  .mode-image {
-    position: absolute;
-    right: -10px;           // Schiebt das Bild sanft an den rechten Rand
-    bottom: 0;
-    height: 100%;           // Nutzt die volle Höhe der Box aus (kannst du anpassen)
-    width: auto;
-    object-fit: contain;
-    z-index: -1;            // Legt das Bild hinter den Text, aber VOR den Hintergrund
-    opacity: 0.85;          // Macht es minimal transparent, damit es hochwertiger wirkt
-    pointer-events: none;   // Verhindert, dass das Bild den Klick auf den Link blockiert
-    mix-blend-mode: lighten; // oder 'lighten'
-  }
-
-
-
-
-// --- ZWISCHENTEXT (GEMEINSAM MUSIK HÖREN) ---
-// Besser mit Klasse ansprechen
-.subtitle-container {
-  text-align: center;
-  margin-bottom: 2.5rem;
-
-  p {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-  }
-}
-
-// --- SESSION JOIN BEREICH ---
-.session-join-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 3.5rem;
-  width: 100%;
-  max-width: 360px;
-  margin-left: auto;
-  margin-right: auto;
-
-  .session-input {
-    flex: 1;
-    background-color: #12141d;
-    border: 2px solid #2a2d3e;
-    border-radius: 8px;
-    padding: 14px 16px;
-    color: #ffffff;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-
-    -moz-appearance: textfield;
-    appearance: textfield;
-
-    /* Pfeile für Chrome, Safari, Edge und Opera ausblenden */
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-      }
-
-    &::placeholder {
-      color: #5c6275;
-      font-weight: 400;
-    }
-
-    // Leichter Glow beim Tippen
-    &:focus {
-      border-color: #1ed760;
-      box-shadow: 0 0 10px rgba(30, 215, 96, 0.2);
-    }
-  }
-
-  .join-btn {
-    background-color: #1ed760;
-    color: #0b0c10;
-    border: none;
-    border-radius: 8px;
-    padding: 14px 24px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 800;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-
-    &:hover {
-      background-color: #1db954;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(30, 215, 96, 0.3);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
 }
 
 // --- MODES BEREICH ---
@@ -171,7 +19,7 @@
   z-index: 0;
   width: 100%;
   max-width: 360px;
-  background-color: #12141d;
+  background-color: $color-bg-card;
   border-radius: 16px;
   padding: 24px 20px;
 
@@ -189,28 +37,27 @@
 
   // --- BOX 1: PRIVATE PARTY ---
   &:nth-child(1) {
-    border: 2px solid #1ed760;
+    border: 2px solid $color-green-main;
     box-shadow: 0 0 15px rgba(30, 215, 96, 0.25), inset 0 0 10px rgba(30, 215, 96, 0.1);
 
     .mode-image {
-      object-fit: contain; // Hält die Figuren im Rahmen
+      object-fit: contain;
       width: 45%;
-      right: -10px;        // Leicht nach rechts geschoben
+      right: -10px;
     }
   }
 
   // --- BOX 2: EVENT ---
   &:nth-child(2) {
-    border: 2px solid #b721ff;
+    border: 2px solid $color-purple-main;
     box-shadow: 0 0 15px rgba(183, 33, 255, 0.25), inset 0 0 10px rgba(183, 33, 255, 0.1);
 
     .mode-image {
-      object-fit: cover;   // Füllt den rechten Bereich komplett ohne zu verzerren
+      object-fit: cover;
       width: 55%;
       right: 0;
-      border-radius: 0 16px 16px 0; // Passt sich den runden Ecken der Box an
+      border-radius: 0 16px 16px 0;
 
-      // Erzeugt einen weichen Übergang (Fade-out) nach links zum Text hin
       -webkit-mask-image: linear-gradient(to right, transparent 0%, black 40%);
       mask-image: linear-gradient(to right, transparent 0%, black 40%);
     }
@@ -220,19 +67,19 @@
   .text-content {
     display: flex;
     flex-direction: column;
-    z-index: 2; // Muss über dem Bild liegen
+    z-index: 2;
     max-width: 55%;
-    background: transparent !important; // Überschreibt schwarze Blöcke
+    background: transparent !important;
   }
 
   .mode-box {
     font-size: 1.4rem;
     font-weight: 800;
-    color: #ffffff;
+    color: $color-text-main;
     text-decoration: none;
     margin-bottom: 6px;
     letter-spacing: 0.5px;
-    background: transparent !important; // Überschreibt schwarze Blöcke
+    background: transparent !important;
 
     &::after {
       content: '';
@@ -246,9 +93,9 @@
     margin: 0;
     font-size: 0.75rem;
     font-weight: 600;
-    color: #a0a5b5;
+    color: $color-text-muted;
     letter-spacing: 0.5px;
-    background: transparent !important; // Überschreibt schwarze Blöcke
+    background: transparent !important;
   }
 
   // --- BILDER BASIS-STYLES ---
@@ -256,7 +103,7 @@
     position: absolute;
     bottom: 0;
     height: 100%;
-    z-index: 1;             // Zwischen Text und Hintergrund
+    z-index: 1;
     opacity: 0.85;
     pointer-events: none;
     mix-blend-mode: lighten;
