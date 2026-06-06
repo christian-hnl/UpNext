@@ -12,6 +12,8 @@ type Participant = Database["public"]["Tables"]["participants"]["Row"];
 @Component({
   selector: "app-session-member-host",
   imports: [
+    Qrcode,
+    Queuevoting
   ],
   templateUrl: "./session-host.html",
   styleUrl: "./session-host.scss",
