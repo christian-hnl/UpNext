@@ -17,16 +17,25 @@ export class JoinSession {
 
   sessionId = signal<number | null>(null);
 
+  errorMess = signal<string | null>(null);
+
 
   async checkSessionAndNavigateToSetName() {
+    //check ob session-id is valid
+    this.errorMess.set(null);
+
     const sId = this.sessionId();
     if (!sId) {
-      console.warn('Bitte eine Session-ID eingeben.');
+      this.errorMess.set("Gib eine Session-ID ein.")
       return;
     }
 
     if (await this.supabaseS.checkIfSessionIsValid(sId)) {
       await this.router.navigate(['/set-name', sId]);
+    } else {
+      this.errorMess.set("Keine gültige Session-ID.")
     }
   }
+
+
 }

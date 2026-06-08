@@ -56,13 +56,20 @@ html, body {
 
 .session-join-container {
   display: flex;
-  flex-wrap: nowrap;
+  flex-direction: column;
   justify-content: center;
-  align-items: stretch;
+  align-items: center;
   gap: 10px;
   width: 100%;
-  max-width: 95%;
-  margin: 2% auto 2% auto;
+  max-width: 380px;
+  margin: 20px auto;
+
+  .input-row {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 10px;
+  }
 }
 
 // Input-Klasse
@@ -229,4 +236,15 @@ html, body {
 
 .welcome-join-wrapper {
   margin-bottom: 2.5rem;
+}
+
+
+.error-message {
+  width: 100%;            // Passt sich der Breite an
+  color: #ff4d4d;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: left;
+  margin-top: 4px;        // Kleiner Abstand nach oben
+  padding-left: 5px;      // Bündig zum Input
 }

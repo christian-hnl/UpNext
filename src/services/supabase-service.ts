@@ -18,6 +18,7 @@ export class SupabaseService {
     return `00000000-0000-0000-0000-${id.toString().padStart(12, "0")}`;
   }
 
+
   async addPrivateSession(titleEingabe: string) {
     console.log('[SupabaseService] addPrivateSession called with title:', titleEingabe);
     const randSessionId = Math.floor(100000 + Math.random() * 900000);
@@ -60,6 +61,8 @@ export class SupabaseService {
           .maybeSingle();
   }
 
+
+  //getInfos
   async getPrivateSessionInfos(id: number) {
     return this.supabase
       .from('private_sessions')
@@ -124,24 +127,16 @@ export class SupabaseService {
     return falls id valid ist true
      */
     async checkIfSessionIsValid(sessionId: number): Promise<boolean> {
-        if (sessionId.toString().length !== 6) {return false}
-        if (sessionId.toString().charAt(0) !== '1' && sessionId.toString().charAt(0) !== '2') {return false}
-
-        const privateCheck = await this.supabase
-            .from('private_sessions')
-            .select('session_id')
-            .eq('session_id', sessionId);
-        if (privateCheck.data && privateCheck.data.length > 0) {
-            return true;
+        const idString = sessionId.toString();
+        if (idString.length !== 6 || (idString.charAt(0) !== '1' && idString.charAt(0) !== '2')) {
+            return false;
         }
 
-        const publicCheck = await this.supabase
-            .from('public_sessions')
-            .select('session_id')
-            .eq('session_id', sessionId);
-        if (publicCheck.data && publicCheck.data.length > 0) {
-            return true;
-        }
+        const privateSession = await this.joinPrivateSession(sessionId);
+        if (privateSession.data) return true;
+
+        const publicSession = await this.joinPublicSession(sessionId);
+        if (publicSession.data) return true;
 
         return false;
     }

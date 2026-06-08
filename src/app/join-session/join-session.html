@@ -1,7 +1,12 @@
 
 
-
 <div class="session-join-container">
-    <input class="session-input" [(ngModel)]="sessionId" placeholder="Enter Session-ID" type="number">
-    <button class="join-btn" (click)="checkSessionAndNavigateToSetName()">JOIN</button>
+    <div class="input-row">
+        <input class="session-input" [(ngModel)]="sessionId" placeholder="Enter Session-ID" type="number">
+        <button class="join-btn" (click)="checkSessionAndNavigateToSetName()">JOIN</button>
+    </div>
+
+    @if (errorMess()) {
+        <p class="error-message">{{ errorMess() }}</p>
+    }
 </div>

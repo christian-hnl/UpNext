@@ -19,9 +19,18 @@ export class SetName {
   private supabaseS = inject(SupabaseService);
   private router = inject(Router);
 
+  errorMess = signal<string | null>(null);
 
 
   async createUserAndJoinSession() {
+    this.errorMess.set(null);
+
+    if (!this.userName() || this.userName().trim().length === 0) {
+      this.errorMess.set("Gib einen Namen ein.")
+      this.userName.set("");
+      return;
+    }
+
     const { data: userData, error: userError } = await this.supabaseS.addUser(
         this.userName(),
         this.sessionId(),

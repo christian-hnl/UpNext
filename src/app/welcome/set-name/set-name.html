@@ -8,7 +8,12 @@
 </div>
 
 <div class="session-join-container">
-    <input class="session-input" [(ngModel)]="userName" placeholder="Enter Name" type="text">
-    <button class="join-btn" (click)="createUserAndJoinSession()">JOIN</button>
-</div>
+    <div class="input-row">
+        <input class="session-input" [(ngModel)]="userName" placeholder="Enter Name" type="text">
+        <button class="join-btn" (click)="createUserAndJoinSession()">JOIN</button>
+    </div>
 
+    @if (errorMess()) {
+        <p class="error-message">{{ errorMess() }}</p>
+    }
+</div>
