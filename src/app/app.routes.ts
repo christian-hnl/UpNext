@@ -7,6 +7,9 @@ import { Error } from './error/error';
 import { SessionMember } from './mode1/session-member/session-member';
 import {SessionHost} from "./mode1/session-host/session-host";
 import {SetName} from "./welcome/set-name/set-name";
+import {SessionMemberMode2} from "./mode2/session-member-mode2/session-member-mode2";
+
+
 
 export const routes: Routes = [
   { path: '', redirectTo: '/welcome', pathMatch: 'full' },
@@ -21,7 +24,7 @@ export const routes: Routes = [
   { path: 'mode1/session-member/:sessionId', component: SessionMember },
   { path: 'mode1/session-host/:sessionId', component: SessionHost },
 
-  { path: 'mode2/session-member', component: Mode2 },
+  { path: 'mode2/session-member/:sessionId', component: SessionMemberMode2 },
 
   { path: '404', component: Error },
   { path: '**', redirectTo: '404' },

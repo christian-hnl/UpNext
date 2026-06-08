@@ -12,6 +12,7 @@ import {Router} from "@angular/router";
   templateUrl: "./set-name.html",
   styleUrl: "./set-name.scss",
 })
+
 export class SetName {
   userName = signal("");
 
