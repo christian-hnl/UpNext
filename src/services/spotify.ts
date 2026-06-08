@@ -17,7 +17,6 @@ export class Spotify {
 
   constructor() {
     const redirectUrl = window.location.origin + '/callback';
-    console.log('[Spotify Service] Redirect URL:', redirectUrl)
     
     const strategy = new CustomAuthorizationStrategy(this.clientId, redirectUrl, Scopes.all);
     this.sdk = new SpotifyApi(strategy);
@@ -28,16 +27,13 @@ export class Spotify {
    * Dies erlaubt Mitgliedern, Spotify-Aktionen über das Token des Hosts auszuführen.
    */
   setAccessToken(token: AccessToken) {
-    console.log('[Spotify Service] Manually setting access token');
     this.sdk = SpotifyApi.withAccessToken(this.clientId, token);
   }
 
   async login(): Promise<UserProfile | null> {
-    console.log('[Spotify Service] login called');
     await this.sdk.authenticate();
     try {
       const profile = await this.getMyProfile();
-      console.log('[Spotify Service] Login successful, profile:', profile);
       return profile;
     } catch (e) {
       console.error('[Spotify Service] Error getting profile after login:', e);
@@ -46,7 +42,6 @@ export class Spotify {
   }
 
   async search(search: string) {
-    console.log('[Spotify Service] searching for:', search);
     try {
       return await this.sdk.search(search, ["track"], "AT", 5);
     } catch (e: any) {
@@ -73,10 +68,8 @@ export class Spotify {
   }
 
   async getAvailableDevices() {
-    console.log('[Spotify Service] getAvailableDevices called');
     try {
       const result = await this.sdk.player.getAvailableDevices();
-      console.log('[Spotify Service] Available devices:', result.devices);
       return result.devices;
     } catch (e) {
       console.error('[Spotify Service] Error getting available devices:', e);
@@ -85,10 +78,8 @@ export class Spotify {
   }
 
   async transferPlayback(deviceId: string) {
-    console.log('[Spotify Service] transferPlayback called with deviceId:', deviceId);
     try {
       await this.sdk.player.transferPlayback([deviceId], true);
-      console.log('[Spotify Service] Playback transferred successfully');
     } catch (e) {
       console.error('[Spotify Service] Error transferring playback:', e);
       throw e;
@@ -123,7 +114,6 @@ export class Spotify {
   }
 
   async addToQueue(uri: string, deviceId?: string | null) {
-    console.log('[Spotify Service] addToQueue called with uri:', uri, 'deviceId:', deviceId);
     try {
       if (deviceId) {
         // Wir versuchen sicherzustellen, dass das Gerät aktiv ist
@@ -131,7 +121,6 @@ export class Spotify {
       } else {
         await this.sdk.player.addItemToPlaybackQueue(uri);
       }
-      console.log('[Spotify Service] addToQueue successful');
       return true;
     } catch (e: any) {
       // Falls der Fehler durch einen leeren Body bei 204 verursacht wird, fangen wir ihn hier ab
@@ -143,7 +132,6 @@ export class Spotify {
       
       if (e?.status === 404 && (e?.message?.includes('No active device found') || e?.reason === 'NO_ACTIVE_DEVICE')) {
         if (deviceId) {
-            console.log('[Spotify Service] No active device, but deviceId provided. Trying to transfer playback...');
             try {
                 await this.transferPlayback(deviceId);
                 // Kurz warten und erneut versuchen

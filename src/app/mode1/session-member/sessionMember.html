@@ -4,7 +4,9 @@
         <p class="session-id">Session ID: {{ sessionId() }}</p>
     </header>
 
-    @if (isBlocked()) {
+    @if (loading()) {
+        <p class="loading-hint">Lädt …</p>
+    } @else if (isBlocked()) {
         <div class="blocked-message">
             <h2>Zugriff verweigert</h2>
             <p>Du wurdest vom Host dieser Session gesperrt.</p>

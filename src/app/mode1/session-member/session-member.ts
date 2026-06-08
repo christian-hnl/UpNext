@@ -4,6 +4,7 @@ import {Search} from "../search/search";
 import {Queuevoting} from "../queuevoting/queuevoting";
 import {FormsModule} from "@angular/forms";
 import {Spotify} from "../../../services/spotify";
+import {NotificationService} from "../../shared/notification.service";
 
 @Component({
   selector: 'app-session-member',
@@ -17,6 +18,7 @@ import {Spotify} from "../../../services/spotify";
 })
 export class SessionMember implements OnInit {
   private supabaseS = inject(SupabaseService);
+  private notifications = inject(NotificationService);
 
   sessionId = input.required<number>();
   title = signal<string | null | undefined>("");
@@ -27,31 +29,37 @@ export class SessionMember implements OnInit {
   inputName = "";
   isJoined = signal<boolean>(false);
   isBlocked = signal<boolean>(false);
+  loading = signal<boolean>(true);
 
   async ngOnInit() {
-    await this.loadSessionInfos();
-    await this.setupSpotifyToken();
-    this.setupSessionSubscription();
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-      // Prüfen, ob der User wirklich noch existiert
-      const { data: userExists } = await this.supabaseS.getUserInfos(userId);
-      if (userExists) {
-        if (userExists.status === 'blocked') {
-          this.isBlocked.set(true);
+    try {
+      await this.loadSessionInfos();
+      await this.setupSpotifyToken();
+      this.setupSessionSubscription();
+      const userId = localStorage.getItem('userId');
+      if (userId) {
+        // Prüfen, ob der User wirklich noch existiert
+        const { data: userExists } = await this.supabaseS.getUserInfos(userId);
+        if (userExists) {
+          if (userExists.status === 'blocked') {
+            this.isBlocked.set(true);
+            this.isJoined.set(false);
+            return;
+          }
+          this.isJoined.set(true);
+          this.userName.set(userExists.name);
+          await this.loadOtherMembers();
+          await this.loadHostName();
+          this.setupStatusSubscription(userId);
+        } else {
+          console.warn('[SessionMember] Saved userId not found in database, clearing localStorage');
+          localStorage.removeItem('userId');
           this.isJoined.set(false);
-          return;
         }
-        this.isJoined.set(true);
-        this.userName.set(userExists.name);
-        await this.loadOtherMembers();
-        await this.loadHostName();
-        this.setupStatusSubscription(userId);
-      } else {
-        console.warn('[SessionMember] Saved userId not found in database, clearing localStorage');
-        localStorage.removeItem('userId');
-        this.isJoined.set(false);
       }
+    } finally {
+      // erst nach dem Check rendern -> kein kurzes Aufblitzen der Lobby
+      this.loading.set(false);
     }
   }
 
@@ -62,9 +70,8 @@ export class SessionMember implements OnInit {
     this.sessionChannel = this.supabaseS.supabase
       .channel(`session-status-${this.sessionId()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'private_sessions', filter: `session_id=eq.${this.sessionId()}` }, (payload: any) => {
-        console.log('[SessionMember] Session event detected:', payload.eventType);
         if (payload.eventType === 'DELETE' || (payload.new && payload.new.status === 'finished')) {
-          alert('Die Session wurde vom Host beendet.');
+          this.notifications.info('Die Session wurde vom Host beendet.');
           localStorage.removeItem('userId');
           window.location.href = '/';
         }
@@ -97,7 +104,6 @@ export class SessionMember implements OnInit {
         const token = JSON.parse((data as any).spotify_token);
         if (token) {
           this.spotifyAPI.setAccessToken(token);
-          console.log('[SessionMember] Spotify token set from session');
         }
       } catch (e) {
         console.error('[SessionMember] Error parsing spotify token:', e);
@@ -107,7 +113,7 @@ export class SessionMember implements OnInit {
 
   async joinSession() {
     if (!this.inputName || this.inputName.trim().length < 2) {
-      alert('Bitte gib einen gültigen Namen ein (mind. 2 Zeichen).');
+      this.notifications.error('Bitte gib einen gültigen Namen ein (mind. 2 Zeichen).');
       return;
     }
     
@@ -116,7 +122,7 @@ export class SessionMember implements OnInit {
       if (result.data) {
         const userData = result.data as any;
         if (userData.status === 'blocked') {
-          alert('Du wurdest von dieser Session gesperrt.');
+          this.notifications.error('Du wurdest von dieser Session gesperrt.');
           return;
         }
         localStorage.setItem('userId', userData.id);
@@ -126,11 +132,10 @@ export class SessionMember implements OnInit {
         await this.loadHostName();
         this.setupStatusSubscription(userData.id);
         
-        console.log('[SessionMember] Successfully joined session, userId:', userData.id);
       }
     } catch (error) {
       console.error('[SessionMember] Error joining session:', error);
-      alert('Fehler beim Beitreten der Session.');
+      this.notifications.error('Fehler beim Beitreten der Session.');
     }
   }
 

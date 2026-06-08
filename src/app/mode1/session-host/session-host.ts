@@ -236,7 +236,6 @@ export class SessionHost implements OnInit {
     try {
       // spotify_id enthaelt bereits die volle URI ("spotify:track:..."), daher direkt verwenden
       await this.spotifyAPI.addToQueue(top.spotify_id, this.selectedDeviceId() || null);
-      console.log('[SessionHost] Top-Song zur Spotify-Queue hinzugefuegt:', top.spotify_id);
     } catch (e) {
       console.error('[SessionHost] Fehler beim Synchronisieren der Queue:', e);
     }

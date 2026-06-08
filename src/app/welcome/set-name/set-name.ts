@@ -1,6 +1,7 @@
 import {Component, inject, input, signal} from "@angular/core";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {SupabaseService} from "../../../services/supabase-service";
+import {NotificationService} from "../../shared/notification.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -17,11 +18,16 @@ export class SetName {
 
   sessionId = input.required<number>();
   private supabaseS = inject(SupabaseService);
+  private notifications = inject(NotificationService);
   private router = inject(Router);
 
 
-
   async createUserAndJoinSession() {
+    if (!this.userName().trim()) {
+      this.notifications.error('Bitte gib deinen Namen ein.');
+      return;
+    }
+
     const { data: userData, error: userError } = await this.supabaseS.addUser(
         this.userName(),
         this.sessionId(),
@@ -29,7 +35,7 @@ export class SetName {
     );
 
     if (userError || !userData) {
-      console.error("Fehler beim Erstellen des Users:", userError);
+      this.notifications.error('Konnte dich der Session nicht hinzufügen.');
       await this.router.navigate(["/404"]);
       return;
     }
@@ -37,7 +43,7 @@ export class SetName {
     const userId = userData.id;
     localStorage.setItem('userId', userId);
 
-    // 2. Den Session-Typ anhand der ersten Ziffer bestimmen
+    // Session-Typ anhand der ersten Ziffer bestimmen (1 = privat, 2 = öffentlich)
     const sessionIdStr = this.sessionId().toString();
     const isPrivateSession = sessionIdStr.charAt(0) === '1';
     const isPublicSession = sessionIdStr.charAt(0) === '2';
@@ -51,13 +57,13 @@ export class SetName {
       const { error } = await this.supabaseS.joinPublicSession(this.sessionId());
       joinError = error;
     } else {
-      console.warn('Keine gültige Session-ID. Weder 1 noch 2 am Anfang.');
+      this.notifications.error('Ungültige Session-ID.');
       await this.router.navigate(["/404"]);
       return;
     }
 
     if (joinError) {
-      console.error("Fehler beim Beitreten der Session:", joinError);
+      this.notifications.error('Beitritt fehlgeschlagen. Bitte versuche es erneut.');
       await this.router.navigate(["/404"]);
       return;
     }
@@ -68,6 +74,4 @@ export class SetName {
       await this.router.navigate(['/mode2/session-member', this.sessionId()]);
     }
   }
-
-
 }

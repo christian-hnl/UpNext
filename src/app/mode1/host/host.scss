@@ -1,5 +1,10 @@
 :host { display: block; }
 
+.loading-hint {
+  color: var(--text-2);
+  font-weight: 600;
+}
+
 .host-panel {
   background: var(--bg-raised);
   border: 1px solid var(--border-soft);

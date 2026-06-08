@@ -3,11 +3,14 @@ import {debounceTime, distinctUntilChanged, Subscription} from "rxjs";
 import {FormControl, ReactiveFormsModule} from "@angular/forms";
 import {Spotify} from "../../../services/spotify";
 import {SupabaseService} from "../../../services/supabase-service";
+import {DurationPipe} from "../../shared/duration.pipe";
+import {NotificationService} from "../../shared/notification.service";
 
 @Component({
   selector: "app-search",
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DurationPipe
   ],
   templateUrl: "./search.html",
   styleUrl: "./search.scss",
@@ -15,6 +18,7 @@ import {SupabaseService} from "../../../services/supabase-service";
 export class Search implements OnInit, OnDestroy{
   spotifyAPI = inject(Spotify)
   supabaseService = inject(SupabaseService);
+  private notifications = inject(NotificationService);
 
   sessionId = input.required<number>();
 
@@ -38,7 +42,6 @@ export class Search implements OnInit, OnDestroy{
 
   setupQueueSubscription() {
     this.queueChannel = this.supabaseService.subscribeToQueue(this.sessionId(), (payload) => {
-      console.log('[Search] Queue change detected via realtime subscription:', payload);
       this.updateSearchTracksFromQueue();
     });
   }
@@ -70,13 +73,11 @@ export class Search implements OnInit, OnDestroy{
       return;
     }
 
-    console.log('[Search] performSearch called with term:', term);
 
     try {
       const result: any = await this.spotifyAPI.search(term);
       const tracks = result.tracks.items;
 
-      console.log('[Search] Spotify search results:', tracks);
 
       const { data: currentQueue } = await this.supabaseService.getQueue(this.sessionId());
       const queuedIds = new Set(currentQueue?.map(item => item.spotify_id) || []);
@@ -92,7 +93,6 @@ export class Search implements OnInit, OnDestroy{
       
       this.searchTracks = tracksWithVotes;
 
-      console.log('[Search] Final search tracks with votes:', this.searchTracks);
 
     } catch (error) {
       console.error('Fehler bei der Spotify-Suche:', error);
@@ -136,7 +136,6 @@ export class Search implements OnInit, OnDestroy{
   }
 
   async addToQueue(track: any) {
-    console.log('[Search] addToQueue called for track:', track.name);
     if (track.isQueued) return;
     
     // UI sofort aktualisieren für besseres Feedback
@@ -171,19 +170,11 @@ export class Search implements OnInit, OnDestroy{
         track.votes = newQueueItem.score;
       }
 
-      console.log('Song zur Warteschlange hinzugefügt:', track.name);
     } catch (error: any) {
       track.isQueued = false; // Rückgängig machen bei Fehler
       console.error('Fehler beim Hinzufügen zur Warteschlange:', error);
-      alert(error.message || 'Fehler beim Hinzufügen zur Warteschlange');
+      this.notifications.error(error.message || 'Fehler beim Hinzufügen zur Warteschlange');
     }
-  }
-
-  formatDuration(ms: number | undefined): string {
-    if (!ms) return '0:00';
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
   ngOnDestroy() {

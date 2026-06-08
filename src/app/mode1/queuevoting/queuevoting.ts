@@ -1,10 +1,11 @@
 import {Component, inject, input, OnDestroy, OnInit, signal} from "@angular/core";
 import {SupabaseService} from "../../../services/supabase-service";
 import {Spotify} from "../../../services/spotify";
+import {DurationPipe} from "../../shared/duration.pipe";
 
 @Component({
   selector: "app-queuevoting",
-  imports: [],
+  imports: [DurationPipe],
   templateUrl: "./queuevoting.html",
   styleUrl: "./queuevoting.scss",
 })
@@ -23,39 +24,59 @@ export class Queuevoting implements OnInit, OnDestroy {
     await this.loadQueue();
     await this.loadCurrentlyPlaying();
     this.setupQueueSubscription();
-    
-    // Playback alle 5 Sekunden prüfen (da Spotify keine Webhooks für Playback-Events sendet)
-    this.playbackInterval = setInterval(() => this.loadCurrentlyPlaying(), 5000);
+
+    // Live-Sync: Spotify sendet keine Webhooks, daher pollen wir regelmaessig.
+    // Das haelt die Queue fuer ALLE aktuell (nicht nur beim Reload) und entfernt
+    // beim Host automatisch bereits gespielte Songs.
+    this.playbackInterval = setInterval(() => this.refresh(), 4000);
+  }
+
+  private async refresh() {
+    await this.loadCurrentlyPlaying();
+    await this.loadQueue();
   }
 
   async loadCurrentlyPlaying() {
     try {
       const result = await this.spotifyAPI.getCurrentlyPlaying();
-      if (result && result.item) {
-        this.currentlyPlaying.set(result.item);
-      } else {
-        this.currentlyPlaying.set(null);
+      const track = result && result.item ? result.item : null;
+      this.currentlyPlaying.set(track);
+
+      // Sobald ein Song aus der Queue laeuft, gilt er als gespielt -> entfernen (nur Host).
+      if (track) {
+        await this.removePlayedSong(track.uri);
       }
     } catch (e) {
       console.error('[Queuevoting] Fehler beim Laden des aktuellen Tracks:', e);
     }
   }
 
+  /** Host-only: entfernt den gerade laufenden Song aus der Warteschlange. */
+  private async removePlayedSong(currentUri: string) {
+    if (!this.isHost() || !currentUri) return;
+
+    const playing = this.queue().find(item => item.spotify_id === currentUri);
+    if (!playing) return;
+
+    const { error } = await this.supabaseS.removeSongFromQueue(playing.id);
+    if (error) {
+      console.error('[Queuevoting] Fehler beim Entfernen des gespielten Songs:', error.message);
+      return;
+    }
+    await this.loadQueue();
+  }
+
   async loadQueue() {
-    console.log('[Queuevoting] loadQueue called for sessionId:', this.sessionId());
     const { data, error } = await this.supabaseS.getQueue(this.sessionId());
     if (error) {
       console.error('[Queuevoting] Error loading queue:', error.message);
       return;
     }
-    console.log('[Queuevoting] Queue loaded:', data);
     this.queue.set(data || []);
   }
 
   setupQueueSubscription() {
-    console.log('[Queuevoting] Setting up queue subscription');
     this.queueChannel = this.supabaseS.subscribeToQueue(this.sessionId(), (payload) => {
-      console.log('[Queuevoting] Queue change detected via realtime subscription. Payload:', payload);
       
       // Bei JEDEM Event die Queue neu laden, um die UI aktuell zu halten
       this.loadQueue();
@@ -63,7 +84,6 @@ export class Queuevoting implements OnInit, OnDestroy {
   }
 
   async upvote(queueId: number) {
-    console.log('[Queuevoting] upvote called for queueId:', queueId);
     const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error('[Queuevoting] No userId found for upvote');
@@ -74,7 +94,6 @@ export class Queuevoting implements OnInit, OnDestroy {
   }
 
   async downvote(queueId: number) {
-    console.log('[Queuevoting] downvote called for queueId:', queueId);
     const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error('[Queuevoting] No userId found for downvote');
@@ -82,13 +101,6 @@ export class Queuevoting implements OnInit, OnDestroy {
     }
     await this.supabaseS.vote(queueId, userId, -1);
     await this.loadQueue();
-  }
-
-  formatDuration(ms: number | undefined): string {
-    if (!ms) return '0:00';
-    const minutes = Math.floor(ms / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   }
 
   ngOnDestroy() {

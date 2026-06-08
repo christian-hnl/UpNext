@@ -1,5 +1,11 @@
 :host { display: block; }
 
+.loading-hint {
+  color: var(--text-2);
+  padding: var(--space-4) 0;
+  font-weight: 600;
+}
+
 .session-header {
   h1 {
     font-size: clamp(1.6rem, 5vw, 2.1rem);
@@ -43,8 +49,8 @@
   h2 { margin: 0 0 4px; font-size: 1.2rem; }
 
   input {
-    padding: 13px 16px;
-    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    border-radius: var(--radius-pill);
     border: 1px solid var(--border-soft);
     background: var(--bg-input);
     color: var(--text-1);

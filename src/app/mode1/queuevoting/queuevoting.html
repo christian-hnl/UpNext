@@ -7,7 +7,7 @@
                 <span class="track-name">{{ currentlyPlaying().name }}</span>
                 <span class="track-artist">{{ currentlyPlaying().artists?.[0]?.name }}</span>
             </div>
-            <span class="track-duration">{{ formatDuration(currentlyPlaying().duration_ms) }}</span>
+            <span class="track-duration">{{ currentlyPlaying().duration_ms | duration }}</span>
             <div class="playing-indicator">
                 <span class="bar bar-1"></span>
                 <span class="bar bar-2"></span>
@@ -33,7 +33,7 @@
                     <span class="track-artist">{{ item.songs?.artist }}</span>
                 </div>
                 
-                <span class="track-duration">{{ formatDuration(item.songs?.duration_ms) }}</span>
+                <span class="track-duration">{{ item.songs?.duration_ms | duration }}</span>
 
                 <div class="track-votes">
                     <button class="vote-btn up" (click)="upvote(item.id)" aria-label="Upvote">

@@ -2,6 +2,7 @@ import {Component, inject, signal} from '@angular/core';
 import {Router} from '@angular/router';
 import {FormsModule} from "@angular/forms";
 import {SupabaseService} from "../../services/supabase-service";
+import {NotificationService} from "../shared/notification.service";
 import {Host} from "./host/host";
 
 @Component({
@@ -15,6 +16,7 @@ import {Host} from "./host/host";
 })
 export class Mode1 {
   private supabaseService = inject(SupabaseService);
+  private notifications = inject(NotificationService);
   private router = inject(Router);
 
   sessionId = signal<number | null>(null);
@@ -24,12 +26,12 @@ export class Mode1 {
     const sId = this.sessionId();
 
     if (sId === null) {
-      console.warn('Enter session-id.');
+      this.notifications.error('Bitte gib eine Session-ID ein.');
       return;
     }
 
     if (!this.userName().trim()) {
-      console.warn('Enter your name.');
+      this.notifications.error('Bitte gib deinen Namen ein.');
       return;
     }
 
@@ -37,37 +39,28 @@ export class Mode1 {
       const { data, error } = await this.supabaseService.joinPrivateSession(sId);
 
       if (error) {
-        console.error('Error: ', error.message);
+        this.notifications.error('Beitritt fehlgeschlagen. Bitte versuche es erneut.');
         return;
       }
 
       if (!data) {
-        console.warn('Keine session mit dieser ID gefunden.');
-      } else {
-        const {
-          data: userData,
-          error: userError
-        } = await this.supabaseService.addUser(this.userName(), <number>this.sessionId(), false);
-
-        if (userError) {
-          console.error('Fehler beim Erstellen des Users: ', userError.message);
-          return;
-        }
-
-        if (userData) {
-          console.log('erfolgreich beigetreten. User ID:', userData.id);
-
-          localStorage.setItem('userId', userData.id.toString());
-
-          await this.router.navigate(['/mode1/session-member', this.sessionId()]);
-        }
+        this.notifications.error('Keine Session mit dieser ID gefunden.');
+        return;
       }
 
+      const { data: userData, error: userError } =
+        await this.supabaseService.addUser(this.userName(), sId, false);
+
+      if (userError || !userData) {
+        this.notifications.error('Beitritt fehlgeschlagen. Bitte versuche es erneut.');
+        return;
+      }
+
+      localStorage.setItem('userId', userData.id.toString());
+      await this.router.navigate(['/mode1/session-member', sId]);
     } catch (err) {
-      console.error('Error: ', err);
+      console.error('[Mode1] join failed:', err);
+      this.notifications.error('Beitritt fehlgeschlagen. Bitte versuche es erneut.');
     }
   }
-
-
-
 }

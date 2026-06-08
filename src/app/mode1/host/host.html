@@ -1,5 +1,7 @@
 <div class="host-panel">
-  @if (!userProfile()) {
+  @if (loading()) {
+    <p class="loading-hint">Lädt …</p>
+} @else if (!userProfile()) {
     <div class="login-section">
       <h3>Um eine Session zu hosten, melde dich bitte zuerst an</h3>
       <button (click)="onLogin()">Mit Spotify anmelden</button>

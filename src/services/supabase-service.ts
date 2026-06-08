@@ -19,11 +19,9 @@ export class SupabaseService {
   }
 
   async addPrivateSession(titleEingabe: string) {
-    console.log('[SupabaseService] addPrivateSession called with title:', titleEingabe);
     // Konvention: erste Ziffer = Modus. Modus-1-Sessions (privat) beginnen mit 1 → 100000-199999
     const randSessionId = 100000 + Math.floor(Math.random() * 100000);
     const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
-    console.log('[SupabaseService] Generated QR URL:', qrUrl);
 
 
     const { data, error } = await this.supabase
@@ -39,7 +37,6 @@ export class SupabaseService {
       return null;
     }
 
-    console.log('[SupabaseService] Private session added successfully:', data);
     return data;
   }
 
@@ -145,7 +142,6 @@ export class SupabaseService {
 
     //queue logic
     async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string, duration_ms: number }, userId: string) {
-        console.log(`[SupabaseService] addSongToQueue called: sessionId=${sessionId}, song=${song.title}, userId=${userId}`);
         // Zuerst den Song in der globalen Songs-Tabelle registrieren/updaten
         const { error: songError } = await this.supabase
             .from('songs')
@@ -153,6 +149,8 @@ export class SupabaseService {
                 spotify_id: song.spotify_id,
                 title: song.title,
                 artist: song.artist,
+                album_image: song.album_image,
+                duration_ms: song.duration_ms,
                 sessionId: sessionId
             });
 
@@ -179,7 +177,6 @@ export class SupabaseService {
             return null;
         }
 
-        console.log('[SupabaseService] Song added to queue successfully:', data);
 
         // Automatisch den ersten Vote erstellen
         await this.vote(data.id, userId, 1);
@@ -200,8 +197,13 @@ export class SupabaseService {
             .limit(10);
     }
 
+    async removeSongFromQueue(queueId: number) {
+        // Votes zuerst loeschen (Fremdschluessel-Constraint), dann den Queue-Eintrag
+        await this.supabase.from('votes').delete().eq('queue_id', queueId);
+        return this.supabase.from('session_queue').delete().eq('id', queueId);
+    }
+
     async vote(queueId: number, participantId: string, value: number) {
-        console.log(`[SupabaseService] vote called: queueId=${queueId}, participantId=${participantId}, value=${value}`);
         // Vote einfügen oder aktualisieren (Upsert)
         
         const { data: existingVote } = await this.supabase
@@ -213,14 +215,12 @@ export class SupabaseService {
 
         let error;
         if (existingVote) {
-            console.log('[SupabaseService] Updating existing vote:', existingVote.id);
             const { error: updateError } = await this.supabase
                 .from('votes')
                 .update({ vote: value })
                 .eq('id', existingVote.id);
             error = updateError;
         } else {
-            console.log('[SupabaseService] Inserting new vote');
             const { error: insertError } = await this.supabase
                 .from('votes')
                 .insert({
@@ -236,13 +236,11 @@ export class SupabaseService {
             return null;
         }
 
-        console.log('[SupabaseService] Vote registered successfully, updating queue score');
         // Score in session_queue aktualisieren
         return this.updateQueueScore(queueId);
     }
 
     private async updateQueueScore(queueId: number) {
-        console.log('[SupabaseService] updateQueueScore called for queueId:', queueId);
         const { data: votes, error: votesError } = await this.supabase
             .from('votes')
             .select('vote')
@@ -259,7 +257,6 @@ export class SupabaseService {
         }
 
         const totalScore = votes.reduce((acc, vote) => acc + (vote.vote || 0), 0);
-        console.log(`[SupabaseService] Calculated total score for queueId ${queueId}: ${totalScore}`);
 
         const { data, error } = await this.supabase
             .from('session_queue')
@@ -271,7 +268,6 @@ export class SupabaseService {
         if (error) {
             console.error('[SupabaseService] Error updating session_queue score:', error.message);
         } else {
-            console.log('[SupabaseService] session_queue score updated successfully:', data);
         }
         
         return data;
@@ -290,9 +286,12 @@ export class SupabaseService {
     }
 
     subscribeToQueue(sessionId: number, callback: (payload: any) => void) {
-        console.log(`[SupabaseService] Subscribing to queue for sessionId=${sessionId}`);
+        // Eindeutiger Channel-Name pro Abo: mehrere Komponenten (queuevoting + search)
+        // abonnieren dieselbe Session, duerfen sich aber keinen Channel teilen, sonst
+        // schlaegt .on() nach .subscribe() fehl.
+        const channelId = `queue-${sessionId}-${Math.random().toString(36).slice(2)}`;
         return this.supabase
-            .channel(`queue-${sessionId}`)
+            .channel(channelId)
             .on(
                 'postgres_changes',
                 {
@@ -302,12 +301,10 @@ export class SupabaseService {
                     filter: `session_id=eq.${this.formatSessionId(sessionId)}`
                 },
                 (payload) => {
-                    console.log('[SupabaseService] Realtime update received for session_queue:', payload);
                     callback(payload);
                 }
             )
             .subscribe((status) => {
-                console.log(`[SupabaseService] Subscription status for queue-${sessionId}:`, status);
             });
 
     }

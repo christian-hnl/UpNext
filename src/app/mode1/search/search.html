@@ -47,7 +47,7 @@
                     }
                 </div>
 
-                <span class="track-duration">{{ formatDuration(song.duration_ms) }}</span>
+                <span class="track-duration">{{ song.duration_ms | duration }}</span>
             </li>
         } @empty {
             @if (searchControl.value) {
