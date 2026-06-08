@@ -19,11 +19,14 @@ export class SupabaseService {
   }
 
 
+    /**
+     * erstellt eine neue privateSession mit uebergebenen title
+     * @param titleEingabe
+     * @returns den erstellten eintrag
+     */
   async addPrivateSession(titleEingabe: string) {
-    console.log('[SupabaseService] addPrivateSession called with title:', titleEingabe);
     const randSessionId = Math.floor(100000 + Math.random() * 900000);
     const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
-    console.log('[SupabaseService] Generated QR URL:', qrUrl);
 
 
     const { data, error } = await this.supabase
@@ -34,12 +37,7 @@ export class SupabaseService {
         status: "running"
       }).select();
 
-    if (error) {
-      console.error('[SupabaseService] Error adding private session:', error.message);
-      return null;
-    }
-
-    console.log('[SupabaseService] Private session added successfully:', data);
+    if (error) throw error;
     return data;
   }
 
@@ -64,18 +62,30 @@ export class SupabaseService {
 
   //getInfos
   async getPrivateSessionInfos(id: number) {
-    return this.supabase
+    const { data, error } = await this.supabase
       .from('private_sessions')
         .select('*')
         .eq('session_id', id)
         .maybeSingle();
+
+    if (error) {
+        throw error;
+    }
+    return data;
   }
 
+    /**
+     * erstellt einen neuen user, mit den uebergebenen parametern
+     * @param username
+     * @param sessionId
+     * @param host
+     * @returns die id des erstellten users
+     */
   async addUser(username: string, sessionId: number, host: boolean) {
     let role: string = 'member';
     if (host) role = 'host';
 
-    return this.supabase
+    const { data, error } = await this.supabase
       .from('participants')
         .insert({
           name: username,
@@ -83,17 +93,35 @@ export class SupabaseService {
           session_id: sessionId
         }).select('id')
         .single();
+
+    if (error) throw error;
+    return data;
   }
 
+
+    /**
+     * sucht in der db nach dem user mit der uebergebenen id
+     * @param id
+     * @returns alle in der db gespeicherten infos des users
+     */
   async getUserInfos(id: string) {
-      return this.supabase
+      const { data, error } = await this.supabase
           .from('participants')
           .select('*')
           .eq('id', id)
         .single();
+
+      if (error) {
+          throw error;
+      }
+      return data;
   }
 
-
+    /**
+     * sucht nach allen namen der session mit der uebergebenen id
+     * @param sessionId
+     * @returns gibt alle namen der members dieser session zurueck
+     */
   async getMemberNamesBySessionId(sessionId: number) {
       return this.supabase
           .from('participants')
@@ -102,29 +130,47 @@ export class SupabaseService {
           .eq('role', 'member');
   }
 
+    /**
+     * gibt den namen des hosts, dieser session zurueck
+     * @param sessionId
+     * @returns ein promise, in dem der name des hosts dieser session ist
+     */
     async getHostNameBySessionId(sessionId: number) {
-        return this.supabase
+        const { data, error } = await this.supabase
             .from('participants')
             .select('name')
             .eq('session_id', sessionId)
             .eq('role', 'host')
             .single();
+
+        if (error) throw error;
+        return data;
     }
 
+    /**
+     * prueft, ob wirklich dieser user der host der session ist, um brocken access control zu verhindern
+     * @param userId
+     * @param sessionId
+     * @returns Ein Promise, das true zurückgibt, wenn der user host dieser Session ist, sonst false
+     */
     async checkHost(userId: string, sessionId: number) {
-        return this.supabase
+        const { data, error } = await this.supabase
             .from('participants')
             .select('id')
             .eq('id', userId)
             .eq('session_id', sessionId)
             .eq('role', 'host')
             .maybeSingle();
+
+        if (data) return true;
+        if (error) throw error;
+        return false;
     }
 
-    /*
-    checkIfSessionIsValid(sessionId: number)
-    checkt ob die uebergebene id valid ist und dann ob sie entweder in private_session oder public_session vorhanden ist
-    return falls id valid ist true
+    /**
+     * Prüft, ob die angegebene sessionId in der Datenbank existiert.
+     * * @param sessionId - 6-stellige ID der Session
+     * @returns Ein Promise, das true zurückgibt, wenn die Session existiert, sonst false
      */
     async checkIfSessionIsValid(sessionId: number): Promise<boolean> {
         const idString = sessionId.toString();
@@ -140,6 +186,7 @@ export class SupabaseService {
 
         return false;
     }
+
 
     async getAllParticipantsBySessionId(sessionId: number) {
         return this.supabase
