@@ -1,104 +1,81 @@
-<div align="center">
+# Projektbegründung & Projektidee
 
-# 🎵 UpNext — Musik Voting
-### Schritt 0 · Projektbegründung & Projektidee
+Projekt: UpNext - Musik Voting
+Projektteam: Christian Hahnl, Andreas Klehr
+Stand: 28.04.2026
 
-</div>
 
-|  |  |
-|---|---|
-| **Projekt** | UpNext – Musik Voting |
-| **Dokument** | Projektbegründung & Projektidee |
-| **Version** | 1.0 |
-| **Datum** | 28.04.2026 |
-| **Autoren** | Christian Hahnl · Andreas Klehr |
-| **Status** | Freigegeben |
+## Brainstorming
 
----
+Ausgangsfrage: Wie kann die Musikauswahl auf Partys und Events fairer und interaktiver werden,
+ohne dass alle den DJ bedrängen müssen?
 
-## 1. Brainstorming
+Ideen aus dem Team:
 
-Ausgangsfrage: *Wie kann die Musikauswahl auf Partys und Events fairer und interaktiver werden,
-ohne dass alle den DJ bedrängen müssen?*
+- Gäste schlagen Songs über das eigene Handy vor, ohne App-Installation
+- Eine Abstimmung entscheidet über die Reihenfolge der Songs
+- Schlecht bewertete Songs verschwinden aus der Warteschlange
+- Beitritt zur Party über einen QR-Code
+- Zwei Varianten: kleine Home-Party und großes Club-Event
+- Anbindung an Spotify statt einer eigenen Musikbibliothek
+- Badges/Ränge für aktive Gäste
+- Auswertung, welche Genres gerade gut ankommen
 
-Gesammelte Ideen aus dem Team:
 
-- 💡 Gäste schlagen Songs über das eigene Handy vor – **ohne App-Installation**
-- 💡 Abstimmung („Voting") entscheidet über die Reihenfolge der Songs
-- 💡 Schlecht bewertete Songs verschwinden automatisch aus der Warteschlange
-- 💡 Beitritt zur Party in Sekunden über einen **QR-Code**
-- 💡 Zwei Welten: die kleine **Home-Party** vs. das große **Club-Event**
-- 💡 Anbindung an einen echten Streaming-Dienst statt eigener Musikbibliothek → **Spotify**
-- 💡 Spielerische Elemente: Badges/Ränge für aktive Gäste
-- 💡 Genre-Auswertung: „Was will die Crowd gerade hören?"
-
-## 2. Mindmap
+## Mindmap
 
 ```mermaid
 mindmap
-  root((UpNext<br/>Musik Voting))
+  root((UpNext))
     Problem
       Unpassende Songauswahl
-      Gäste bedrängen DJ
+      Gaeste bedraengen DJ
       Schlechte Kommunikation
     Modus 1 Home Party
-      bis 30 Gäste
-      Autonomer DJ
+      bis 30 Gaeste
       Voting bestimmt Reihenfolge
-      Auto-Wiedergabe über Spotify
-    Modus 2 Großevent
-      bis 3000 Gäste
-      Werkzeug für DJ
-      Songvorschläge als Ideenliste
-      DJ behält Kontrolle
+      Auto-Wiedergabe ueber Spotify
+    Modus 2 Grossevent
+      bis 3000 Gaeste
+      Vorschlaege als Ideenliste
+      DJ behaelt Kontrolle
     Technik
       Webapp ohne Installation
       QR-Code Beitritt
       Spotify Web API
       Echtzeit-Sync
-    Mehrwert
-      Demokratische Playlist
-      Mehr Stimmung
-      Nutzer-Analyse und Badges
-      Genre-Analyse
 ```
 
-## 3. Projektbegründung
 
-#### Warum gibt es dieses Projekt?
+## Projektbegründung
 
-Auf Partys und Events entsteht regelmäßig **Unzufriedenheit mit der Musikauswahl**. Lokale DJs
-(z. B. Patrick Biggs, Bruce) treffen nicht den Geschmack der Gäste, und es fehlt ein einfacher,
-geordneter Weg, Musikwünsche zu äußern. Gäste drängen sich um das DJ-Pult oder geben auf – beides
-schadet der Stimmung.
+Auf Partys und Events entscheidet meistens eine einzelne Person über die Musik. Die Gäste haben
+kaum eine geordnete Möglichkeit, ihre Wünsche einzubringen. Daraus entsteht Unzufriedenheit, die
+Gäste drängen sich um das DJ-Pult, und die Musik trifft oft nicht die Stimmung.
 
-#### Welches Problem wird gelöst?
+Auslöser für das Projekt waren wiederkehrende Beschwerden über lokale DJs und die schlechte
+Kommunikation zwischen Gästen und DJ.
+
+Gegenüberstellung:
 
 | Problem heute | Lösung mit UpNext |
 |---------------|-------------------|
 | Gäste haben keinen Einfluss auf die Musik | Jeder kann Songs vorschlagen und abstimmen |
-| Wünsche werden lautstark/chaotisch geäußert | Geordnetes, digitales Voting über das Handy |
-| DJ kennt die Stimmung der Crowd nicht | Live-Übersicht beliebter Songs/Genres |
+| Wünsche werden chaotisch zugerufen | Geordnetes Voting über das Handy |
+| DJ kennt die Stimmung der Crowd nicht | Übersicht über beliebte Songs |
 | Hürde durch App-Installation | Reine Webanwendung, Beitritt per QR-Code |
 | Unpassende Songs blockieren die Playlist | Schlecht bewertete Songs werden verdrängt |
 
-#### Warum lohnt sich der Aufwand?
+Warum sich das Projekt lohnt:
 
-- Klar abgegrenzter Funktionsumfang, der in der verfügbaren Projektzeit umsetzbar ist
-- Nutzung einer bestehenden Plattform (Spotify) statt Aufbau einer eigenen Musikbibliothek
-- Skalierbares Konzept: vom Wohnzimmer (Modus 1) bis zum Club mit 3.000 Gästen (Modus 2)
-- Hoher Lerneffekt: moderne Webtechnologien (Angular, Realtime-Datenbank, OAuth, externe API)
+- Klar abgegrenzter Umfang, der in der Projektzeit umsetzbar ist
+- Nutzung von Spotify statt Aufbau einer eigenen Musikbibliothek
+- Vom Wohnzimmer bis zum Club skalierbar
+- Lerneffekt mit Angular, einer Echtzeit-Datenbank, OAuth und einer externen API
 
-#### Abgrenzung (Was wird NICHT gebaut?)
 
-- Keine eigene Musikplattform / kein eigener Streaming-Dienst
-- Keine native App für App Store / Play Store
-- Kein eigenes Bezahlsystem (Spotify-Premium-Abos sind vorausgesetzt)
+## Abgrenzung (Nicht-Ziele)
 
----
-
-<div align="center">
-
-*UpNext — Musik Voting · Projektbegründung · Version 1.0 · 28.04.2026*
-
-</div>
+- Keine eigene Musikplattform und kein eigener Streaming-Dienst
+- Keine native App für App Store oder Play Store
+- Kein eigenes Bezahlsystem, Spotify-Premium wird vorausgesetzt
