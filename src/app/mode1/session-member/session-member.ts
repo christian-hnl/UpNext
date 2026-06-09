@@ -123,20 +123,15 @@ export class SessionMember implements OnInit {
     
     try {
       const result = await this.supabaseS.addUser(this.inputName.trim(), this.sessionId(), false);
-      if (result.id) {
-        const userData = result.id as any;
-        if (userData.status === 'blocked') {
-          alert('Du wurdest von dieser Session gesperrt.');
-          return;
-        }
-        localStorage.setItem('userId', userData.id);
+      if (result && result.id) {
+        localStorage.setItem('userId', result.id);
         this.isJoined.set(true);
         this.userName.set(this.inputName.trim());
         await this.loadOtherMembers();
         await this.loadHostName();
-        this.setupStatusSubscription(userData.id);
+        this.setupStatusSubscription(result.id);
         
-        console.log('[SessionMember] Successfully joined session, userId:', userData.id);
+        console.log('[SessionMember] Successfully joined session, userId:', result.id);
       }
     } catch (error) {
       console.error('[SessionMember] Error joining session:', error);
