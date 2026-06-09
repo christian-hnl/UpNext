@@ -1,4 +1,4 @@
-import {Component, inject, input, OnDestroy, OnInit} from "@angular/core";
+import {Component, inject, input, OnDestroy, OnInit, ChangeDetectorRef} from "@angular/core";
 import {debounceTime, distinctUntilChanged, Subscription} from "rxjs";
 import {FormControl, ReactiveFormsModule} from "@angular/forms";
 import {Spotify} from "../../../services/spotify";
@@ -15,6 +15,7 @@ import {SupabaseService} from "../../../services/supabase-service";
 export class Search implements OnInit, OnDestroy{
   spotifyAPI = inject(Spotify)
   supabaseService = inject(SupabaseService);
+  cdr = inject(ChangeDetectorRef);
 
   sessionId = input.required<number>();
 
@@ -59,6 +60,7 @@ export class Search implements OnInit, OnDestroy{
           queueId: queueItem?.id
         };
       });
+      this.cdr.detectChanges();
     } catch (error) {
       console.error('[Search] Fehler beim Aktualisieren der Suchergebnisse:', error);
     }
@@ -67,6 +69,7 @@ export class Search implements OnInit, OnDestroy{
   async performSearch(term: string | null) {
     if (!term) {
       this.searchTracks = [];
+      this.cdr.detectChanges();
       return;
     }
 
@@ -91,6 +94,7 @@ export class Search implements OnInit, OnDestroy{
       }));
       
       this.searchTracks = tracksWithVotes;
+      this.cdr.detectChanges();
 
       console.log('[Search] Final search tracks with votes:', this.searchTracks);
 
