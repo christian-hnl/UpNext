@@ -1,6 +1,8 @@
 @if (currentlyPlaying()) {
     <div class="now-playing-section">
-        <div class="now-playing-label">Aktueller Song</div>
+        <div class="now-playing-label">
+            <span class="np-dot"></span> Aktueller Song
+        </div>
         <div class="track-row currently-playing-row">
             <img class="track-image" [src]="currentlyPlaying().album?.images?.[2]?.url" alt="">
             <div class="track-info">
@@ -12,6 +14,23 @@
                 <span class="bar bar-1"></span>
                 <span class="bar bar-2"></span>
                 <span class="bar bar-3"></span>
+            </div>
+        </div>
+    </div>
+} @else {
+    <div class="now-playing-section now-playing-section--idle">
+        <div class="now-playing-label">
+            <span class="np-dot np-dot--idle"></span> Bereit
+        </div>
+        <div class="idle-player">
+            <div class="idle-disc">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.4"/>
+                </svg>
+            </div>
+            <div class="idle-text">
+                <span class="idle-title">Gerade läuft nichts</span>
+                <span class="idle-hint">Sobald ein Song startet, erscheint er hier.</span>
             </div>
         </div>
     </div>
@@ -32,7 +51,7 @@
                     <span class="track-name">{{ item.songs?.title }}</span>
                     <span class="track-artist">{{ item.songs?.artist }}</span>
                 </div>
-                
+
                 <span class="track-duration">{{ formatDuration(item.songs?.duration_ms) }}</span>
 
                 <div class="track-votes">
@@ -48,12 +67,20 @@
                         </svg>
                     </button>
                 </div>
-                
+
                 <!-- Platzhalter für Ausrichtung wie in Search -->
                 <div class="track-actions"></div>
             </li>
         } @empty {
-            <li class="no-results">Noch keine Lieder in der Warteschlange.</li>
+            <li class="empty-state">
+                <div class="empty-state__icon">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                    </svg>
+                </div>
+                <p class="empty-state__title">Noch nichts in der Warteschlange</p>
+                <p class="empty-state__hint">Such über die Suche nach Songs und füge den ersten Track hinzu.</p>
+            </li>
         }
     </ul>
 </div>

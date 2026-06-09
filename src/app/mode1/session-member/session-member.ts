@@ -29,6 +29,9 @@ export class SessionMember implements OnInit {
   isJoined = signal<boolean>(false);
   isBlocked = signal<boolean>(false);
 
+  // Reiner UI-State: aktiver Tab der mobilen Bottom-Bar (nur Präsentation).
+  mobileTab = signal<'overview' | 'search'>('overview');
+
   private router = inject(Router);
 
 

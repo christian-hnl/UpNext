@@ -1,35 +1,68 @@
-<section class="page">
-    <header class="session-header">
-        <h1>{{ title() }}</h1>
-        <p class="session-id">Session ID: {{ sessionId() }}</p>
+<section class="page session-page">
+    <header class="session-header glass-header">
+        <div class="session-header__titles">
+            <h1>{{ title() }}</h1>
+            <p class="session-id">Session ID: {{ sessionId() }}</p>
+        </div>
     </header>
 
     @if (isBlocked()) {
-        <div class="blocked-message">
-            <h2>Zugriff verweigert</h2>
-            <p>Du wurdest vom Host dieser Session gesperrt.</p>
+        <div class="centered-state">
+            <div class="blocked-message">
+                <h2>Zugriff verweigert</h2>
+                <p>Du wurdest vom Host dieser Session gesperrt.</p>
+            </div>
         </div>
     } @else if (!isJoined()) {
-        <div class="join-container">
-            <h2>Lobby beitreten</h2>
-            <input type="text" [(ngModel)]="inputName" placeholder="Dein Name">
-            <button (click)="joinSession()">Beitreten</button>
+        <div class="centered-state">
+            <div class="join-container">
+                <h2>Lobby beitreten</h2>
+                <input type="text" [(ngModel)]="inputName" placeholder="Dein Name">
+                <button (click)="joinSession()">Beitreten</button>
+            </div>
         </div>
     } @else {
-        <div class="session-info">
-            <p class="greeting">Hallo {{ userName() }}!</p>
-            <p class="host-line">Host: <strong>{{ hostName() }}</strong></p>
-            <p class="members-line">Andere Teilnehmer:
-                @for (member of otherMembers(); track $index) {
-                    <span>{{ member }}{{ !$last ? ', ' : '' }}</span>
-                } @empty {
-                    <span>Nur du</span>
-                }
-            </p>
+        <div class="session-grid" [attr.data-tab]="mobileTab()">
+            <div class="session-main panel" data-panel="overview">
+                <app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
+            </div>
+
+            <aside class="session-side">
+                <div class="panel panel-search" data-panel="search">
+                    <app-search [sessionId]="sessionId()"></app-search>
+                </div>
+
+                <div class="session-info panel" data-panel="overview">
+                    <p class="greeting">Hallo {{ userName() }}!</p>
+                    <p class="host-line">Host: <strong>{{ hostName() }}</strong></p>
+                    <p class="members-line">Andere Teilnehmer:
+                        @for (member of otherMembers(); track $index) {
+                            <span>{{ member }}{{ !$last ? ', ' : '' }}</span>
+                        } @empty {
+                            <span>Nur du</span>
+                        }
+                    </p>
+                </div>
+            </aside>
         </div>
 
-        <app-queuevoting [sessionId]="sessionId()"></app-queuevoting>
-
-        <app-search [sessionId]="sessionId()"></app-search>
+        <!-- App-Store-artige Bottom-Bar (nur Mobile) -->
+        <nav class="mobile-tabbar" role="tablist" aria-label="Ansicht wechseln">
+            <button class="tab" type="button" role="tab"
+                    [class.active]="mobileTab() === 'overview'"
+                    [attr.aria-selected]="mobileTab() === 'overview'"
+                    (click)="mobileTab.set('overview')">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                <span>Übersicht</span>
+            </button>
+            <button class="tab" type="button" role="tab"
+                    [class.active]="mobileTab() === 'search'"
+                    [attr.aria-selected]="mobileTab() === 'search'"
+                    (click)="mobileTab.set('search')">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+                <span>Suche</span>
+            </button>
+            <span class="tab-indicator" [class.right]="mobileTab() === 'search'" aria-hidden="true"></span>
+        </nav>
     }
 </section>

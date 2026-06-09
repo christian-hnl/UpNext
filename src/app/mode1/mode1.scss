@@ -8,6 +8,14 @@
   min-height: 100vh;
 }
 
+// gestaffelter Auftritt der Sektionen
+.mode-page-container > * {
+  animation: fade-in-up .5s var(--ease-out) backwards;
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 0.08}s; }
+  }
+}
+
 // spezifische Farbe: Untertitel
 .page-subtitle {
   color: $color-green-main;

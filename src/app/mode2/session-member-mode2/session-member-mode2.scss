@@ -1,0 +1,81 @@
+:host { display: block; }
+
+.event-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: clamp(20px, 5vw, 40px);
+}
+
+.event-card {
+  width: 100%;
+  max-width: 460px;
+  text-align: center;
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(183, 33, 255, 0.32);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--glow-violet), var(--shadow-card);
+  padding: clamp(32px, 7vw, 48px) clamp(24px, 5vw, 40px);
+  animation: fade-in-up .55s var(--ease-out) backwards;
+}
+
+.event-icon {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--violet);
+  background: radial-gradient(circle at 50% 40%, var(--violet-glow), transparent 70%);
+  animation: float-soft 4.5s ease-in-out infinite;
+
+  svg { width: 36px; height: 36px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+  .event-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--violet);
+    opacity: 0;
+    animation: pulse-ring 2.8s var(--ease-out) infinite;
+  }
+}
+
+.event-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 6vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #d98bff, var(--violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.event-badge {
+  display: inline-block;
+  margin: 14px 0 18px;
+  padding: 6px 14px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--violet);
+  background: var(--violet-glow);
+  border: 1px solid rgba(183, 33, 255, 0.3);
+  border-radius: var(--radius-pill);
+}
+
+.event-text {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-2);
+}

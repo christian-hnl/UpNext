@@ -1,8 +1,10 @@
 :host { display: block; }
 
-/* The search panel is now a self-contained card */
+/* The search panel is now a self-contained glass card */
 .search-container {
-  background: var(--bg-raised);
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(20px) saturate(150%);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
@@ -101,33 +103,37 @@
     .track-votes {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-right: 24px;
+      gap: 8px;
+      margin-right: 20px;
       flex-shrink: 0;
 
       .vote-btn {
         border: none;
-        background: transparent;
+        background: var(--overlay-hover);
         cursor: pointer;
-        opacity: 0.35;
-        transition: opacity .2s, transform .1s;
-        padding: 4px;
+        opacity: 0.5;
+        transition: opacity var(--t-fast), transform var(--t-fast) var(--ease-spring), background-color var(--t-fast);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
 
-        svg { width: 16px; height: 16px; fill: var(--text-2); transition: fill .2s; }
+        svg { width: 16px; height: 16px; fill: var(--text-2); transition: fill var(--t-fast); }
 
-        &:hover { opacity: 1; svg { fill: var(--text-1); } }
+        &:hover { opacity: 1; transform: scale(1.12); svg { fill: var(--text-1); } }
         &.hidden { visibility: hidden; pointer-events: none; }
         &:active { transform: scale(0.9); }
+        &.up:hover   { background: var(--accent-soft); svg { fill: var(--accent); } }
+        &.down:hover { background: var(--danger-soft);  svg { fill: var(--danger-hover); } }
       }
 
       .vote-count {
-        min-width: 20px;
+        min-width: 22px;
         text-align: center;
-        font-size: 0.85rem;
-        font-weight: 600;
+        font-size: 0.9rem;
+        font-weight: 700;
         color: var(--text-1);
         font-variant-numeric: tabular-nums;
       }
@@ -178,5 +184,13 @@
     font-size: 0.95rem;
     padding: 18px 12px;
     text-align: center;
+  }
+
+  /* Gestaffeltes Einblenden der Ergebnisse */
+  .track-row {
+    animation: row-in .4s var(--ease-out) backwards;
+    @for $i from 1 through 12 {
+      &:nth-child(#{$i}) { animation-delay: #{($i - 1) * 0.04}s; }
+    }
   }
 }

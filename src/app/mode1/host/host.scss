@@ -1,11 +1,9 @@
-@use '../../../variables' as *;
-
 :host {
   display: block;
   width: 100%;
 }
 
-// --- BEREICH: NICHT ANGEMELDET ---
+/* --- BEREICH: NICHT ANGEMELDET --- */
 .login-section {
   display: flex;
   flex-direction: column;
@@ -14,116 +12,120 @@
 
   .host-text {
     font-size: 0.9rem;
-    font-weight: 600;
-    color: $color-text-muted;
+    font-weight: 500;
+    color: var(--text-2);
     margin-bottom: 1.5rem;
     text-align: center;
-    line-height: 1.5;
+    line-height: 1.6;
   }
 }
 
-// --- BEREICH: ANGEMELDET ---
+/* --- BEREICH: ANGEMELDET --- */
 .host-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 
-  // Benutzer-Info (kleines Profil-Badge)
+  /* Profil-Badge */
   .user-badge {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.03); // Ganz leichtes Grau
-    border: 1px solid $color-border;
-    border-radius: 12px;
-    padding: 12px 24px;
-    margin-bottom: 1.5rem;
     width: 100%;
-    max-width: 300px;
+    max-width: 320px;
+    margin-bottom: 1.5rem;
+    padding: 16px 24px;
+    border-radius: var(--radius-md);
+    background: var(--bg-raised-2);
+    border: 1px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
 
     .badge-label {
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: $color-text-placeholder;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-3);
       text-transform: uppercase;
-      margin-bottom: 4px;
+      letter-spacing: 0.14em;
+      margin-bottom: 6px;
     }
 
     .user-name {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 800;
-      color: $color-green-main;
-      letter-spacing: 0.5px;
+      color: var(--accent);
+      letter-spacing: -0.01em;
     }
 
     .user-email {
       font-size: 0.8rem;
-      font-weight: 600;
-      color: $color-text-muted;
+      font-weight: 500;
+      color: var(--text-2);
       margin-top: 2px;
     }
   }
 
-  // Eingabefeld und Start-Button
+  /* Eingabe + Start */
   .input-group {
     display: flex;
     justify-content: center;
     width: 100%;
     gap: 10px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 
     .host-input {
       flex: 1;
-      background-color: $color-bg-main; // Etwas dunkler als die Karte
-      border: 2px solid $color-border;
-      border-radius: 8px;
-      padding: 12px 16px;
-      color: $color-text-main;
-      font-family: $font-main;
+      min-width: 0;
+      background: var(--bg-input);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      color: var(--text-1);
+      font-family: var(--font-sans);
       font-weight: 600;
       font-size: 0.95rem;
       outline: none;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      transition: border-color var(--t-med) var(--ease-out),
+                  box-shadow var(--t-med) var(--ease-out),
+                  background-color var(--t-med) var(--ease-out);
 
-      &::placeholder {
-        color: $color-text-placeholder;
-        font-weight: 400;
-      }
-
+      &::placeholder { color: var(--text-3); font-weight: 500; }
+      &:hover { border-color: var(--border-strong); }
       &:focus {
-        border-color: $color-green-main;
-        box-shadow: 0 0 10px rgba(30, 215, 96, 0.2);
+        border-color: var(--accent);
+        background: var(--bg-raised);
+        box-shadow: 0 0 0 4px var(--accent-glow);
       }
     }
 
     .start-btn {
-      background-color: $color-green-main;
-      color: $color-bg-main;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #28e974, var(--accent));
+      color: var(--accent-contrast);
       border: none;
-      border-radius: 8px;
-      padding: 12px 20px;
-      font-family: $font-main;
+      border-radius: var(--radius-pill);
+      padding: 14px 22px;
+      font-family: var(--font-sans);
       font-weight: 800;
       font-size: 0.9rem;
+      letter-spacing: 0.02em;
       cursor: pointer;
-      transition: all 0.2s ease;
       text-transform: uppercase;
+      box-shadow: 0 8px 24px -10px rgba(30, 215, 96, 0.55);
+      transition: transform var(--t-fast) var(--ease-out),
+                  box-shadow var(--t-med) var(--ease-out),
+                  filter var(--t-fast) var(--ease-out);
 
       &:hover:not(:disabled) {
-        background-color: $color-green-hover;
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(30, 215, 96, 0.3);
+        filter: brightness(1.05);
+        box-shadow: var(--glow-accent);
       }
+      &:active:not(:disabled) { transform: translateY(0) scale(0.98); }
 
-      &:active:not(:disabled) {
-        transform: translateY(0);
-      }
-
-      // Design, wenn kein Text im Input steht
       &:disabled {
-        background-color: $color-border;
-        color: $color-text-muted;
+        background: var(--bg-raised-2);
+        color: var(--text-3);
         cursor: not-allowed;
         box-shadow: none;
         transform: none;
@@ -131,23 +133,23 @@
     }
   }
 
-  // Der Abmelden-Button (unauffällig gestaltet)
+  /* Abmelden — dezent */
   .logout-btn {
     background: transparent;
-    color: $color-text-muted;
-    border: 1px solid $color-border;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-family: $font-main;
+    color: var(--text-2);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-pill);
+    padding: 9px 18px;
+    font-family: var(--font-sans);
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color var(--t-fast), border-color var(--t-fast), background-color var(--t-fast);
 
     &:hover {
-      color: #ff4d4d; // Dezentes Rot beim Hover
-      border-color: #ff4d4d;
-      background-color: rgba(255, 77, 77, 0.05);
+      color: var(--danger-hover);
+      border-color: rgba(240, 51, 75, 0.5);
+      background: var(--danger-soft);
     }
   }
 }

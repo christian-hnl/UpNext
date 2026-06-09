@@ -1,10 +1,21 @@
-// Farben
-$color-bg-main: #0b0c10;
-$color-bg-card: #12141d;
+// ============================================================
+//  UpNext · SCSS palette (legacy bridge)
+//  ------------------------------------------------------------
+//  Die EINZIGE Quelle der Wahrheit für Farben/Tokens ist das
+//  :root-System in styles.scss (CSS Custom Properties). Diese
+//  SCSS-Variablen spiegeln dieselbe Palette für Komponenten-
+//  Stylesheets, die noch mit $-Variablen arbeiten. Werte hier
+//  bewusst als Literale (kein var()), damit SCSS-Farbfunktionen
+//  weiter funktionieren.
+// ============================================================
+
+// Hintergründe — neutrales Dunkelgrau bis Schwarz (kein Blaustich)
+$color-bg-main: #070707;
+$color-bg-card: #151515;
 $color-text-main: #ffffff;
-$color-text-muted: #a0a5b5;
-$color-text-placeholder: #5c6275;
-$color-border: #2a2d3e;
+$color-text-muted: #a7a7ad;
+$color-text-placeholder: #6e6e74;
+$color-border: #262626;
 
 // Akzent-Farben
 $color-green-main: #1ed760;
@@ -12,4 +23,5 @@ $color-green-hover: #1db954;
 $color-purple-main: #b721ff;
 
 // Schriften
-$font-main: 'Montserrat', sans-serif;
+$font-main: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+$font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;

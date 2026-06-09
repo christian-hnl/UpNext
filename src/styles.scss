@@ -1,59 +1,195 @@
 @use 'variables' as *;
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
 
+/* ============================================================
+   UpNext · Global stylesheet
+   ------------------------------------------------------------
+   1. Fonts
+   2. Animatable color tokens (@property)
+   3. Design tokens (:root)  ← single source of truth
+   4. Reset & base
+   5. Typography
+   6. Global UI primitives (buttons, inputs, cards, header …)
+   7. Layout helpers (.page, scrollbars, a11y)
+   ============================================================ */
 
-*, *::before, *::after {
-  box-sizing: border-box;
+/* ---- 1. Fonts ------------------------------------------------ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+
+/* ---- 2. Animatable color tokens -----------------------------
+   Registriert die Album-Akzente als echte <color>-Properties,
+   damit sie beim Setzen per JS weich interpolieren (Ambient-BG).
+   Progressive Enhancement: Browser ohne @property nutzen die
+   Blob-background-color-Transition in app.scss. */
+@property --album-1 { syntax: '<color>'; inherits: true; initial-value: #1db954; }
+@property --album-2 { syntax: '<color>'; inherits: true; initial-value: #0f5132; }
+@property --album-3 { syntax: '<color>'; inherits: true; initial-value: #123c2c; }
+
+/* ---- 3. Design tokens --------------------------------------- */
+:root {
+  /* Surfaces — neutrales Dunkelgrau bis Schwarz (kein Blaustich) */
+  --bg-base:        #070707;
+  --bg-raised:      #151515;
+  --bg-raised-2:    #1e1e1e;
+  --bg-input:       #0d0d0d;
+  --bg-glass:       rgba(22, 22, 22, 0.64);
+  --bg-glass-strong:rgba(14, 14, 14, 0.80);
+
+  /* Text — neutrale Grautöne */
+  --text-1: #ffffff;
+  --text-2: #a7a7ad;
+  --text-3: #6e6e74;
+
+  /* Lines & overlays */
+  --border-soft:   rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --overlay-hover:  rgba(255, 255, 255, 0.05);
+  --overlay-active: rgba(255, 255, 255, 0.09);
+
+  /* Accent (brand green — themeable) */
+  --accent:          #1ed760;
+  --accent-hover:    #1db954;
+  --accent-contrast: #04150b;
+  --accent-glow:     rgba(30, 215, 96, 0.22);
+  --accent-soft:     rgba(30, 215, 96, 0.12);
+
+  /* Secondary brand (event / violet) */
+  --violet:      #b721ff;
+  --violet-glow: rgba(183, 33, 255, 0.22);
+
+  /* Danger */
+  --danger:       #f0334b;
+  --danger-hover: #ff4d62;
+  --danger-soft:  rgba(240, 51, 75, 0.12);
+
+  /* Radii */
+  --radius-sm:   8px;
+  --radius-md:   12px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-pill: 999px;
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  /* Soft shadows / glows (kein harter Drop-Shadow) */
+  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-card:  0 18px 50px -24px rgba(0, 0, 0, 0.75),
+                  0 4px 14px -6px rgba(0, 0, 0, 0.45);
+  --shadow-pop:   0 24px 70px -28px rgba(0, 0, 0, 0.85);
+  --glow-accent:  0 0 0 1px var(--accent-soft),
+                  0 12px 40px -10px rgba(30, 215, 96, 0.4);
+  --glow-violet:  0 0 0 1px var(--violet-glow),
+                  0 12px 40px -10px rgba(183, 33, 255, 0.4);
+
+  /* Typography */
+  --font-sans:    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+
+  /* Motion */
+  --ease-out: cubic-bezier(.22, .61, .36, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --t-fast: .16s;
+  --t-med:  .28s;
+
+  /* Album-ambient (von der App per setProperty überschreibbar).
+     Fallback-Werte für Browser ohne @property-Support. */
+  --album-1:   #1db954;
+  --album-2:   #0f5132;
+  --album-3:   #123c2c;
+  --album-bg:  #0a140f;
+  --shell-max: 1240px;
+
+  color-scheme: dark;
 }
 
+/* ---- 4. Reset & base ---------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
 
-/* basis styling für gesamte app */
 html, body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
-  background-color: $color-bg-main;
-  color: $color-text-main;
-  font-family: $font-main;
+  min-height: 100dvh;
+  background-color: var(--bg-base);
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: -0.011em;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
+body { overflow-x: hidden; }
+
+img { max-width: 100%; }
+
+button { font-family: inherit; }
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-1);
+}
+
+a { color: inherit; }
+
+/* ---- 5. Typography ------------------------------------------ */
+h1, h2, h3, .title, .page-title, .card-heading {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* ---- 6. Global UI primitives -------------------------------- */
+
+/* App-Header (Welcome / Set-Name) */
 .header-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 2rem;
-  margin-bottom: 1.5rem;
+  margin-top: clamp(2rem, 6vw, 3.5rem);
+  margin-bottom: 1.25rem;
 
   .logo {
-    width: 60px;
+    width: 56px;
     height: auto;
-    margin-right: 12px;
+    margin-right: 14px;
+    filter: drop-shadow(0 6px 18px var(--accent-glow));
   }
 
   .title {
     margin: 0;
-    font-size: 2.5rem;
-    font-weight: 800;
-    letter-spacing: 1px;
+    font-size: clamp(2.4rem, 9vw, 3.4rem);
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(180deg, #fff 30%, #c7cad6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
 
-// zwischentext
 .subtitle-container {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: clamp(2rem, 7vw, 3rem);
 
   p {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--text-3);
   }
 }
 
-/* 4. GLOBALE UI-ELEMENTE */
-
+/* Join-Row (Session-ID / Name + Button) */
 .session-join-container {
   display: flex;
   flex-direction: column;
@@ -61,7 +197,7 @@ html, body {
   align-items: center;
   gap: 10px;
   width: 100%;
-  max-width: 380px;
+  max-width: 420px;
   margin: 20px auto;
 
   .input-row {
@@ -72,71 +208,72 @@ html, body {
   }
 }
 
-// Input-Klasse
+/* Input — Glass + sanfter Focus-Glow */
 .session-input {
   flex: 1 1 150px;
-  max-width: 80%;
-  background-color: $color-bg-card;
-  border: 2px solid $color-border;
-  border-radius: 8px;
-  padding: 14px 16px;
-  color: $color-text-main;
-  font-family: $font-main;
+  min-width: 0;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 15px 18px;
+  color: var(--text-1);
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 1rem;
   outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color var(--t-med) var(--ease-out),
+              box-shadow var(--t-med) var(--ease-out),
+              background-color var(--t-med) var(--ease-out);
 
-  // versteckt die Pfeile bei type="number"
   -moz-appearance: textfield;
   appearance: textfield;
   &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+  &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-  &::placeholder {
-    color: $color-text-placeholder;
-    font-weight: 400;
-  }
+  &::placeholder { color: var(--text-3); font-weight: 500; }
+
+  &:hover { border-color: var(--border-strong); }
 
   &:focus {
-    border-color: $color-green-main;
-    box-shadow: 0 0 10px rgba(30, 215, 96, 0.2);
+    border-color: var(--accent);
+    background-color: var(--bg-raised);
+    box-shadow: 0 0 0 4px var(--accent-glow);
   }
 }
 
-// button klasse
+/* Primärer Button — Pill, Glow, federnde Micro-Interaction */
 .join-btn {
   flex: 0 0 auto;
-  background-color: $color-green-main;
-  color: $color-bg-main;
+  position: relative;
+  background: linear-gradient(180deg, #28e974, var(--accent));
+  color: var(--accent-contrast);
   border: none;
-  border-radius: 8px;
-  padding: 14px 24px;
-  font-family: $font-main;
+  border-radius: var(--radius-pill);
+  padding: 15px 28px;
+  font-family: var(--font-sans);
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 24px -10px rgba(30, 215, 96, 0.55);
+  transition: transform var(--t-fast) var(--ease-out),
+              box-shadow var(--t-med) var(--ease-out),
+              filter var(--t-fast) var(--ease-out);
 
   &:hover {
-    background-color: $color-green-hover;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(30, 215, 96, 0.3);
+    filter: brightness(1.05);
+    box-shadow: var(--glow-accent);
   }
-
-  &:active {
-    transform: translateY(0);
-  }
+  &:active { transform: translateY(0) scale(0.98); }
+  &:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 }
 
-/* 5. GEMEINSAMES LAYOUT FÜR MODE-SEITEN (Karten, Header, Divider) */
-
+/* Mode-Landing-Seiten (mode1 / mode2) */
 .mode-page-container {
   width: 100%;
-  max-width: 450px;
+  max-width: 520px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -144,7 +281,7 @@ html, body {
 
 .page-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: clamp(2rem, 6vw, 3rem);
 
   .title-wrapper {
     display: flex;
@@ -152,99 +289,358 @@ html, body {
     justify-content: center;
 
     .logo {
-      width: 45px;
+      width: 44px;
       height: auto;
       margin-right: 12px;
+      filter: drop-shadow(0 6px 18px var(--accent-glow));
     }
   }
 
   .page-title {
     margin: 0;
-    font-size: 2.2rem;
-    font-weight: 800;
-    color: $color-text-main;
-    letter-spacing: 1px;
+    font-size: clamp(2rem, 7vw, 2.8rem);
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: -0.02em;
     text-transform: uppercase;
   }
 
   .page-subtitle {
-    margin: 8px 0 0 0;
-    font-size: 0.9rem;
+    margin: 10px 0 0;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 1.5px;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
+    color: var(--text-3);
   }
 }
 
+/* Cards — Glass-Panel mit weicher Tiefe */
 .action-card {
   width: 100%;
-  background-color: $color-bg-card;
-  border: 1px solid $color-border;
-  border-radius: 16px;
-  padding: 30px 25px;
+  position: relative;
+  background: var(--bg-glass);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: clamp(24px, 5vw, 34px) clamp(20px, 4vw, 30px);
   text-align: center;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--t-med) var(--ease-out),
+              transform var(--t-med) var(--ease-out);
+
+  /* feiner Lichtsaum oben */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+  }
 
   .card-heading {
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    font-weight: 800;
-    color: $color-text-main;
-    letter-spacing: 0.5px;
+    margin: 0 0 1.4rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-1);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .card-description {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: $color-text-muted;
-    margin-bottom: 1%;
-    line-height: 1.6;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-2);
+    margin: 0;
+    line-height: 1.7;
+    text-align: left;
 
-    strong {
-      color: $color-text-main;
-    }
+    strong { color: var(--text-1); font-weight: 700; }
   }
 }
 
+/* Divider mit Label */
 .divider {
   width: 100%;
   display: flex;
   align-items: center;
-  margin: 2rem 0;
-  color: $color-text-placeholder;
+  margin: 1.8rem 0;
+  color: var(--text-3);
   font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 1px;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
 
-  &::before,
-  &::after {
+  &::before, &::after {
     content: '';
     flex: 1;
-    border-bottom: 1px solid $color-border;
+    border-bottom: 1px solid var(--border-soft);
   }
-
-  &::before {
-    margin-right: 15px;
-  }
-
-  &::after {
-    margin-left: 15px;
-  }
+  &::before { margin-right: 16px; }
+  &::after  { margin-left: 16px; }
 }
 
-
-.welcome-join-wrapper {
-  margin-bottom: 2.5rem;
-}
-
+.welcome-join-wrapper { margin-bottom: clamp(2rem, 6vw, 3rem); }
 
 .error-message {
-  width: 100%;            // Passt sich der Breite an
-  color: #ff4d4d;
+  width: 100%;
+  color: var(--danger-hover);
   font-size: 0.85rem;
   font-weight: 600;
   text-align: left;
-  margin-top: 4px;        // Kleiner Abstand nach oben
-  padding-left: 5px;      // Bündig zum Input
+  margin-top: 6px;
+  padding-left: 6px;
+}
+
+/* ---- 7. Layout helpers -------------------------------------- */
+
+/* Generischer Seiten-Container für Session-Screens
+   (Detail-Layout in den jeweiligen Komponenten). */
+.page {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(20px, 4vw, 32px) clamp(14px, 3vw, 24px) 96px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Section-Titel (z. B. Teilnehmerliste) */
+.section-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin: 0;
+}
+
+/* Dezente, themetreue Scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-pill);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); background-clip: padding-box; }
+
+/* Gemeinsame Einstiegs-Animationen */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Panel-Wechsel (Mobile-Tabs) — Apple-Spring */
+@keyframes panel-in {
+  from { opacity: 0; transform: translateY(10px) scale(.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes tabbar-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(130%); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ============================================================
+   Mobile Bottom-Bar (App-Store-Stil)
+   Desktop: ausgeblendet (2-Spalten-Grid zeigt alles).
+   ============================================================ */
+.mobile-tabbar { display: none; }
+
+@media (max-width: 979px) {
+  .mobile-tabbar {
+    position: fixed;
+    left: 50%;
+    bottom: max(16px, env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    z-index: 50;
+
+    display: flex;
+    align-items: stretch;
+    gap: 4px;
+    width: min(360px, calc(100% - 28px));
+    padding: 6px;
+
+    border-radius: var(--radius-pill);
+    background: var(--bg-glass-strong);
+    -webkit-backdrop-filter: blur(26px) saturate(160%);
+    backdrop-filter: blur(26px) saturate(160%);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--shadow-pop),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    animation: tabbar-in .6s var(--ease-spring) .15s backwards;
+  }
+
+  .mobile-tabbar .tab {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 9px 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-2);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    border-radius: var(--radius-pill);
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--t-med) var(--ease-out),
+                transform var(--t-fast) var(--ease-spring);
+
+    svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform var(--t-med) var(--ease-spring);
+    }
+
+    &.active { color: var(--accent-contrast); }
+    &.active svg { transform: translateY(-1px) scale(1.08); }
+
+    /* taktiles Press-Feedback (bounce) */
+    &:active { transform: scale(0.9); }
+    &:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  }
+
+  .mobile-tabbar .tab-indicator {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: calc((100% - 16px) / 2);
+    height: calc(100% - 12px);
+    border-radius: var(--radius-pill);
+    background: linear-gradient(180deg, #28e974, var(--accent));
+    box-shadow: 0 8px 22px -8px rgba(30, 215, 96, 0.65);
+    transition: transform .44s var(--ease-spring);
+
+    &.right { transform: translateX(calc(100% + 4px)); }
+  }
+}
+
+/* Gestaffeltes Listen-/Element-Einblenden */
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-7px); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.8); opacity: 0.7; }
+  70%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: .55; }
+  50%      { opacity: 1; }
+}
+
+/* ============================================================
+   Empty / Idle states  (Queue leer, Suche ohne Eingabe …)
+   Damit nie eine leere Fläche entsteht.
+   ============================================================ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: clamp(28px, 6vw, 48px) 20px;
+  list-style: none;
+  animation: fade-in-up .5s var(--ease-out) backwards;
+
+  &::before { content: none; } /* überschreibt evtl. Queue-Zähler */
+
+  .empty-state__icon {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 10px;
+    border-radius: 50%;
+    color: var(--accent);
+    background: radial-gradient(circle at 50% 40%, var(--accent-soft), transparent 70%);
+    animation: float-soft 4s ease-in-out infinite;
+
+    svg {
+      width: 30px;
+      height: 30px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.7;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* pulsierender Ring */
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid var(--accent);
+      opacity: 0;
+      animation: pulse-ring 2.6s var(--ease-out) infinite;
+    }
+  }
+
+  .empty-state__title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-1);
+    font-family: var(--font-display);
+  }
+
+  .empty-state__hint {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--text-3);
+    max-width: 36ch;
+    line-height: 1.55;
+  }
+}
+
+/* Karten reagieren dezent auf Hover (Tiefe) */
+.action-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+}
+
+/* Logo schwebt sanft */
+.header-container .logo,
+.page-header .title-wrapper .logo {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
+/* Respektiere Nutzerpräferenz */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
 }

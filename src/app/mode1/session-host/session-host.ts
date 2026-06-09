@@ -34,6 +34,9 @@ export class SessionHost implements OnInit {
   selectedDeviceId = signal<string>("");
   qrcodedata = signal("")
 
+  // Reiner UI-State: aktiver Tab der mobilen Bottom-Bar (nur Präsentation).
+  mobileTab = signal<'overview' | 'search'>('overview');
+
 
   async ngOnInit() {
     console.log('[SessionHost] ngOnInit called. SessionId:', this.sessionId());

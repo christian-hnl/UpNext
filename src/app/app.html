@@ -1,5 +1,41 @@
+<!-- Ambient mesh-gradient background.
+     Greift die Farben des aktuellen Tracks auf: setzt eine externe
+     Logik die CSS-Variablen --album-1 / --album-2 / --album-3 (z. B.
+     via document.documentElement.style.setProperty), blenden die
+     Blobs weich über. Keine Logik hier — rein dekorativ. -->
+<div class="ambient" aria-hidden="true">
+  <div class="ambient__blob ambient__blob--1"></div>
+  <div class="ambient__blob ambient__blob--2"></div>
+  <div class="ambient__blob ambient__blob--3"></div>
+  <div class="ambient__blob ambient__blob--4"></div>
 
+  <!-- Driftendes Partikelfeld (reactbits-Optik). Positionen/Tempo
+       per Inline-Custom-Props, damit das CSS schlank bleibt. -->
+  <div class="ambient__particles">
+    <span class="p" style="--x:6%;  --s:2px; --d:26s; --delay:-2s;  --o:.5;  --drift:24px"></span>
+    <span class="p" style="--x:14%; --s:3px; --d:32s; --delay:-12s; --o:.4;  --drift:-18px; --c:var(--accent)"></span>
+    <span class="p" style="--x:21%; --s:2px; --d:22s; --delay:-6s;  --o:.6;  --drift:30px"></span>
+    <span class="p" style="--x:29%; --s:4px; --d:38s; --delay:-20s; --o:.35; --drift:-26px"></span>
+    <span class="p" style="--x:36%; --s:2px; --d:28s; --delay:-9s;  --o:.5;  --drift:16px"></span>
+    <span class="p" style="--x:43%; --s:3px; --d:34s; --delay:-3s;  --o:.45; --drift:-22px; --c:var(--accent)"></span>
+    <span class="p" style="--x:50%; --s:2px; --d:24s; --delay:-15s; --o:.6;  --drift:28px"></span>
+    <span class="p" style="--x:57%; --s:3px; --d:30s; --delay:-7s;  --o:.4;  --drift:-30px"></span>
+    <span class="p" style="--x:64%; --s:2px; --d:36s; --delay:-18s; --o:.5;  --drift:20px"></span>
+    <span class="p" style="--x:71%; --s:4px; --d:27s; --delay:-4s;  --o:.35; --drift:-16px; --c:var(--violet)"></span>
+    <span class="p" style="--x:78%; --s:2px; --d:33s; --delay:-11s; --o:.55; --drift:26px"></span>
+    <span class="p" style="--x:85%; --s:3px; --d:23s; --delay:-1s;  --o:.45; --drift:-24px"></span>
+    <span class="p" style="--x:92%; --s:2px; --d:31s; --delay:-14s; --o:.5;  --drift:18px; --c:var(--accent)"></span>
+    <span class="p" style="--x:11%; --s:2px; --d:29s; --delay:-22s; --o:.4;  --drift:-20px"></span>
+    <span class="p" style="--x:47%; --s:2px; --d:35s; --delay:-8s;  --o:.45; --drift:22px"></span>
+    <span class="p" style="--x:68%; --s:3px; --d:25s; --delay:-17s; --o:.5;  --drift:-28px"></span>
+    <span class="p" style="--x:88%; --s:2px; --d:37s; --delay:-5s;  --o:.4;  --drift:24px"></span>
+    <span class="p" style="--x:33%; --s:2px; --d:30s; --delay:-13s; --o:.55; --drift:-18px; --c:var(--accent)"></span>
+  </div>
 
+  <div class="ambient__grain"></div>
+  <div class="ambient__vignette"></div>
+</div>
 
-
-<router-outlet></router-outlet>
+<main class="app-shell">
+  <router-outlet></router-outlet>
+</main>

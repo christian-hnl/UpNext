@@ -51,7 +51,25 @@
             </li>
         } @empty {
             @if (searchControl.value) {
-                <li class="no-results">Keine Songs gefunden</li>
+                <li class="empty-state">
+                    <div class="empty-state__icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M8.5 11h5"/>
+                        </svg>
+                    </div>
+                    <p class="empty-state__title">Keine Songs gefunden</p>
+                    <p class="empty-state__hint">Probier einen anderen Suchbegriff oder prüfe die Schreibweise.</p>
+                </li>
+            } @else {
+                <li class="empty-state empty-state--idle">
+                    <div class="empty-state__icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                        </svg>
+                    </div>
+                    <p class="empty-state__title">Wonach ist dir?</p>
+                    <p class="empty-state__hint">Tippe oben und durchsuche Millionen Songs für die Warteschlange.</p>
+                </li>
             }
         }
     </ul>

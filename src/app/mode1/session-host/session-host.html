@@ -1,67 +1,104 @@
-<section class="page">
-    <header class="session-header">
-        <h1>hosting session {{ title() }}</h1>
-        <p class="greeting">Hello {{ userName() }}!</p>
+<section class="page session-page">
+    <header class="session-header glass-header">
+        <div class="session-header__titles">
+            <h1>hosting session {{ title() }}</h1>
+            <p class="greeting">Hello {{ userName() }}!</p>
+        </div>
+        <span class="host-pill">HOST</span>
     </header>
 
-    <div class="participants-card">
-        <p class="section-title">Teilnehmer in deiner Session</p>
-        <ul class="member-list">
-            @for (member of members(); track member.id) {
-                <li [class.blocked]="member.status === 'blocked'">
-                    <span class="member-name">{{member.name}}</span>
-                    @if (member.role === 'host') {
-                        <span class="member-role">(Host)</span>
-                    }
+    <div class="session-grid" [attr.data-tab]="mobileTab()">
+        <!-- Fokus-Spalte: Now Playing + Warteschlange (Tab: Übersicht) -->
+        <div class="session-main panel" data-panel="overview">
+            <app-queuevoting [sessionId]="sessionId()" [isHost]="true"></app-queuevoting>
+        </div>
 
-                    @if (member.role !== 'host') {
-                        <div class="member-actions">
-                            @if (member.status === 'blocked') {
-                                <button class="unblock-btn" (click)="unblockParticipant(member.id)">Entsperren</button>
-                            } @else {
-                                <button class="block-btn" (click)="blockParticipant(member.id)">Sperren</button>
+        <!-- Steuer-Spalte -->
+        <aside class="session-side">
+            <div class="panel panel-search" data-panel="search">
+                <app-search [sessionId]="sessionId()"></app-search>
+            </div>
+
+            <div class="side-stack panel" data-panel="overview">
+                <div class="participants-card">
+                    <p class="section-title">Teilnehmer in deiner Session</p>
+                    <ul class="member-list">
+                        @for (member of members(); track member.id) {
+                            <li [class.blocked]="member.status === 'blocked'">
+                                <span class="member-name">{{member.name}}</span>
+                                @if (member.role === 'host') {
+                                    <span class="member-role">(Host)</span>
+                                }
+
+                                @if (member.role !== 'host') {
+                                    <div class="member-actions">
+                                        @if (member.status === 'blocked') {
+                                            <button class="unblock-btn" (click)="unblockParticipant(member.id)">Entsperren</button>
+                                        } @else {
+                                            <button class="block-btn" (click)="blockParticipant(member.id)">Sperren</button>
+                                        }
+                                    </div>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="host-controls">
+                    <div class="device-selector">
+                        <label for="deviceSelect">Wiedergabegerät:</label>
+                        <select id="deviceSelect" (change)="onDeviceChange($event)" [value]="selectedDeviceId()">
+                            @for (device of devices(); track device.id) {
+                                <option [value]="device.id">{{ device.name }} {{ device.is_active ? '(Aktiv)' : '' }}</option>
+                            } @empty {
+                                <option value="">Keine Geräte gefunden. Öffne Spotify!</option>
                             }
-                        </div>
-                    }
-                </li>
-            }
-        </ul>
+                        </select>
+                        <button (click)="loadDevices()">Aktualisieren</button>
+                    </div>
+
+                    <button class="end-session-btn" (click)="endSession()">Session beenden</button>
+                </div>
+
+                <div class="qr-card">
+                    <p class="section-title">Zum Beitreten scannen</p>
+                    <app-qrcode [sessionLink]="qrcodedata()"></app-qrcode>
+                </div>
+
+                <div class="debug-section">
+                    <h3>Host Debug-Funktionen</h3>
+                    <p class="debug-hint">Nur für dich als Host sichtbar. Nutze dies zum Testen der Warteschlange.</p>
+
+                    <div class="debug-actions">
+                        <button (click)="syncQueues()">Queue jetzt synchronisieren</button>
+                        <button (click)="loadDevices()">Geräte neu laden</button>
+                    </div>
+
+                    <div class="debug-queue-tools">
+                        <h4>Warteschlange manipulieren</h4>
+                        <p>Nutze die Votebuttons in der Warteschlange, um die Reihenfolge zu testen.</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
     </div>
 
-    <div class="host-controls">
-        <div class="device-selector">
-            <label for="deviceSelect">Wiedergabegerät:</label>
-            <select id="deviceSelect" (change)="onDeviceChange($event)" [value]="selectedDeviceId()">
-                @for (device of devices(); track device.id) {
-                    <option [value]="device.id">{{ device.name }} {{ device.is_active ? '(Aktiv)' : '' }}</option>
-                } @empty {
-                    <option value="">Keine Geräte gefunden. Öffne Spotify!</option>
-                }
-            </select>
-            <button (click)="loadDevices()">Aktualisieren</button>
-        </div>
-
-        <button class="end-session-btn" (click)="endSession()">Session beenden</button>
-    </div>
-
-    <div class="debug-section">
-        <h3>Host Debug-Funktionen</h3>
-        <p class="debug-hint">Nur für dich als Host sichtbar. Nutze dies zum Testen der Warteschlange.</p>
-
-        <div class="debug-actions">
-            <button (click)="syncQueues()">Queue jetzt synchronisieren</button>
-            <button (click)="loadDevices()">Geräte neu laden</button>
-        </div>
-
-        <div class="debug-queue-tools">
-            <h4>Warteschlange manipulieren</h4>
-            <p>Nutze die Votebuttons in der Warteschlange unten, um die Reihenfolge zu testen.</p>
-        </div>
-    </div>
-
-    <app-queuevoting [sessionId]="sessionId()" [isHost]="true"></app-queuevoting>
-
-    <app-qrcode [sessionLink]="qrcodedata()"></app-qrcode>
-
-    <app-search [sessionId]="sessionId()"></app-search>
+    <!-- App-Store-artige Bottom-Bar (nur Mobile) -->
+    <nav class="mobile-tabbar" role="tablist" aria-label="Ansicht wechseln">
+        <button class="tab" type="button" role="tab"
+                [class.active]="mobileTab() === 'overview'"
+                [attr.aria-selected]="mobileTab() === 'overview'"
+                (click)="mobileTab.set('overview')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+            <span>Übersicht</span>
+        </button>
+        <button class="tab" type="button" role="tab"
+                [class.active]="mobileTab() === 'search'"
+                [attr.aria-selected]="mobileTab() === 'search'"
+                (click)="mobileTab.set('search')">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <span>Suche</span>
+        </button>
+        <span class="tab-indicator" [class.right]="mobileTab() === 'search'" aria-hidden="true"></span>
+    </nav>
 </section>

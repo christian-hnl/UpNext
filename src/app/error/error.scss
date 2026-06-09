@@ -22,22 +22,26 @@
 // Die große 404
 .error-title {
   margin: 0;
-  font-size: 6rem;
-  font-weight: 800;
-  color: $color-green-main;
-  text-shadow: 0 0 25px rgba(30, 215, 96, 0.4); // Cooler Glow-Effekt
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 22vw, 9rem);
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: 2px;
+  letter-spacing: -0.03em;
+  background: linear-gradient(180deg, #5cf09a, var(--accent) 55%, var(--accent-hover));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 40px var(--accent-glow));
 }
 
 // Der Untertitel im upNext-Stil
 .error-subtitle {
-  margin: 0;
-  margin-top: 10px;
-  font-size: 1.2rem;
+  margin: 14px 0 0;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: $color-text-main;
-  letter-spacing: 2px;
+  color: var(--text-2);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
 }
 
 // Das Logo (Responsive gemacht)
@@ -50,27 +54,27 @@
   mix-blend-mode: lighten;
 }
 
-// Der Zurück-Button (sieht aus wie dein Join-Button)
+// Der Zurück-Button (Pill-Stil wie der primäre Join-Button)
 .back-btn {
   display: inline-block;
-  background-color: $color-green-main;
-  color: $color-bg-main;
-  text-decoration: none; // Entfernt den blauen Link-Unterstrich
-  border-radius: 8px;
-  padding: 16px 32px;
+  background: linear-gradient(180deg, #28e974, var(--accent));
+  color: var(--accent-contrast);
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  padding: 16px 34px;
   font-weight: 800;
-  font-size: 1rem;
-  text-transform: uppercase; // Macht den Text automatisch groß
-  letter-spacing: 1px;
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  box-shadow: 0 8px 24px -10px rgba(30, 215, 96, 0.55);
+  transition: transform var(--t-fast) var(--ease-out),
+              box-shadow var(--t-med) var(--ease-out),
+              filter var(--t-fast) var(--ease-out);
 
   &:hover {
-    background-color: $color-green-hover;
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(30, 215, 96, 0.35);
+    filter: brightness(1.05);
+    box-shadow: var(--glow-accent);
   }
-
-  &:active {
-    transform: translateY(0);
-  }
+  &:active { transform: translateY(0) scale(0.98); }
 }
