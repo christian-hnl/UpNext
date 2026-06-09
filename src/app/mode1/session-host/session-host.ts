@@ -6,15 +6,17 @@ import {Queuevoting} from "../queuevoting/queuevoting";
 import {Router} from "@angular/router";
 import {Device} from "@spotify/web-api-ts-sdk";
 import {Database} from "../../database.types";
+import {Search} from "../search/search";
 
 type Participant = Database["public"]["Tables"]["participants"]["Row"];
 
 @Component({
   selector: "app-session-member-host",
-  imports: [
-    Qrcode,
-    Queuevoting
-  ],
+    imports: [
+        Qrcode,
+        Queuevoting,
+        Search
+    ],
   templateUrl: "./session-host.html",
   styleUrl: "./session-host.scss",
 })
