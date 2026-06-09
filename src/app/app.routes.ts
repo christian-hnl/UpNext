@@ -20,7 +20,6 @@ export const routes: Routes = [
   { path: 'set-name/:sessionId', component: SetName },
 
   { path: 'callback', component: Host },
-  { path: 'mode1/configureSession', component: Host },
   { path: 'mode1/session-member/:sessionId', component: SessionMember },
   { path: 'mode1/session-host/:sessionId', component: SessionHost },
 

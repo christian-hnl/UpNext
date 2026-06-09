@@ -40,7 +40,7 @@ export class Host implements OnInit{
         console.log('[Host] Profile retrieved after callback:', profile);
         this.userProfile.set(profile);
 
-        await this.router.navigate(['/mode1/configureSession']);
+        await this.router.navigate(['/mode1']);
       } catch (e) {
         console.error('[Host] Error during Spotify authentication callback:', e);
 
