@@ -226,6 +226,8 @@ export class SupabaseService {
     //queue logic
     async addSongToQueue(sessionId: number, song: { spotify_id: string, title: string, artist: string, album_image?: string, duration_ms: number }, userId: string) {
         console.log(`[SupabaseService] addSongToQueue called: sessionId=${sessionId}, song=${song.title}, userId=${userId}`);
+        const parsedSessionId = Number(sessionId);
+        
         // Zuerst den Song in der globalen Songs-Tabelle registrieren/updaten
         const { error: songError } = await this.supabase
             .from('songs')
@@ -235,19 +237,19 @@ export class SupabaseService {
                 artist: song.artist,
                 album_image: song.album_image || null,
                 duration_ms: song.duration_ms,
-                sessionId: sessionId
+                sessionId: parsedSessionId
             });
 
         if (songError) {
             console.error('[SupabaseService] Fehler beim Speichern des Songs:', songError.message);
-            return null;
+            throw new Error(`Fehler beim Speichern des Songs: ${songError.message}`);
         }
 
         // Dann in die session_queue einfügen
         const { data, error } = await this.supabase
             .from('session_queue')
             .insert({
-                session_id: sessionId,
+                session_id: parsedSessionId,
                 spotify_id: song.spotify_id,
                 suggested_by: userId,
                 score: 1, // Start mit 1 Vote vom Hinzufüger
@@ -258,16 +260,16 @@ export class SupabaseService {
 
         if (error) {
             console.error('[SupabaseService] Fehler beim Hinzufügen zur Queue:', error.message);
-            return null;
+            throw new Error(`Fehler beim Hinzufügen zur Queue: ${error.message}`);
         }
 
         console.log('[SupabaseService] Song added to queue successfully:', data);
 
         // Update session activity
-        this.updateActivity(sessionId);
+        this.updateActivity(parsedSessionId);
 
         // Automatisch den ersten Vote erstellen
-        await this.vote(data.id, userId, 1, sessionId);
+        await this.vote(data.id, userId, 1, parsedSessionId);
 
         return data;
     }

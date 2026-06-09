@@ -178,9 +178,11 @@ export class Search implements OnInit, OnDestroy{
           console.log('Song zur Spotify-Warteschlange hinzugefügt:', track.name);
         } catch (spotifyError: any) {
           console.warn('[Search] Konnte Song nicht zur Spotify-Warteschlange hinzufügen (aber er ist in der Datenbank):', spotifyError);
-          // Zeige Hinweis, falls kein aktives Gerät gefunden wurde, aber mache die UI nicht rückgängig
+          // Zeige Hinweis für den Fehler
           if (spotifyError.message && spotifyError.message.includes('Kein aktives Spotify-Gerät')) {
               alert('Song wurde zur Liste hinzugefügt! Hinweis: Spotify spielt momentan nicht (Kein aktives Gerät beim Host).');
+          } else {
+              alert(`Song in der Liste, aber Spotify Fehler: ${spotifyError.message || 'Unbekannter Spotify Fehler'}`);
           }
         }
       }

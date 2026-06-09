@@ -39,9 +39,10 @@ export class SessionMember implements OnInit {
     this.setupSessionSubscription();
     const userId = localStorage.getItem('userId');
     if (userId) {
-      // Prüfen, ob der User wirklich noch existiert
+      // Prüfen, ob der User wirklich noch existiert UND zur aktuellen Session gehört
       const data = await this.supabaseS.getUserInfos(userId);
-      if (data) {
+      // sessionId() kann ein String vom Router sein, also vergleichen wir die Werte
+      if (data && data.session_id == this.sessionId()) {
         if (data.status === 'blocked') {
           this.isBlocked.set(true);
           this.isJoined.set(false);
@@ -53,7 +54,7 @@ export class SessionMember implements OnInit {
         await this.loadHostName();
         this.setupStatusSubscription(userId);
       } else {
-        console.warn('[SessionMember] Saved userId not found in database, clearing localStorage');
+        console.warn('[SessionMember] Saved userId not found or belongs to a different session, clearing localStorage');
         localStorage.removeItem('userId');
         this.isJoined.set(false);
       }
