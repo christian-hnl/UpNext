@@ -22,9 +22,10 @@ export class SupabaseService {
      */
     async addPrivateSession(titleEingabe: string) {
         const randSessionId = Math.floor(100000 + Math.random() * 900000);
+
         const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
 
-
+        console.log("QR-Code Data: " + qrUrl)
         const { data, error } = await this.supabase
             .from('private_sessions').insert({
                 session_id: randSessionId,
