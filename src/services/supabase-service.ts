@@ -351,6 +351,39 @@ export class SupabaseService {
         const totalScore = votes.reduce((acc, vote) => acc + (vote.vote || 0), 0);
         console.log(`[SupabaseService] Calculated total score for queueId ${queueId}: ${totalScore}`);
 
+        // Check for 40% downvotes
+        const downvoteCount = votes.filter(v => v.vote === -1).length;
+
+        const { data: queueItem } = await this.supabase
+            .from('session_queue')
+            .select('session_id')
+            .eq('id', queueId)
+            .single();
+
+        if (queueItem) {
+            const { count: participantCount } = await this.supabase
+                .from('participants')
+                .select('*', { count: 'exact', head: true })
+                .eq('session_id', queueItem.session_id);
+
+            if (participantCount && participantCount > 0) {
+                if (downvoteCount / participantCount >= 0.4) {
+                    console.log(`[SupabaseService] Song ${queueId} reached 40% downvotes (${downvoteCount}/${participantCount}). Removing from queue.`);
+                    const { error: removeError, data: removedData } = await this.supabase
+                        .from('session_queue')
+                        .update({ status: 'deleted' })
+                        .eq('id', queueId)
+                        .select()
+                        .single();
+
+                    if (removeError) {
+                        console.error('[SupabaseService] Error removing downvoted song:', removeError.message);
+                    }
+                    return removedData;
+                }
+            }
+        }
+
         const { data, error } = await this.supabase
             .from('session_queue')
             .update({ score: totalScore })
