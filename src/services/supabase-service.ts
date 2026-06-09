@@ -22,7 +22,8 @@ export class SupabaseService {
      * @returns den erstellten eintrag
      */
     async addPrivateSession(titleEingabe: string, spotifyToken?: string | null) {
-        const randSessionId = Math.floor(100000 + Math.random() * 900000);
+        console.log(`[SupabaseService] addPrivateSession called. title: ${titleEingabe}, hasToken: ${!!spotifyToken}`);
+        const randSessionId = Math.floor(100000 + Math.random() * 100000);
 
         const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
 
@@ -43,6 +44,7 @@ export class SupabaseService {
 
     //joining
     async joinPrivateSession(id: number) {
+        console.log(`[SupabaseService] joinPrivateSession called. id: ${id}`);
         return this.supabase
             .from('private_sessions')
             .select('session_id')
@@ -51,6 +53,7 @@ export class SupabaseService {
     }
 
     async joinPublicSession(id: number) {
+        console.log(`[SupabaseService] joinPublicSession called. id: ${id}`);
         return this.supabase
             .from('public_sessions')
             .select('session_id')
@@ -61,6 +64,7 @@ export class SupabaseService {
 
     //getInfos
     async getPrivateSessionInfos(id: number) {
+        console.log(`[SupabaseService] getPrivateSessionInfos called. id: ${id}`);
         const { data, error } = await this.supabase
             .from('private_sessions')
             .select('*')
@@ -81,6 +85,7 @@ export class SupabaseService {
      * @returns die id des erstellten users
      */
     async addUser(username: string, sessionId: number, host: boolean) {
+        console.log(`[SupabaseService] addUser called. username: ${username}, sessionId: ${sessionId}, host: ${host}`);
         let role: string = 'member';
         if (host) role = 'host';
 
@@ -104,6 +109,7 @@ export class SupabaseService {
      * @returns alle in der db gespeicherten infos des users
      */
     async getUserInfos(id: string) {
+        console.log(`[SupabaseService] getUserInfos called. id: ${id}`);
         const { data, error } = await this.supabase
             .from('participants')
             .select('*')
@@ -122,6 +128,7 @@ export class SupabaseService {
      * @returns gibt alle namen der members dieser session zurueck
      */
     async getMemberNamesBySessionId(sessionId: number) {
+        console.log(`[SupabaseService] getMemberNamesBySessionId called. sessionId: ${sessionId}`);
         return this.supabase
             .from('participants')
             .select('name')
@@ -135,6 +142,7 @@ export class SupabaseService {
      * @returns ein promise, in dem der name des hosts dieser session ist
      */
     async getHostNameBySessionId(sessionId: number) {
+        console.log(`[SupabaseService] getHostNameBySessionId called. sessionId: ${sessionId}`);
         const { data, error } = await this.supabase
             .from('participants')
             .select('name')
@@ -153,6 +161,7 @@ export class SupabaseService {
      * @returns Ein Promise, das true zurückgibt, wenn der user host dieser Session ist, sonst false
      */
     async checkHost(userId: string, sessionId: number) {
+        console.log(`[SupabaseService] checkHost called. userId: ${userId}, sessionId: ${sessionId}`);
         const { data, error } = await this.supabase
             .from('participants')
             .select('id')
@@ -172,6 +181,7 @@ export class SupabaseService {
      * @returns Ein Promise, das true zurückgibt, wenn die Session existiert, sonst false
      */
     async checkIfSessionIsValid(sessionId: number): Promise<boolean> {
+        console.log(`[SupabaseService] checkIfSessionIsValid called. sessionId: ${sessionId}`);
         const idString = sessionId.toString();
         if (idString.length !== 6 || (idString.charAt(0) !== '1' && idString.charAt(0) !== '2')) {
             return false;
@@ -188,6 +198,7 @@ export class SupabaseService {
 
 
     async getAllParticipantsBySessionId(sessionId: number) {
+        console.log(`[SupabaseService] getAllParticipantsBySessionId called. sessionId: ${sessionId}`);
         return this.supabase
             .from('participants')
             .select('*')
@@ -196,6 +207,7 @@ export class SupabaseService {
     }
 
     async setParticipantStatus(participantId: string, status: string) {
+        console.log(`[SupabaseService] setParticipantStatus called. participantId: ${participantId}, status: ${status}`);
         return this.supabase
             .from('participants')
             .update({ status })
@@ -203,6 +215,7 @@ export class SupabaseService {
     }
 
     async endSession(sessionId: number) {
+        console.log(`[SupabaseService] endSession called. sessionId: ${sessionId}`);
         return this.supabase
             .from('private_sessions')
             .update({ status: 'finished' })
@@ -258,6 +271,7 @@ export class SupabaseService {
     }
 
     async getQueue(sessionId: number) {
+        console.log(`[SupabaseService] getQueue called. sessionId: ${sessionId}`);
         return this.supabase
             .from('session_queue')
             .select(`
@@ -352,6 +366,7 @@ export class SupabaseService {
     }
 
     async getSongVotes(sessionId: number, spotifyId: string) {
+        console.log(`[SupabaseService] getSongVotes called. sessionId: ${sessionId}, spotifyId: ${spotifyId}`);
         const { data, error } = await this.supabase
             .from('session_queue')
             .select('score')
@@ -396,6 +411,7 @@ export class SupabaseService {
      * Aktualisiert den last_active_at Timestamp einer Session
      */
     async updateActivity(sessionId: number) {
+        console.log(`[SupabaseService] updateActivity called. sessionId: ${sessionId}`);
         const { error } = await this.supabase
             .from('private_sessions')
             .update({ last_active_at: new Date().toISOString() })

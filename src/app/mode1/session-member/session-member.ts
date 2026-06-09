@@ -33,6 +33,7 @@ export class SessionMember implements OnInit {
 
 
   async ngOnInit() {
+    console.log('[SessionMember] ngOnInit called. SessionId:', this.sessionId());
     await this.loadSessionInfos();
     await this.setupSpotifyToken();
     this.setupSessionSubscription();
@@ -63,6 +64,7 @@ export class SessionMember implements OnInit {
   private sessionChannel: any;
 
   setupSessionSubscription() {
+    console.log('[SessionMember] setupSessionSubscription called');
     this.sessionChannel = this.supabaseS.supabase
       .channel(`session-status-${this.sessionId()}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'private_sessions', filter: `session_id=eq.${this.sessionId()}` }, (payload: any) => {
@@ -77,6 +79,7 @@ export class SessionMember implements OnInit {
   }
 
   setupStatusSubscription(userId: string) {
+    console.log('[SessionMember] setupStatusSubscription called for userId:', userId);
     this.statusChannel = this.supabaseS.supabase
       .channel(`user-status-${userId}`)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'participants', filter: `id=eq.${userId}` }, (payload: any) => {
@@ -95,6 +98,7 @@ export class SessionMember implements OnInit {
   private spotifyAPI = inject(Spotify);
 
   async setupSpotifyToken() {
+    console.log('[SessionMember] setupSpotifyToken called');
     const data = await this.supabaseS.getPrivateSessionInfos(this.sessionId());
     if (data && (data as any).spotify_token) {
       try {
@@ -110,6 +114,7 @@ export class SessionMember implements OnInit {
   }
 
   async joinSession() {
+    console.log('[SessionMember] joinSession called with inputName:', this.inputName);
     if (!this.inputName || this.inputName.trim().length < 2) {
       alert('Bitte gib einen gültigen Namen ein (mind. 2 Zeichen).');
       return;
@@ -139,6 +144,7 @@ export class SessionMember implements OnInit {
   }
 
   ngOnDestroy() {
+    console.log('[SessionMember] ngOnDestroy called');
     if (this.statusChannel) {
       this.supabaseS.supabase.removeChannel(this.statusChannel);
     }
@@ -150,6 +156,7 @@ export class SessionMember implements OnInit {
 
 
   async loadSessionInfos() {
+    console.log('[SessionMember] loadSessionInfos called. SessionId:', this.sessionId());
     const sid = this.sessionId();
 
     try {
@@ -168,6 +175,7 @@ export class SessionMember implements OnInit {
 
 
   async loadOtherMembers() {
+    console.log('[SessionMember] loadOtherMembers called');
     const {data, error} = await this.supabaseS.getMemberNamesBySessionId(this.sessionId());
 
     if (error) {
@@ -186,6 +194,7 @@ export class SessionMember implements OnInit {
 
 
   async loadHostName() {
+    console.log('[SessionMember] loadHostName called');
     try {
       const hostName = await this.supabaseS.getHostNameBySessionId(this.sessionId());
       this.hostName.set(hostName.name);

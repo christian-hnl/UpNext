@@ -151,6 +151,7 @@ export class Search implements OnInit, OnDestroy{
       if (!userId) {
         track.isQueued = false;
         console.error('[Search] No userId found in localStorage');
+        alert('Fehler: Du scheinst nicht richtig angemeldet zu sein. Bitte trete der Session neu bei.');
         return;
       }
 
@@ -167,19 +168,27 @@ export class Search implements OnInit, OnDestroy{
       );
 
       if (newQueueItem) {
-        // Song zur echten Spotify-Wiedergabeschlange hinzufuegen (aktives Geraet des Hosts)
-        await this.spotifyAPI.addToQueue(track.uri);
-
         track.queueId = newQueueItem.id;
         // Den Score direkt aus dem neu erstellten (und gevoteten) Item nehmen
         track.votes = newQueueItem.score;
+        
+        try {
+          // Song zur echten Spotify-Wiedergabeschlange hinzufuegen (aktives Geraet des Hosts)
+          await this.spotifyAPI.addToQueue(track.uri);
+          console.log('Song zur Spotify-Warteschlange hinzugefügt:', track.name);
+        } catch (spotifyError: any) {
+          console.warn('[Search] Konnte Song nicht zur Spotify-Warteschlange hinzufügen (aber er ist in der Datenbank):', spotifyError);
+          // Zeige Hinweis, falls kein aktives Gerät gefunden wurde, aber mache die UI nicht rückgängig
+          if (spotifyError.message && spotifyError.message.includes('Kein aktives Spotify-Gerät')) {
+              alert('Song wurde zur Liste hinzugefügt! Hinweis: Spotify spielt momentan nicht (Kein aktives Gerät beim Host).');
+          }
+        }
       }
 
-      console.log('Song zur Warteschlange hinzugefügt:', track.name);
     } catch (error: any) {
-      track.isQueued = false; // Rückgängig machen bei Fehler
-      console.error('Fehler beim Hinzufügen zur Warteschlange:', error);
-      alert(error.message || 'Fehler beim Hinzufügen zur Warteschlange');
+      track.isQueued = false; // Nur Rückgängig machen, wenn Datenbank-Fehler auftritt
+      console.error('Fehler beim Speichern in der Datenbank:', error);
+      alert(error.message || 'Ein Datenbankfehler ist aufgetreten.');
     }
   }
 

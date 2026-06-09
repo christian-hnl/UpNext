@@ -36,6 +36,7 @@ export class SessionHost implements OnInit {
 
 
   async ngOnInit() {
+    console.log('[SessionHost] ngOnInit called. SessionId:', this.sessionId());
     const isAuthorized = await this.checkSession();
     if (!isAuthorized) {
       return;
@@ -53,6 +54,7 @@ export class SessionHost implements OnInit {
   laedt den namen und qrCodeLink der session
   */
   async loadSessionInfos() {
+    console.log('[SessionHost] loadSessionInfos called. SessionId:', this.sessionId());
     if (this.sessionId() === null) {
       await this.router.navigate(['/404']);
       return;
@@ -77,6 +79,7 @@ export class SessionHost implements OnInit {
   verhindert brocken access control
    */
   async checkSession(): Promise<boolean> {
+    console.log('[SessionHost] checkSession called');
     const userId = localStorage.getItem("userId");
     if (!userId) {
       await this.router.navigate(['/welcome']);
@@ -98,6 +101,7 @@ export class SessionHost implements OnInit {
   laedt den namen vom host
    */
   async loadMyUserInfos() {
+    console.log('[SessionHost] loadMyUserInfos called');
     const userId = localStorage.getItem('userId');
     if (!userId) {
       await this.router.navigate(['/404']);
@@ -119,6 +123,7 @@ export class SessionHost implements OnInit {
   laedt alle teilnehmer (host + members) der session inkl. status und rolle
    */
   async loadMembers() {
+    console.log('[SessionHost] loadMembers called. SessionId:', this.sessionId());
     const {data, error} = await this.supabaseS.getAllParticipantsBySessionId(this.sessionId());
 
     if (error) {
@@ -137,6 +142,7 @@ export class SessionHost implements OnInit {
   und waehlt das aktive Geraet vor
    */
   async loadDevices() {
+    console.log('[SessionHost] loadDevices called');
     const devices = await this.spotifyAPI.getAvailableDevices();
     this.devices.set(devices);
 
@@ -153,6 +159,7 @@ export class SessionHost implements OnInit {
    */
   async onDeviceChange(event: Event) {
     const deviceId = (event.target as HTMLSelectElement).value;
+    console.log('[SessionHost] onDeviceChange called with deviceId:', deviceId);
     this.selectedDeviceId.set(deviceId);
     if (!deviceId) {
       return;
@@ -172,6 +179,7 @@ export class SessionHost implements OnInit {
   clientseitig per realtime-subscription (session-member) rausgeworfen
    */
   async blockParticipant(participantId: string) {
+    console.log('[SessionHost] blockParticipant called for:', participantId);
     const { error } = await this.supabaseS.setParticipantStatus(participantId, 'blocked');
     if (error) {
       console.error('[SessionHost] Fehler beim Sperren:', error.message);
@@ -181,6 +189,7 @@ export class SessionHost implements OnInit {
   }
 
   async unblockParticipant(participantId: string) {
+    console.log('[SessionHost] unblockParticipant called for:', participantId);
     const { error } = await this.supabaseS.setParticipantStatus(participantId, 'active');
     if (error) {
       console.error('[SessionHost] Fehler beim Entsperren:', error.message);
@@ -196,6 +205,7 @@ export class SessionHost implements OnInit {
   per realtime-subscription automatisch rausgeworfen
    */
   async endSession() {
+    console.log('[SessionHost] endSession called. SessionId:', this.sessionId());
     if (!confirm('Session wirklich beenden? Alle Teilnehmer werden entfernt.')) {
       return;
     }
@@ -216,6 +226,7 @@ export class SessionHost implements OnInit {
   in die echte Spotify-Wiedergabeschlange des gewaehlten Geraets
    */
   async syncQueues() {
+    console.log('[SessionHost] syncQueues called');
     const { data, error } = await this.supabaseS.getQueue(this.sessionId());
     if (error || !data || data.length === 0) {
       console.warn('[SessionHost] Keine Songs in der Queue zum Synchronisieren');
