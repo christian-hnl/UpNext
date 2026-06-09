@@ -136,8 +136,8 @@ export class Spotify {
     } catch (e: any) {
       // Falls der Fehler durch einen leeren Body bei 204 verursacht wird, fangen wir ihn hier ab
       const errorMessage = e instanceof Error ? e.message : String(e);
-      if (errorMessage.includes('Unexpected token') || errorMessage.includes('No number after minus sign')) {
-        console.warn('[Spotify Service] Spotify hat 204 No Content zurückgegeben, was der SDK-Deserializer nicht mag. URI:', uri);
+      if (errorMessage.includes('Unexpected token') || errorMessage.includes('No number after minus sign') || errorMessage.includes('Unexpected identifier') || errorMessage.includes('JSON Parse error')) {
+        console.warn('[Spotify Service] Spotify hat 204 No Content oder OK zurückgegeben, was der SDK-Deserializer nicht mag. URI:', uri);
         return true;
       }
       
