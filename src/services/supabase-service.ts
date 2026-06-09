@@ -1,22 +1,18 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import {environment} from '../environments/environment';
-import {Database} from "../app/database.types";
+import { environment } from '../environments/environment';
+import { Database } from "../app/database.types";
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 export class SupabaseService {
     supabase: SupabaseClient<Database>;
 
 
-  constructor() {
-    this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
-  }
-
-  private formatSessionId(id: number): string {
-    return `00000000-0000-0000-0000-${id.toString().padStart(12, "0")}`;
-  }
+    constructor() {
+        this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
+    }
 
 
     /**
@@ -24,55 +20,55 @@ export class SupabaseService {
      * @param titleEingabe
      * @returns den erstellten eintrag
      */
-  async addPrivateSession(titleEingabe: string) {
-    const randSessionId = Math.floor(100000 + Math.random() * 900000);
-    const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
+    async addPrivateSession(titleEingabe: string) {
+        const randSessionId = Math.floor(100000 + Math.random() * 900000);
+        const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
 
 
-    const { data, error } = await this.supabase
-      .from('private_sessions').insert({
-        session_id: randSessionId,
-        title: titleEingabe,
-        qrCodeData: qrUrl,
-        status: "running"
-      }).select();
+        const { data, error } = await this.supabase
+            .from('private_sessions').insert({
+                session_id: randSessionId,
+                title: titleEingabe,
+                qrCodeData: qrUrl,
+                status: "running"
+            }).select();
 
-    if (error) throw error;
-    return data;
-  }
-
-
-  //joining
-  async joinPrivateSession(id: number) {
-    return this.supabase
-        .from('private_sessions')
-        .select('session_id')
-        .eq('session_id', id)
-        .maybeSingle();
-  }
-
-  async joinPublicSession(id: number) {
-      return this.supabase
-          .from('public_sessions')
-          .select('session_id')
-          .eq('session_id', id)
-          .maybeSingle();
-  }
-
-
-  //getInfos
-  async getPrivateSessionInfos(id: number) {
-    const { data, error } = await this.supabase
-      .from('private_sessions')
-        .select('*')
-        .eq('session_id', id)
-        .maybeSingle();
-
-    if (error) {
-        throw error;
+        if (error) throw error;
+        return data;
     }
-    return data;
-  }
+
+
+    //joining
+    async joinPrivateSession(id: number) {
+        return this.supabase
+            .from('private_sessions')
+            .select('session_id')
+            .eq('session_id', id)
+            .maybeSingle();
+    }
+
+    async joinPublicSession(id: number) {
+        return this.supabase
+            .from('public_sessions')
+            .select('session_id')
+            .eq('session_id', id)
+            .maybeSingle();
+    }
+
+
+    //getInfos
+    async getPrivateSessionInfos(id: number) {
+        const { data, error } = await this.supabase
+            .from('private_sessions')
+            .select('*')
+            .eq('session_id', id)
+            .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+        return data;
+    }
 
     /**
      * erstellt einen neuen user, mit den uebergebenen parametern
@@ -81,22 +77,22 @@ export class SupabaseService {
      * @param host
      * @returns die id des erstellten users
      */
-  async addUser(username: string, sessionId: number, host: boolean) {
-    let role: string = 'member';
-    if (host) role = 'host';
+    async addUser(username: string, sessionId: number, host: boolean) {
+        let role: string = 'member';
+        if (host) role = 'host';
 
-    const { data, error } = await this.supabase
-      .from('participants')
-        .insert({
-          name: username,
-          role: role,
-          session_id: sessionId
-        }).select('id')
-        .single();
+        const { data, error } = await this.supabase
+            .from('participants')
+            .insert({
+                name: username,
+                role: role,
+                session_id: sessionId
+            }).select('id')
+            .single();
 
-    if (error) throw error;
-    return data;
-  }
+        if (error) throw error;
+        return data;
+    }
 
 
     /**
@@ -104,31 +100,31 @@ export class SupabaseService {
      * @param id
      * @returns alle in der db gespeicherten infos des users
      */
-  async getUserInfos(id: string) {
-      const { data, error } = await this.supabase
-          .from('participants')
-          .select('*')
-          .eq('id', id)
-        .single();
+    async getUserInfos(id: string) {
+        const { data, error } = await this.supabase
+            .from('participants')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-      if (error) {
-          throw error;
-      }
-      return data;
-  }
+        if (error) {
+            throw error;
+        }
+        return data;
+    }
 
     /**
      * sucht nach allen namen der session mit der uebergebenen id
      * @param sessionId
      * @returns gibt alle namen der members dieser session zurueck
      */
-  async getMemberNamesBySessionId(sessionId: number) {
-      return this.supabase
-          .from('participants')
-          .select('name')
-          .eq('session_id', sessionId)
-          .eq('role', 'member');
-  }
+    async getMemberNamesBySessionId(sessionId: number) {
+        return this.supabase
+            .from('participants')
+            .select('name')
+            .eq('session_id', sessionId)
+            .eq('role', 'member');
+    }
 
     /**
      * gibt den namen des hosts, dieser session zurueck
@@ -233,7 +229,7 @@ export class SupabaseService {
         const { data, error } = await this.supabase
             .from('session_queue')
             .insert({
-                session_id: this.formatSessionId(sessionId),
+                session_id: sessionId,
                 spotify_id: song.spotify_id,
                 suggested_by: userId,
                 score: 1, // Start mit 1 Vote vom Hinzufüger
@@ -262,7 +258,7 @@ export class SupabaseService {
                 *,
                 songs (*)
             `)
-            .eq('session_id', this.formatSessionId(sessionId))
+            .eq('session_id', sessionId)
             .eq('status', 'queued')
             .order('score', { ascending: false })
             .limit(10);
@@ -271,7 +267,7 @@ export class SupabaseService {
     async vote(queueId: number, participantId: string, value: number) {
         console.log(`[SupabaseService] vote called: queueId=${queueId}, participantId=${participantId}, value=${value}`);
         // Vote einfügen oder aktualisieren (Upsert)
-        
+
         const { data: existingVote } = await this.supabase
             .from('votes')
             .select('*')
@@ -341,7 +337,7 @@ export class SupabaseService {
         } else {
             console.log('[SupabaseService] session_queue score updated successfully:', data);
         }
-        
+
         return data;
     }
 
@@ -349,25 +345,32 @@ export class SupabaseService {
         const { data, error } = await this.supabase
             .from('session_queue')
             .select('score')
-            .eq('session_id', this.formatSessionId(sessionId))
+            .eq('session_id', sessionId)
             .eq('spotify_id', spotifyId)
             .maybeSingle();
-            
+
         if (error) return 0;
         return data?.score || 0;
     }
 
     subscribeToQueue(sessionId: number, callback: (payload: any) => void) {
         console.log(`[SupabaseService] Subscribing to queue for sessionId=${sessionId}`);
+        const channelName = `queue-${sessionId}`;
+
+        const existingChannel = this.supabase.getChannels().find(ch => ch.topic === `realtime:${channelName}`);
+        if (existingChannel) {
+            this.supabase.removeChannel(existingChannel);
+        }
+
         return this.supabase
-            .channel(`queue-${sessionId}`)
+            .channel(channelName)
             .on(
                 'postgres_changes',
                 {
                     event: '*',
                     schema: 'public',
                     table: 'session_queue',
-                    filter: `session_id=eq.${this.formatSessionId(sessionId)}`
+                    filter: `session_id=eq.${sessionId}`
                 },
                 (payload) => {
                     console.log('[SupabaseService] Realtime update received for session_queue:', payload);
@@ -375,8 +378,7 @@ export class SupabaseService {
                 }
             )
             .subscribe((status) => {
-                console.log(`[SupabaseService] Subscription status for queue-${sessionId}:`, status);
+                console.log(`[SupabaseService] Subscription status for ${channelName}:`, status);
             });
-
     }
 }

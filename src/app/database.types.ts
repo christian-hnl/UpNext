@@ -105,7 +105,7 @@ export type Database = {
         Row: {
           id: number
           score: number | null
-          session_id: string
+          session_id: number
           spotify_id: string | null
           status: string | null
           suggested_by: string | null
@@ -113,7 +113,7 @@ export type Database = {
         Insert: {
           id?: number
           score?: number | null
-          session_id: string
+          session_id: number
           spotify_id?: string | null
           status?: string | null
           suggested_by?: string | null
@@ -121,7 +121,7 @@ export type Database = {
         Update: {
           id?: number
           score?: number | null
-          session_id?: string
+          session_id?: number
           spotify_id?: string | null
           status?: string | null
           suggested_by?: string | null
