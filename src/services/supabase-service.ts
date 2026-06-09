@@ -18,9 +18,10 @@ export class SupabaseService {
     /**
      * erstellt eine neue privateSession mit uebergebenen title
      * @param titleEingabe
+     * @param spotifyToken
      * @returns den erstellten eintrag
      */
-    async addPrivateSession(titleEingabe: string) {
+    async addPrivateSession(titleEingabe: string, spotifyToken?: string | null) {
         const randSessionId = Math.floor(100000 + Math.random() * 900000);
 
         const qrUrl = window.location.origin + '/mode1/session-member/' + randSessionId;
@@ -31,7 +32,8 @@ export class SupabaseService {
                 session_id: randSessionId,
                 title: titleEingabe,
                 qrCodeData: qrUrl,
-                status: "running"
+                status: "running",
+                spotify_token: spotifyToken || null
             }).select();
 
         if (error) throw error;
@@ -246,8 +248,11 @@ export class SupabaseService {
 
         console.log('[SupabaseService] Song added to queue successfully:', data);
 
+        // Update session activity
+        this.updateActivity(sessionId);
+
         // Automatisch den ersten Vote erstellen
-        await this.vote(data.id, userId, 1);
+        await this.vote(data.id, userId, 1, sessionId);
 
         return data;
     }
@@ -265,9 +270,13 @@ export class SupabaseService {
             .limit(10);
     }
 
-    async vote(queueId: number, participantId: string, value: number) {
+    async vote(queueId: number, participantId: string, value: number, sessionId?: number) {
         console.log(`[SupabaseService] vote called: queueId=${queueId}, participantId=${participantId}, value=${value}`);
         // Vote einfügen oder aktualisieren (Upsert)
+
+        if (sessionId) {
+            this.updateActivity(sessionId);
+        }
 
         const { data: existingVote } = await this.supabase
             .from('votes')
@@ -381,5 +390,28 @@ export class SupabaseService {
             .subscribe((status) => {
                 console.log(`[SupabaseService] Subscription status for ${channelName}:`, status);
             });
+    }
+
+    /**
+     * Aktualisiert den last_active_at Timestamp einer Session
+     */
+    async updateActivity(sessionId: number) {
+        const { error } = await this.supabase
+            .from('private_sessions')
+            .update({ last_active_at: new Date().toISOString() })
+            .eq('session_id', sessionId);
+            
+        if (error) {
+            console.warn('[SupabaseService] Error updating activity for private session:', error.message);
+        }
+        
+        const { error: publicError } = await this.supabase
+            .from('public_sessions')
+            .update({ last_active_at: new Date().toISOString() })
+            .eq('session_id', sessionId);
+            
+        if (publicError) {
+            console.warn('[SupabaseService] Error updating activity for public session:', publicError.message);
+        }
     }
 }

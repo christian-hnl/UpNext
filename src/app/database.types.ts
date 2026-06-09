@@ -46,6 +46,7 @@ export type Database = {
           active_device_id: string | null
           created_at: string
           duration_ms: number | null
+          last_active_at: string | null
           qrCodeData: string | null
           session_id: number
           spotify_token: string | null
@@ -56,6 +57,7 @@ export type Database = {
           active_device_id?: string | null
           created_at?: string
           duration_ms?: number | null
+          last_active_at?: string | null
           qrCodeData?: string | null
           session_id?: number
           spotify_token?: string | null
@@ -66,6 +68,7 @@ export type Database = {
           active_device_id?: string | null
           created_at?: string
           duration_ms?: number | null
+          last_active_at?: string | null
           qrCodeData?: string | null
           session_id?: number
           spotify_token?: string | null
@@ -78,6 +81,7 @@ export type Database = {
         Row: {
           created_at: string
           event_name: string | null
+          last_active_at: string | null
           organicer: string | null
           qrCodeData: string | null
           session_id: number
@@ -86,6 +90,7 @@ export type Database = {
         Insert: {
           created_at?: string
           event_name?: string | null
+          last_active_at?: string | null
           organicer?: string | null
           qrCodeData?: string | null
           session_id?: number
@@ -94,6 +99,7 @@ export type Database = {
         Update: {
           created_at?: string
           event_name?: string | null
+          last_active_at?: string | null
           organicer?: string | null
           qrCodeData?: string | null
           session_id?: number

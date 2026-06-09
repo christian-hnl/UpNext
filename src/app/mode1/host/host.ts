@@ -82,7 +82,16 @@ export class Host implements OnInit{
   async addSession() {
     console.log('[Host] addSession called. Title:', this.title());
     console.log('[Host] Current user profile:', this.userProfile());
-    const data = await this.supabaseService.addPrivateSession(this.title());
+    
+    let tokenStr = null;
+    try {
+        const token = await this.spotifyService.getAccessToken();
+        if (token) tokenStr = JSON.stringify(token);
+    } catch (e) {
+        console.error('[Host] Error getting access token for session:', e);
+    }
+
+    const data = await this.supabaseService.addPrivateSession(this.title(), tokenStr);
     if (data && data[0] && data[0].qrCodeData) {
       console.log('[Host] Session created successfully. Data:', data[0]);
       const sessionId = data[0].session_id;
