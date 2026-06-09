@@ -4,6 +4,7 @@ import {Search} from "../search/search";
 import {Queuevoting} from "../queuevoting/queuevoting";
 import {FormsModule} from "@angular/forms";
 import {Spotify} from "../../../services/spotify";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-session-member',
@@ -28,6 +29,9 @@ export class SessionMember implements OnInit {
   isJoined = signal<boolean>(false);
   isBlocked = signal<boolean>(false);
 
+  private router = inject(Router);
+
+
   async ngOnInit() {
     await this.loadSessionInfos();
     await this.setupSpotifyToken();
@@ -35,15 +39,15 @@ export class SessionMember implements OnInit {
     const userId = localStorage.getItem('userId');
     if (userId) {
       // Prüfen, ob der User wirklich noch existiert
-      const { data: userExists } = await this.supabaseS.getUserInfos(userId);
-      if (userExists) {
-        if (userExists.status === 'blocked') {
+      const data = await this.supabaseS.getUserInfos(userId);
+      if (data) {
+        if (data.status === 'blocked') {
           this.isBlocked.set(true);
           this.isJoined.set(false);
           return;
         }
         this.isJoined.set(true);
-        this.userName.set(userExists.name);
+        this.userName.set(data.name);
         await this.loadOtherMembers();
         await this.loadHostName();
         this.setupStatusSubscription(userId);
@@ -91,7 +95,7 @@ export class SessionMember implements OnInit {
   private spotifyAPI = inject(Spotify);
 
   async setupSpotifyToken() {
-    const { data, error } = await this.supabaseS.getPrivateSessionInfos(this.sessionId());
+    const data = await this.supabaseS.getPrivateSessionInfos(this.sessionId());
     if (data && (data as any).spotify_token) {
       try {
         const token = JSON.parse((data as any).spotify_token);
@@ -113,8 +117,8 @@ export class SessionMember implements OnInit {
     
     try {
       const result = await this.supabaseS.addUser(this.inputName.trim(), this.sessionId(), false);
-      if (result.data) {
-        const userData = result.data as any;
+      if (result.id) {
+        const userData = result.id as any;
         if (userData.status === 'blocked') {
           alert('Du wurdest von dieser Session gesperrt.');
           return;
@@ -146,53 +150,51 @@ export class SessionMember implements OnInit {
 
 
   async loadSessionInfos() {
-    if (this.sessionId() === null) {
-      return;
+    const sid = this.sessionId();
+
+    try {
+      const data = await this.supabaseS.getPrivateSessionInfos(sid);
+
+      if (!data) {
+        return;
+      }
+      this.title.set(data.title);
+
+    } catch (error) {
+      await this.router.navigate(['/404']);
     }
-
-    const { data, error } = await this.supabaseS.getPrivateSessionInfos(this.sessionId());
-
-    if (error) {
-      console.error('Error: ', error.message);
-      return;
-    }
-
-    this.title.set(data?.title);
   }
+
+
 
   async loadOtherMembers() {
     const {data, error} = await this.supabaseS.getMemberNamesBySessionId(this.sessionId());
 
     if (error) {
-      console.error('Error: ', error.message);
       return;
     }
 
     if (!data || data.length === 0) {
-      console.warn('no other members in this session');
       this.otherMembers.set([]);
       return;
     }
-    const names = data.map(member => member.name || 'Unbekannt');
 
+    const names = data.map(member => member.name || 'Unbekannt');
     this.otherMembers.set(names);
   }
 
+
+
   async loadHostName() {
-    const {data, error} = await this.supabaseS.getHostNameBySessionId(this.sessionId());
+    try {
+      const hostName = await this.supabaseS.getHostNameBySessionId(this.sessionId());
+      this.hostName.set(hostName.name);
 
-    if (error) {
-      console.error('Error: ', error.message);
-      return;
+    } catch (error) {
+      await this.router.navigate(['/404']);
     }
-
-    if (!data) {
-      console.warn('cannot find the host');
-      return;
-    }
-
-    this.hostName.set(data.name);
   }
+
 
 
 }

@@ -56,16 +56,16 @@ export class SessionHost implements OnInit {
       return;
     }
 
-    const { data, error } = await this.supabaseS.getPrivateSessionInfos(this.sessionId());
+    try {
+      const data = await this.supabaseS.getPrivateSessionInfos(this.sessionId());
 
-    if (error) {
-      console.error('Error: ', error.message);
+      this.title.set(data?.title);
+      this.qrcodedata.set(<string>data?.qrCodeData)
+    } catch (error) {
       await this.router.navigate(['/404']);
-      return;
     }
 
-    this.title.set(data?.title);
-    this.qrcodedata.set(<string>data?.qrCodeData)
+
   }
 
 
@@ -81,18 +81,10 @@ export class SessionHost implements OnInit {
       return false;
     }
 
-    const { data: hostData, error: hostError } = await this.supabaseS.checkHost(userId, this.sessionId());
-
-    if (hostError) {
-      console.error("Datenbank-Fehler beim Host-Check:", hostError);
+    try {
+      await this.supabaseS.checkHost(userId, this.sessionId());
+    } catch (error) {
       await this.router.navigate(['/404']);
-      return false;
-    }
-
-    const isHost = hostData !== null;
-    if (!isHost) {
-      await this.router.navigate(['/404']);
-      return false;
     }
 
     return true;
@@ -110,13 +102,13 @@ export class SessionHost implements OnInit {
       return;
     }
 
-    const { data, error } = await this.supabaseS.getUserInfos(userId);
-    if (error) {
-      await this.router.navigate(['/404']);
-      return;
-    }
+    try {
+      const data = await this.supabaseS.getUserInfos(userId);
+      this.userName.set(data?.name);
 
-    this.userName.set(data?.name);
+    } catch (e) {
+      await this.router.navigate(['/404']);
+    }
   }
 
 

@@ -23,6 +23,7 @@ export class SetName {
   errorMess = signal<string | null>(null);
 
 
+
   async createUserAndJoinSession() {
     this.errorMess.set(null);
 
@@ -32,50 +33,32 @@ export class SetName {
       return;
     }
 
-    const { data: userData, error: userError } = await this.supabaseS.addUser(
-        this.userName(),
-        this.sessionId(),
-        false
-    );
+    try {
+      const userId = await this.supabaseS.addUser(
+          this.userName(),
+          this.sessionId(),
+          false
+      );
 
-    if (userError || !userData) {
-      console.error("Fehler beim Erstellen des Users:", userError);
+      localStorage.setItem('userId', userId.id);
+
+      const sessionIdStr = this.sessionId().toString();
+      const isPrivateSession = sessionIdStr.charAt(0) === '1';
+      const isPublicSession = sessionIdStr.charAt(0) === '2';
+
+      if (isPrivateSession) {
+        await this.router.navigate(['/mode1/session-member', this.sessionId()]);
+
+      } else if (isPublicSession) {
+        await this.router.navigate(['/mode2/session-member', this.sessionId()]);
+      }
+
+    } catch (error) {
       await this.router.navigate(["/404"]);
       return;
     }
 
-    const userId = userData.id;
-    localStorage.setItem('userId', userId);
-
-    const sessionIdStr = this.sessionId().toString();
-    const isPrivateSession = sessionIdStr.charAt(0) === '1';
-    const isPublicSession = sessionIdStr.charAt(0) === '2';
-
-    let joinError = null;
-
-    if (isPrivateSession) {
-      const { error } = await this.supabaseS.joinPrivateSession(this.sessionId());
-      joinError = error;
-    } else if (isPublicSession) {
-      const { error } = await this.supabaseS.joinPublicSession(this.sessionId());
-      joinError = error;
-    } else {
-      console.warn('Keine gültige Session-ID. Weder 1 noch 2 am Anfang.');
-      await this.router.navigate(["/404"]);
-      return;
-    }
-
-    if (joinError) {
-      console.error("Fehler beim Beitreten der Session:", joinError);
-      await this.router.navigate(["/404"]);
-      return;
-    }
-
-    if (isPrivateSession) {
-      await this.router.navigate(['/mode1/session-member', this.sessionId()]);
-    } else if (isPublicSession) {
-      await this.router.navigate(['/mode2/session-member', this.sessionId()]);
-    }
+    await this.router.navigate(["/404"]);
   }
 
 

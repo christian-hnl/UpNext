@@ -91,19 +91,14 @@ export class Host implements OnInit{
       const profile = this.userProfile();
       if (profile) {
         console.log('[Host] Registering host user in database:', profile.display_name);
-        const { data: hostUser, error: hostUserError } = await this.supabaseService.addUser(profile.display_name, this.sessionId(), true);
-        if (hostUserError || !hostUser) {
-          console.error('[Host] Failed to register host user:', hostUserError?.message);
-          return;
-        }
-        // WICHTIG: Host-userId speichern – sonst scheitert der Host-Check in session-host (→ 404)
+        const hostUser = await this.supabaseService.addUser(profile.display_name, this.sessionId(), true);
+
         localStorage.setItem('userId', hostUser.id);
       }
 
-      console.log('[Host] Navigating to session-host view with sessionId:', this.sessionId());
       await this.router.navigate(['/mode1/session-host', this.sessionId()]);
     } else {
-      console.error('[Host] Failed to create session');
+      await this.router.navigate(['/404']);
     }
   }
 

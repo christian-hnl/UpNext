@@ -16,7 +16,6 @@ export class JoinSession {
   private supabaseS = inject(SupabaseService);
 
   sessionId = signal<number | null>(null);
-
   errorMess = signal<string | null>(null);
 
 
