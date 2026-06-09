@@ -48,9 +48,10 @@ export class SetName {
 
       if (isPrivateSession) {
         await this.router.navigate(['/mode1/session-member', this.sessionId()]);
-
+        return;
       } else if (isPublicSession) {
         await this.router.navigate(['/mode2/session-member', this.sessionId()]);
+        return;
       }
 
     } catch (error) {
@@ -58,6 +59,7 @@ export class SetName {
       return;
     }
 
+    // Fallback if session type is unknown
     await this.router.navigate(["/404"]);
   }
 

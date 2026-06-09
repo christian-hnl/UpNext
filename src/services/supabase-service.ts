@@ -233,6 +233,8 @@ export class SupabaseService {
                 spotify_id: song.spotify_id,
                 title: song.title,
                 artist: song.artist,
+                album_image: song.album_image || null,
+                duration_ms: song.duration_ms,
                 sessionId: sessionId
             });
 
@@ -428,6 +430,21 @@ export class SupabaseService {
             
         if (publicError) {
             console.warn('[SupabaseService] Error updating activity for public session:', publicError.message);
+        }
+    }
+
+    /**
+     * Markiert einen Song in der Warteschlange als "played"
+     */
+    async markSongAsPlayed(queueId: number) {
+        console.log(`[SupabaseService] markSongAsPlayed called. queueId: ${queueId}`);
+        const { error } = await this.supabase
+            .from('session_queue')
+            .update({ status: 'played' })
+            .eq('id', queueId);
+            
+        if (error) {
+            console.error('[SupabaseService] Error marking song as played:', error.message);
         }
     }
 }

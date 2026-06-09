@@ -33,6 +33,18 @@ export class Queuevoting implements OnInit, OnDestroy {
       const result = await this.spotifyAPI.getCurrentlyPlaying();
       if (result && result.item) {
         this.currentlyPlaying.set(result.item);
+        
+        // Host-Logik: Prüfen, ob der spielende Song aus der Queue kommt und ihn "abhaken"
+        if (this.isHost()) {
+            const currentQ = this.queue();
+            const playingId = result.item.uri;
+            
+            const itemInQueue = currentQ.find(item => item.spotify_id === playingId);
+            if (itemInQueue) {
+                console.log('[Queuevoting] Host: Currently playing song ist in der Queue. Markiere als gespielt.', itemInQueue.id);
+                await this.supabaseS.markSongAsPlayed(itemInQueue.id);
+            }
+        }
       } else {
         this.currentlyPlaying.set(null);
       }
