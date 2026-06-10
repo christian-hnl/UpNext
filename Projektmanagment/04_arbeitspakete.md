@@ -1,123 +1,118 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+:root{
+  --bg:#070707;--card:#151515;--card2:#1e1e1e;--text:#fff;--muted:#a7a7ad;--faint:#6e6e74;
+  --border:#262626;--green:#1ed760;--green2:#1db954;--violet:#b721ff;--danger:#f0334b;
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  line-height:1.65;max-width:980px;margin:0 auto;padding:0 24px 96px;letter-spacing:-.011em;}
+h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.02em;color:#fff;}
+h2{margin-top:2.4em;padding-bottom:.35em;border-bottom:1px solid var(--border);font-size:1.5rem;}
+h2::before{content:'';display:inline-block;width:10px;height:10px;border-radius:3px;
+  background:linear-gradient(180deg,#28e974,var(--green));margin-right:12px;vertical-align:middle;}
+h3{color:var(--green);font-size:1.12rem;margin-top:1.8em;}
+a{color:var(--green);text-decoration:none;}
+a:hover{text-decoration:underline;}
+strong{color:#fff;}
+table{border-collapse:collapse;width:100%;margin:1.2em 0;font-size:.9rem;
+  background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+th{background:#101010;color:var(--muted);text-transform:uppercase;font-size:.72rem;
+  letter-spacing:.08em;text-align:left;padding:12px 14px;border-bottom:1px solid var(--border);}
+td{padding:11px 14px;border-bottom:1px solid var(--border);color:#d8d8db;vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.025);}
+code{background:#0d0d0d;border:1px solid var(--border);border-radius:6px;padding:.12em .45em;
+  font-size:.86em;color:var(--green);}
+blockquote{border-left:3px solid var(--green);background:rgba(30,215,96,.06);margin:1.2em 0;
+  padding:.6em 1.1em;border-radius:0 10px 10px 0;color:var(--muted);}
+hr{border:none;border-top:1px solid var(--border);margin:2.4em 0;}
+ul li::marker{color:var(--green);}
+.hero{display:flex;align-items:center;gap:18px;margin:40px 0 8px;}
+.hero img{width:64px;height:64px;filter:drop-shadow(0 6px 18px rgba(30,215,96,.4));}
+.hero .t{margin:0;font-size:2.6rem;font-weight:700;font-family:'Space Grotesk';
+  background:linear-gradient(180deg,#fff 30%,#c7cad6);-webkit-background-clip:text;
+  background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.hero .s{margin:6px 0 0;font-size:.72rem;font-weight:600;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--faint);}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px;}
+.pill{display:inline-block;background:var(--card);border:1px solid var(--border);
+  border-radius:999px;padding:6px 14px;font-size:.74rem;font-weight:600;color:var(--muted);}
+.pill.green{background:rgba(30,215,96,.12);border-color:rgba(30,215,96,.3);color:var(--green);}
+.pill.violet{background:rgba(183,33,255,.12);border-color:rgba(183,33,255,.3);color:#d98bff;}
+</style>
+
+<div class="hero">
+  <img src="../public/media/logo.png" alt="upNext Logo"/>
+  <div>
+    <p class="t">upNext</p>
+    <p class="s">Gemeinsam Musik hören</p>
+  </div>
+</div>
+
+<div class="pills">
+  <span class="pill green">Dokument 04</span>
+  <span class="pill">Arbeitspakete</span>
+  <span class="pill violet">Wer · Was · Bis wann</span>
+</div>
+
 # Arbeitspakete
 
-Projekt: UpNext - Musik Voting
-Projektteam: Christian Hahnl, Andreas Klehr
-Stand: 06.05.2026
+Die Arbeitspakete (AP) zerlegen die Projektphasen aus dem Projektauftrag in konkrete,
+zuweisbare Aufgaben. Jedes Paket hat **genau eine verantwortliche Person**, einen
+Zeitraum und ein **prüfbares Abnahmekriterium**. Sie bilden die Grundlage für das
+[Gantt-Diagramm](05_gantt-diagramm.md).
 
+## Team & Kürzel
 
-## Grundsätze
+| Kürzel | Person | Individueller Schwerpunkt |
+|--------|--------|---------------------------|
+| CH | Christian Hahnl | Songsuche, Warteschlange & Voting-Logik, Auto-Play |
+| AK | Andreas Klehr | Start-/Beitrittsfluss (Welcome, Join, Set-Name), Routing & Navigation, Fehlerseite |
 
-- Jedes Arbeitspaket hat genau eine verantwortliche Person.
-- Jedes Arbeitspaket hat ein prüfbares Abnahmekriterium.
-- Jedes Arbeitspaket ist einem Meilenstein zugeordnet (siehe Gantt-Diagramm).
+**Gemeinsam (50/50):** Supabase-Service & Datenmodell, Spotify-Integration,
+Design-System / CSS sowie die Session-Host-Ansicht wurden von beiden zusammen entwickelt
+(Pair-Programming). Die Aufteilung ist daher **kein** Frontend/Backend-Schnitt – die
+zentrale Infrastruktur tragen beide gemeinsam.
 
-Kürzel: CH = Christian Hahnl, AK = Andreas Klehr.
+## Übersicht der Arbeitspakete
 
+| AP | Bezeichnung | Verantwortlich | Zeitraum | Meilenstein | Abnahmekriterium |
+|----|-------------|----------------|----------|-------------|------------------|
+| AP1 | Projektdokumentation (Auftrag, Pflichtenheft) | CH | KW 18 | M1 | Pflichtenheft vom Betreuer freigegeben |
+| AP2 | Projekt-Setup (Angular, Supabase, Vercel, Spotify-Client) | CH + AK | KW 18 | M2 | `npm start` läuft, DB & Deployment erreichbar |
+| AP3 | Datenmodell & Tabellen anlegen (6 Tabellen, ERD) | CH + AK | KW 18–19 | M2 | Schema in Supabase, ERD entspricht DB |
+| AP4 | Design-System & globale UI (Farben, Fonts, Cards) | CH + AK | KW 18–19 | M2 | `styles.scss`/`_variables.scss` umgesetzt |
+| AP5 | Spotify-OAuth-Login (PKCE) + Callback | CH + AK | KW 19 | M3 | Host kann sich anmelden, Profil wird geladen |
+| AP6 | Session erstellen + QR-Code | CH | KW 19 | M3 | Session mit ID & QR wird angelegt |
+| AP7 | Welcome-/Modus-Seiten & Beitritt + Validierung | AK | KW 19–20 | M3 | Gast tritt mit gültiger ID bei |
+| AP8 | Set-Name & Teilnehmerverwaltung | AK | KW 20 | M4 | Teilnehmer wird in DB angelegt |
+| AP9 | Songsuche (Spotify) + Ergebnisliste | CH | KW 20 | M4 | Suche liefert Tracks im UI |
+| AP10 | Warteschlange: Hinzufügen, Anzeige, Realtime-Sort | CH | KW 20–21 | M4 | Queue aktualisiert sich live nach Score |
+| AP11 | Voting (Up/Down) + Auto-Remove bei 40 % | CH | KW 21 | M4 | Score & Auto-Entfernen funktionieren |
+| AP12 | Wiedergabe: Geräteauswahl, Transfer, Auto-Play | CH + AK | KW 21 | M4 | Top-Song spielt auf Host-Gerät |
+| AP13 | Session-Host-Ansicht & Host-Admin (Teilnehmer, Sperren, Beenden, Host-Check) | CH + AK | KW 21 | M4 | Sperren/Beenden wirft Gäste raus; Nicht-Host blockiert |
+| AP14 | Routing, Navigationsfluss & Fehlerseite (404) | AK | KW 21–22 | M5 | Ungültige Routen/Sessions landen auf 404 |
+| AP15 | Responsives Feintuning & Animationen | CH + AK | KW 22 | M5 | App auf Smartphone & Desktop nutzbar |
+| AP16 | Testdurchführung & Testprotokoll | CH + AK | KW 22–23 | M6 | Alle Muss-Tests dokumentiert |
+| AP17 | README & Abschlussdoku | AK | KW 23 | M6 | Start auf fremdem Rechner erfolgreich |
+| AP18 | Abschlusspräsentation & Probelauf | CH + AK | KW 24 | M7 | Pitch gehalten, Live-Demo läuft |
+| AP19 | Modus 2 (Event): Songwünsche an DJ, Stimmungsbild *(in Umsetzung)* | CH + AK | KW 22–24 | M7 | Gäste schlagen dem DJ Songs vor, DJ sieht die Wünsche |
 
-## Übersicht
+## Abhängigkeiten (Auszug)
 
-| AP | Bezeichnung | Verantw. | Zeitraum | Meilenstein |
-|----|-------------|----------|----------|-------------|
-| AP01 | Projektsetup (Angular, Repo, Supabase) | CH | KW 18 | M2 |
-| AP02 | Datenbankschema und Typen | AK | KW 18-19 | M3 |
-| AP03 | Spotify-Authentifizierung (OAuth/PKCE) | CH | KW 19 | M2 |
-| AP04 | Session erstellen und QR-Code | AK | KW 19-20 | M4 |
-| AP05 | Beitritt und Namenseingabe | CH | KW 20 | M4 |
-| AP06 | Songsuche über Spotify | AK | KW 20-21 | M4 |
-| AP07 | Warteschlange und Voting | CH | KW 21 | M4 |
-| AP08 | Echtzeit-Synchronisation | AK | KW 21-22 | M4 |
-| AP09 | Automatische Wiedergabe und Geräteauswahl | CH | KW 22 | M5 |
-| AP10 | Admin: Teilnehmer sperren, Session beenden | AK | KW 22 | M5 |
-| AP11 | Modus 2 Grundgerüst (Ausblick) | CH | KW 22-23 | M5 |
-| AP12 | Fehlerbehandlung (Toast, Error-Handler) | AK | KW 22 | M5 |
-| AP13 | Responsives Design und Styling | CH | KW 20-23 | M5 |
-| AP14 | Tests und Testprotokoll | AK | KW 23 | M6 |
-| AP15 | Projektdokumentation | CH | KW 18-24 | M6 |
-| AP16 | Abschlusspräsentation und Probelauf | CH, AK | KW 24 | M7 |
+- AP3 (Datenmodell) ist Voraussetzung für AP10/AP11 (Queue & Voting).
+- AP5/AP6 (Login, Session) sind Voraussetzung für AP9/AP12 (Suche & Wiedergabe).
+- AP16 (Tests) setzt voraus, dass AP5–AP14 fertig sind.
 
+> **Hinweis:** **Modus 2 (Event)** wird aktuell aktiv implementiert (parallel zur
+> Härtung von Modus 1). **Genre-Analyse und Badges (FA17–FA18)** sind als spätere
+> Ausbaustufe vorgesehen und daher hier noch nicht als eigenes Arbeitspaket geführt.
 
-## Details
+## Beachtungspunkte
 
-### AP01 Projektsetup
-Verantwortlich: CH, Zeitraum: KW 18, Meilenstein: M2
-Angular-Projekt aufsetzen, Git-Repository anlegen, Supabase-Projekt erstellen, Abhängigkeiten
-installieren.
-Abnahme: npm install und npm start laufen fehlerfrei, leere App ist im Browser erreichbar.
-
-### AP02 Datenbankschema und Typen
-Verantwortlich: AK, Zeitraum: KW 18-19, Meilenstein: M3
-Tabellen private_sessions, public_sessions, participants, songs, session_queue und votes mit
-Beziehungen anlegen, database.types.ts generieren.
-Abnahme: Alle Tabellen existieren, die Typen kompilieren ohne Fehler.
-
-### AP03 Spotify-Authentifizierung
-Verantwortlich: CH, Zeitraum: KW 19, Meilenstein: M2
-OAuth-2.0-PKCE-Flow, Callback-Route, Token-Handling, Profilabruf.
-Abnahme: Host kann sich mit Spotify anmelden, der Profilname wird angezeigt.
-
-### AP04 Session erstellen und QR-Code
-Verantwortlich: AK, Zeitraum: KW 19-20, Meilenstein: M4
-Session mit Titel anlegen, Session-ID nach Konvention erzeugen, QR-Code anzeigen.
-Abnahme: Nach dem Starten existiert ein scanbarer QR-Code mit Beitritts-URL.
-
-### AP05 Beitritt und Namenseingabe
-Verantwortlich: CH, Zeitraum: KW 20, Meilenstein: M4
-Welcome-Seite, Set-Name-Seite, Teilnehmer anlegen, Modus-Erkennung.
-Abnahme: Gast tritt per ID/QR und Name bei und landet in der richtigen Lobby.
-
-### AP06 Songsuche
-Verantwortlich: AK, Zeitraum: KW 20-21, Meilenstein: M4
-Suchfeld mit Debounce, Spotify-Suche, Ergebnisliste mit Cover und Dauer.
-Abnahme: Suche liefert in unter 3 Sekunden Treffer, bereits eingereihte Songs sind markiert.
-
-### AP07 Warteschlange und Voting
-Verantwortlich: CH, Zeitraum: KW 21, Meilenstein: M4
-Song zur Queue hinzufügen, Up- und Downvote, Score-Berechnung, Top-10-Sortierung.
-Abnahme: Votes verändern den Score, die Queue ist sortiert, eine Stimme pro Person und Song.
-
-### AP08 Echtzeit-Synchronisation
-Verantwortlich: AK, Zeitraum: KW 21-22, Meilenstein: M4
-Supabase-Realtime-Abos auf session_queue und participants.
-Abnahme: Änderungen auf einem Gerät erscheinen live auf einem zweiten Gerät.
-
-### AP09 Automatische Wiedergabe und Geräteauswahl
-Verantwortlich: CH, Zeitraum: KW 22, Meilenstein: M5
-Geräteliste laden, Wiedergabe übertragen, Songs in die Spotify-Queue legen, gespielte Songs
-per Polling entfernen.
-Abnahme: Top-Song wird automatisch auf dem gewählten Gerät abgespielt und danach entfernt.
-
-### AP10 Admin-Funktionen
-Verantwortlich: AK, Zeitraum: KW 22, Meilenstein: M5
-Teilnehmer sperren und entsperren, Session beenden.
-Abnahme: Gesperrter oder entfernter Teilnehmer verliert sofort den Zugriff.
-
-### AP11 Modus 2 (Ausblick)
-Verantwortlich: CH, Zeitraum: KW 22-23, Meilenstein: M5
-Route, Grundgerüst und Konzept der Ideenliste für den DJ ohne Auto-Wiedergabe.
-Abnahme: Modus-2-Route erreichbar, Konzept im Pflichtenheft dokumentiert.
-
-### AP12 Fehlerbehandlung
-Verantwortlich: AK, Zeitraum: KW 22, Meilenstein: M5
-Toast-Komponente, NotificationService, globaler Error-Handler.
-Abnahme: Fehler erzeugen eine verständliche, automatisch verschwindende Meldung.
-
-### AP13 Responsives Design
-Verantwortlich: CH, Zeitraum: KW 20-23, Meilenstein: M5
-Mobile-first SCSS, einheitliche Karten und Buttons, Spotify-Farbschema.
-Abnahme: Alle Hauptseiten sind auf dem Smartphone ohne horizontales Scrollen bedienbar.
-
-### AP14 Tests und Testprotokoll
-Verantwortlich: AK, Zeitraum: KW 23, Meilenstein: M6
-Vitest-Tests, manuelle Durchführung aller Testfälle, Protokollierung.
-Abnahme: Testprotokoll vollständig ausgefüllt, alle Muss-Tests bestanden oder als Einschränkung
-dokumentiert.
-
-### AP15 Dokumentation
-Verantwortlich: CH, Zeitraum: KW 18-24 (laufend), Meilenstein: M6
-Auftrag, Pflichtenheft, Arbeitspakete, Gantt, README.
-Abnahme: Abschluss-Checkliste vollständig abgehakt.
-
-### AP16 Abschlusspräsentation
-Verantwortlich: CH und AK, Zeitraum: KW 24, Meilenstein: M7
-Pitch aufbauen, Live-Demo vorbereiten, Probelauf.
-Abnahme: Probelauf erfolgreich, Live-Demo läuft in Modus 1.
+- AP mit nur einem Namen kennzeichnen den individuellen Schwerpunkt; die zentrale
+  Infrastruktur (Supabase, Spotify, Design-System, Session-Host-Ansicht) wurde
+  **gemeinsam** entwickelt und ist mit **CH + AK** ausgewiesen.
+- Beide arbeiten bewusst eng zusammen (Pair-Programming an den Kernkomponenten),
+  zusätzlich übernimmt jeder eigene Features parallel.
+- Jedes Abnahmekriterium ist prüfbar formuliert – kein vages „fertig".
