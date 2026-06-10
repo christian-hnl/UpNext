@@ -122,31 +122,6 @@ gantt
     M7 Praesentation/Abnahme              :milestone, m7, 2026-06-12, 0d
 ```
 
-## Gantt (ASCII-Fallback)
-
-```text
-AP \ KW         18    19    20    21    22    23    24
-AP1 Doku        ███
-AP2 Setup       ██
-AP3 Daten       ███   █
-AP4 Design      ███   ██
-AP5 Login             ██
-AP6 Session+QR        ██
-AP7 Beitritt          ███   █
-AP8 Set-Name                ██
-AP9 Suche                   ██
-AP10 Queue                  ███   █
-AP11 Voting                       ███
-AP12 Wiedergabe                   ███
-AP13 Host-Admin                   ███
-AP14 Routing/404                        ██
-AP15 Responsive                         ██
-AP16 Tests                                    ███
-AP17 README                                   ██
-AP18 Pitch                                          ███
-AP19 Modus 2 (lfd.)                      ░░░   ▓▓▓   ▓▓▓
-Meilenstein     ◆M1   ◆M2   ◆M3   ◆M4   ◆M5   ◆M6   ◆M7
-```
 
 ## Tipps zur Umsetzung (berücksichtigt)
 
